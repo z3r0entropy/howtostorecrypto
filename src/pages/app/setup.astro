@@ -1,0 +1,35 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import SetupWizard from "~/components/SetupWizard";
+
+const initialTier = Astro.url.searchParams.get("tier") ?? undefined;
+---
+
+<Layout
+  title="Setup wizard — How to Store Crypto"
+  description="A guided wizard that builds a complete custody setup matched to your level and stakes."
+>
+  <main class="mx-auto max-w-5xl px-6 pt-32 pb-20 md:px-10">
+    <header class="mb-10">
+      <div class="pill"><span class="pill-dot"></span> Wizard · stored locally</div>
+      <h1 class="display mt-6 text-[clamp(2.25rem,5vw,4.5rem)] leading-[0.95]">
+        Plan your
+        <span class="stat-grad italic">custody setup.</span>
+      </h1>
+      <p class="mt-4 max-w-2xl text-base text-[var(--ink-2)]">
+        Seven steps. About five minutes. Ends with a printable plan you can
+        actually act on. Nothing leaves your browser.
+      </p>
+    </header>
+
+    <SetupWizard client:load initialTier={initialTier} />
+  </main>
+</Layout>
+
+<style is:global>
+  @media print {
+    body { background: white !important; }
+    header, footer, .pill, button { display: none !important; }
+    .glass { background: white !important; backdrop-filter: none !important; box-shadow: none !important; border-color: #ddd !important; }
+  }
+</style>

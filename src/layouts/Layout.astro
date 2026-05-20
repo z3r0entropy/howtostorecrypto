@@ -1,0 +1,170 @@
+---
+import { url } from "~/lib/url";
+import "~/styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+  hideNav?: boolean;
+  hideFooter?: boolean;
+}
+
+const {
+  title,
+  description = "A patient, practical guide to storing your crypto so you don't lose it.",
+  hideNav = false,
+  hideFooter = false,
+} = Astro.props;
+
+const nav = [
+  { label: "Plan", href: "/app/setup" },
+  { label: "Locations", href: "/app/locations" },
+  { label: "Quizzes", href: "/app/quiz" },
+  { label: "Brand", href: "/brand" },
+];
+
+// Strip the base so `path` matches the author-written hrefs in `nav` (e.g. "/app/setup").
+const basePrefix = import.meta.env.BASE_URL.replace(/\/$/, "");
+const path =
+  Astro.url.pathname
+    .replace(/\/$/, "")
+    .replace(new RegExp("^" + basePrefix.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")), "") || "/";
+const isApp = path.startsWith("/app");
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f3a68' stroke-width='1.6'><path d='M12 2 L20 6.5 L20 16.5 L12 21 L4 16.5 L4 6.5 Z'/><path d='M12 7 L16 11.5 L12 16 L8 11.5 Z'/></svg>" />
+    <link rel="preconnect" href="https://rsms.me/" />
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <title>{title}</title>
+    <slot name="head" />
+  </head>
+  <body>
+    <!-- Construction banner — site-wide, every page -->
+    <div class="construction-banner" role="alert">
+      <span class="construction-banner__icon" aria-hidden="true">⚠</span>
+      <span>
+        <strong>Under heavy construction.</strong>{" "}
+        This site is a work-in-progress draft. Content, structure, and
+        recommendations are not yet stable.
+        <strong> Do not act on anything here without independent verification.</strong>
+      </span>
+    </div>
+
+    {
+      !hideNav && (
+        <header class="fixed inset-x-0 z-50 mx-auto flex max-w-5xl items-center justify-between px-4" style="top: calc(env(safe-area-inset-top, 0px) + 56px);">
+          <a
+            href={url("/")}
+            class="pill text-[var(--ink)] hover:text-[var(--ice-deep)]"
+            aria-label="How to Store Crypto · home"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">
+              <path d="M12 2 L20 6.5 L20 16.5 L12 21 L4 16.5 L4 6.5 Z" />
+              <path d="M12 7 L16 11.5 L12 16 L8 11.5 Z" />
+            </svg>
+            <span class="font-medium tracking-tight">How to Store Crypto</span>
+          </a>
+
+          <nav class="pill hidden gap-1 px-1.5! py-1! md:flex">
+            {
+              nav.map((item) => {
+                const isActive =
+                  path === item.href ||
+                  (item.href !== "/" && path.startsWith(item.href));
+                return (
+                  <a
+                    href={url(item.href)}
+                    class:list={[
+                      "rounded-full px-3 py-1.5 text-[11px] transition",
+                      isActive
+                        ? "bg-[var(--ink)] text-white"
+                        : "text-[var(--ink-2)] hover:bg-white/70",
+                    ]}
+                  >
+                    {item.label}
+                  </a>
+                );
+              })
+            }
+          </nav>
+
+          <a
+            href={url(isApp ? "/" : "/app/setup")}
+            class="btn btn-primary btn-sm"
+          >
+            {isApp ? "← Reading" : "Start →"}
+          </a>
+        </header>
+      )
+    }
+
+    <slot />
+
+    {
+      !hideFooter && (
+        <footer class="mx-auto max-w-6xl px-6 pb-12 pt-20 md:px-10">
+          <div class="glass rounded-3xl p-8 md:p-12">
+            <div class="grid grid-cols-12 gap-8">
+              <div class="col-span-12 md:col-span-5">
+                <a href={url("/")} class="flex items-center gap-2 text-[var(--ink)]">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round">
+                    <path d="M12 2 L20 6.5 L20 16.5 L12 21 L4 16.5 L4 6.5 Z" />
+                    <path d="M12 7 L16 11.5 L12 16 L8 11.5 Z" />
+                  </svg>
+                  <span class="display text-lg">How to Store Crypto</span>
+                </a>
+                <p class="mt-4 max-w-xs text-sm text-[var(--ink-2)]">
+                  A patient, opinionated, vendor-neutral guide to keeping your
+                  seed phrase safe.
+                </p>
+              </div>
+
+              <div class="col-span-6 md:col-span-3">
+                <div class="text-xs uppercase tracking-[0.15em] text-[var(--dim)]">
+                  Read
+                </div>
+                <ul class="mt-3 space-y-2 text-sm">
+                  <li><a href={url("/#methods")} class="text-[var(--ink-2)] hover:text-[var(--ice-deep)]">Methods</a></li>
+                  <li><a href={url("/#walkthrough")} class="text-[var(--ink-2)] hover:text-[var(--ice-deep)]">Walkthrough</a></li>
+                  <li><a href={url("/#mistakes")} class="text-[var(--ink-2)] hover:text-[var(--ice-deep)]">Common mistakes</a></li>
+                  <li><a href={url("/#faq")} class="text-[var(--ink-2)] hover:text-[var(--ice-deep)]">FAQ</a></li>
+                </ul>
+              </div>
+
+              <div class="col-span-6 md:col-span-4">
+                <div class="text-xs uppercase tracking-[0.15em] text-[var(--dim)]">
+                  Use
+                </div>
+                <ul class="mt-3 space-y-2 text-sm">
+                  <li><a href={url("/app/setup")} class="text-[var(--ink-2)] hover:text-[var(--ice-deep)]">Plan your setup</a></li>
+                  <li><a href={url("/app/locations")} class="text-[var(--ink-2)] hover:text-[var(--ice-deep)]">Browse backup locations</a></li>
+                  <li><a href={url("/app/quiz/knowledge")} class="text-[var(--ink-2)] hover:text-[var(--ice-deep)]">Knowledge quiz</a></li>
+                  <li><a href={url("/app/quiz/audit")} class="text-[var(--ink-2)] hover:text-[var(--ice-deep)]">Audit your setup</a></li>
+                  <li><a href={url("/brand")} class="text-[var(--ink-2)] hover:text-[var(--ice-deep)]">Brand &amp; design system</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="mt-10 flex flex-wrap items-center justify-between gap-4 border-t hairline pt-6 text-xs text-[var(--dim)]">
+              <span>© 2026 How to Store Crypto</span>
+              <span>Not financial advice. Not a custodian. Vendor-neutral.</span>
+              <span>Built calmly. Updated regularly.</span>
+            </div>
+          </div>
+        </footer>
+      )
+    }
+  </body>
+</html>

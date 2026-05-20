@@ -1,0 +1,678 @@
+---
+import { url } from "~/lib/url";
+import Layout from "~/layouts/Layout.astro";
+
+const methods = [
+  {
+    code: "M1",
+    name: "Stamped steel",
+    summary: "The conservative default. Cold-stamped 316 stainless, two plates, two locations.",
+    cost: "$70–$200",
+    setup: "an afternoon",
+    survivability: "9 / 10",
+    bestFor: "any meaningful holding",
+    notes: "Survives fire, flood, and decades. Vulnerable only to a thief who finds it.",
+  },
+  {
+    code: "M2",
+    name: "Multisig (2-of-3)",
+    summary: "Three keys, three places, two required to spend. Eliminates the single point of failure.",
+    cost: "$300–$700",
+    setup: "a weekend",
+    survivability: "10 / 10",
+    bestFor: "serious holdings or single owners",
+    notes: "Higher initial complexity. The right tool past roughly five figures.",
+  },
+  {
+    code: "M3",
+    name: "Shamir shares",
+    summary: "Split the seed into m-of-n shares. Reconstruct with the threshold, never with fewer.",
+    cost: "$80–$200",
+    setup: "an afternoon",
+    survivability: "8 / 10",
+    bestFor: "distributing to trusted family",
+    notes: "Requires trust you actually have. Excellent for inheritance setups.",
+  },
+  {
+    code: "M4",
+    name: "Sealed paper",
+    summary: "Printed phrase in a tamper-evident sleeve in a fire-rated safe. As redundancy only.",
+    cost: "$20–$60",
+    setup: "an hour",
+    survivability: "5 / 10",
+    bestFor: "a tertiary backup",
+    notes: "Never the primary. Fire and water remain the hard problems.",
+  },
+];
+
+const walkthrough = [
+  {
+    n: 1,
+    label: "Generate offline",
+    body: "Set up a wallet on a device that has never connected to the internet. A hardware wallet straight from a sealed package is the typical answer.",
+    time: "15 min",
+  },
+  {
+    n: 2,
+    label: "Record by hand",
+    body: "Cold-stamp the first four letters of each word into a 316 stainless plate. No screens. No photos. No clipboard.",
+    time: "45 min",
+  },
+  {
+    n: 3,
+    label: "Duplicate",
+    body: "Stamp a second plate, identical to the first. This is your offsite backup, not a spare for the same room.",
+    time: "30 min",
+  },
+  {
+    n: 4,
+    label: "Distribute",
+    body: "One plate stays home in a fire-rated safe. One plate goes elsewhere — a bank deposit box, a trusted family member, a second property.",
+    time: "1–2 days",
+  },
+  {
+    n: 5,
+    label: "Write the letter",
+    body: "A sealed envelope with location, procedure, and enough context that a non-technical heir could actually follow it. Held by an attorney or trusted relative.",
+    time: "1 hour",
+  },
+  {
+    n: 6,
+    label: "Test recovery",
+    body: "Restore onto a fresh, offline device. Confirm the first address matches. Wipe the device. Schedule the next test for one year from now.",
+    time: "30 min, annually",
+  },
+];
+
+const mistakes = [
+  {
+    title: "Screenshotting the phrase",
+    body: "Your phone is online. It has been backed up to a cloud. It has been scanned by an OCR pipeline you don't control.",
+    instead: "Hand-write it. Stamp it. Never let it touch a screen.",
+  },
+  {
+    title: "One paper copy in a drawer",
+    body: "Single location, single medium, single fire away from gone. The most common cause of permanent loss is simply: misplaced.",
+    instead: "Two locations. At least one of them on metal.",
+  },
+  {
+    title: "Memorising and not writing down",
+    body: "Human memory is the least reliable storage medium ever invented. You will forget some part of it. Probably more than you'd like.",
+    instead: "Memory is a supplement, not a backup. Write it down.",
+  },
+  {
+    title: "Cloud-only backup",
+    body: "An encrypted cloud backup is only as strong as the password protecting it — and now you have two secrets to keep instead of one.",
+    instead: "Cloud is acceptable as a tertiary copy. Never as the primary.",
+  },
+  {
+    title: "Telling a friend 'just in case'",
+    body: "Now there are two people who can be coerced, and one of them might not be careful.",
+    instead: "Give them the location of a sealed letter. Not the phrase itself.",
+  },
+  {
+    title: "Never testing recovery",
+    body: "An untested backup is not a backup. It's a hope. Hope has a poor track record against fire, flood, and human error.",
+    instead: "Restore on a fresh device once a year. Confirm. Wipe.",
+  },
+];
+
+const faqs = [
+  {
+    q: "Isn't a hardware wallet already cold storage?",
+    a: "A hardware wallet is a convenient, secure interface to your seed. The seed itself — the twenty-four words — is what you're really protecting. If the device dies (and they do), you restore from the phrase. So how you store that phrase is the actual question.",
+  },
+  {
+    q: "Can I use a password manager?",
+    a: "As a tertiary, encrypted, self-hosted copy — fine. As the primary — no. Cloud sync turns your seed into something with a network surface, which defeats the entire premise of cold storage.",
+  },
+  {
+    q: "How often should I test recovery?",
+    a: "Annually. Restore onto a fresh, air-gapped device, confirm the first address matches, then wipe the device. Schedule it like a smoke-alarm check.",
+  },
+  {
+    q: "What about a passphrase (the 25th word)?",
+    a: "A worthwhile additional layer — provided you have an equally serious plan for storing the passphrase. Otherwise you've just doubled the number of things you can lose.",
+  },
+  {
+    q: "Is a bank safety deposit box safe?",
+    a: "It's a reasonable second location for a redundant metal plate. It is not safe as a single location: banks have flooded, been seized, and lost contents. Always have two.",
+  },
+  {
+    q: "Do you recommend specific hardware or brands?",
+    a: "Not on the landing page. The brand market shifts faster than guides should. Vendor recommendations live in the methods deep-dives with notes on when each was last reviewed.",
+  },
+  {
+    q: "Is this site selling anything?",
+    a: "No. No affiliate links, no products, no newsletter monetisation, no tracking. The hardware costs what hardware costs at whoever you choose to buy it from.",
+  },
+  {
+    q: "Quantum?",
+    a: "BIP-39 phrases are fine. The keys they derive use ECDSA, which is theoretically vulnerable to a sufficiently large quantum computer. None exist. The community will migrate before that changes; the work to do today does not change.",
+  },
+];
+---
+
+<Layout
+  title="How to Store Crypto — Self-custody, without the panic"
+  description="A patient, vendor-neutral guide to storing your crypto so you don't lose it. Methods, walkthrough, common mistakes, recovery testing, inheritance."
+>
+  <main class="mx-auto max-w-6xl px-6 pt-32 md:px-10">
+    <!-- ============================================================
+         Hero
+         ============================================================ -->
+    <section class="grid grid-cols-12 items-center gap-10 pb-32 md:pt-12">
+      <div class="col-span-12 md:col-span-7">
+        <div class="pill mb-8">
+          <span class="pill-dot"></span>
+          Updated 20 May 2026 · reading time ≈ 9 min
+        </div>
+        <h1 class="display text-[clamp(2.75rem,7.5vw,6.5rem)] leading-[0.95]">
+          Self-custody,
+          <br />
+          <span class="stat-grad italic">without the panic.</span>
+        </h1>
+        <p class="mt-10 max-w-xl text-lg leading-relaxed text-[var(--ink-2)] md:text-xl">
+          A patient, vendor-neutral guide to storing your crypto so you don't
+          lose it. Written for people who want to do this once, do it right,
+          and then mostly stop thinking about it.
+        </p>
+        <div class="mt-10 flex flex-wrap gap-3">
+          <a href="#walkthrough" class="btn btn-primary btn-lg">
+            Start the walkthrough →
+          </a>
+          <a href="#methods" class="btn btn-secondary btn-lg">
+            Compare methods
+          </a>
+        </div>
+
+        <div class="mt-14 flex flex-wrap items-center gap-x-8 gap-y-3 text-xs text-[var(--dim)]">
+          <span class="flex items-center gap-2">
+            <span class="size-1 rounded-full bg-[var(--ok)]"></span>
+            No products to sell
+          </span>
+          <span class="flex items-center gap-2">
+            <span class="size-1 rounded-full bg-[var(--ok)]"></span>
+            No affiliate links
+          </span>
+          <span class="flex items-center gap-2">
+            <span class="size-1 rounded-full bg-[var(--ok)]"></span>
+            No tracking
+          </span>
+          <span class="flex items-center gap-2">
+            <span class="size-1 rounded-full bg-[var(--ok)]"></span>
+            Updated annually
+          </span>
+        </div>
+      </div>
+
+      <!-- Hero artwork -->
+      <div class="col-span-12 md:col-span-5">
+        <div class="relative aspect-square w-full">
+          <div class="absolute inset-0 rounded-full frost ring-soft float"></div>
+          <div class="glass absolute inset-[10%] flex flex-col items-center justify-center rounded-[28px] text-center">
+            <div class="text-[10px] uppercase tracking-[0.2em] text-[var(--dim)]">
+              your seed phrase
+            </div>
+            <div class="display mt-3 stat-grad text-7xl">24</div>
+            <div class="mt-2 text-sm text-[var(--ink-2)]">words · BIP-39</div>
+            <div class="mt-8 flex gap-1.5">
+              {Array.from({ length: 24 }).map((_, i) => (
+                <span
+                  class="size-1.5 rounded-full"
+                  style={`background: rgba(31,58,104,${0.15 + (i % 5) * 0.15})`}
+                />
+              ))}
+            </div>
+            <div class="pill mt-8 text-[var(--ice-deep)]!">
+              ❄ offline · isolated · permanent
+            </div>
+          </div>
+
+          <div class="glass absolute -left-6 top-1/3 rounded-2xl px-4 py-3 text-xs float" style="animation-delay: -2s;">
+            <div class="text-[10px] uppercase tracking-[0.15em] text-[var(--dim)]">Survives</div>
+            <div class="mt-1 text-[var(--ink)]">🔥 1400°C · 💧 indefinitely</div>
+          </div>
+          <div class="glass absolute -right-4 bottom-1/4 rounded-2xl px-4 py-3 text-xs float" style="animation-delay: -4s;">
+            <div class="text-[10px] uppercase tracking-[0.15em] text-[var(--dim)]">Brute force</div>
+            <div class="mt-1 text-[var(--ink)]">≈ 10⁶⁰ years</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         The framework
+         ============================================================ -->
+    <section class="py-20">
+      <div class="mb-14 max-w-3xl">
+        <div class="pill"><span>The framework</span></div>
+        <h2 class="display mt-6 text-4xl leading-tight md:text-6xl">
+          One sentence
+          <span class="stat-grad italic">to keep in mind.</span>
+        </h2>
+        <p class="mt-6 text-lg text-[var(--ink-2)]">
+          Most of the practical advice on this site follows from this.
+        </p>
+      </div>
+
+      <div class="glass rounded-[32px] p-8 md:p-14">
+        <p class="display text-3xl leading-snug md:text-5xl">
+          Your seed phrase
+          <span class="stat-grad italic">is the wallet.</span>
+          <span class="text-[var(--dim)]">The device is just an interface.</span>
+        </p>
+        <div class="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
+          {
+            [
+              {
+                t: "Devices are replaceable",
+                b: "Hardware wallets fail, lose firmware support, and become bricks. None of that matters as long as you have the phrase.",
+              },
+              {
+                t: "Phrases are not",
+                b: "Twenty-four words written on a sufficient medium can outlast every device you currently own — by decades.",
+              },
+              {
+                t: "There is no reset",
+                b: "No password recovery. No customer support. No central authority. This is the entire point, and the entire problem.",
+              },
+            ].map((p) => (
+              <div>
+                <h3 class="display text-xl">{p.t}</h3>
+                <p class="mt-2 text-sm leading-relaxed text-[var(--ink-2)]">{p.b}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Methods comparison
+         ============================================================ -->
+    <section id="methods" class="py-20">
+      <div class="mb-14 max-w-3xl">
+        <div class="pill"><span>Methods</span></div>
+        <h2 class="display mt-6 text-4xl leading-tight md:text-6xl">
+          Four approaches.
+          <span class="text-[var(--dim)]">A serious setup uses two.</span>
+        </h2>
+        <p class="mt-6 text-lg text-[var(--ink-2)]">
+          These are the methods that have actually held up. None is exotic.
+          None requires trusting a third party. The differences are cost,
+          complexity, and how badly things have to go before you lose access.
+        </p>
+      </div>
+
+      <!-- Cards -->
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+        {
+          methods.map((m, i) => (
+            <article class={`glass relative rounded-3xl p-8 ${i === 1 ? "ring-2 ring-[var(--accent)]/40 shadow-2xl shadow-[var(--accent)]/10" : ""}`}>
+              {i === 1 && (
+                <div class="absolute -top-3 left-8 rounded-full bg-[var(--accent)] px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-white">
+                  Recommended past five figures
+                </div>
+              )}
+              <div class="flex items-baseline justify-between">
+                <div class="text-xs uppercase tracking-[0.2em] text-[var(--ice-deep)]">
+                  {m.code} · {m.name}
+                </div>
+                <div class="text-[11px] text-[var(--dim)]">
+                  setup ≈ {m.setup}
+                </div>
+              </div>
+              <p class="mt-6 text-base leading-relaxed">{m.summary}</p>
+
+              <dl class="mt-8 grid grid-cols-3 gap-4 border-t hairline pt-5 text-xs">
+                <div>
+                  <dt class="text-[var(--dim)]">Cost</dt>
+                  <dd class="display mt-1 text-lg">{m.cost}</dd>
+                </div>
+                <div>
+                  <dt class="text-[var(--dim)]">Survivability</dt>
+                  <dd class="display stat-grad mt-1 text-lg">{m.survivability}</dd>
+                </div>
+                <div>
+                  <dt class="text-[var(--dim)]">Best for</dt>
+                  <dd class="mt-1 text-sm text-[var(--ink-2)]">{m.bestFor}</dd>
+                </div>
+              </dl>
+
+              <p class="mt-6 text-sm italic text-[var(--ink-2)]">{m.notes}</p>
+            </article>
+          ))
+        }
+      </div>
+
+      <!-- Comparison table -->
+      <div class="glass mt-10 overflow-hidden rounded-3xl">
+        <div class="flex items-baseline justify-between border-b hairline-strong px-6 py-5">
+          <div>
+            <div class="text-xs uppercase tracking-[0.2em] text-[var(--ice-deep)]">
+              Method comparison
+            </div>
+            <div class="display mt-1 text-2xl">At a glance</div>
+          </div>
+          <a href="#walkthrough" class="hidden text-xs text-[var(--accent)] hover:text-[var(--accent-deep)] md:inline">
+            Then: the walkthrough →
+          </a>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="table-cold min-w-[640px]">
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Cost</th>
+                <th>Setup time</th>
+                <th>Survivability</th>
+                <th>Best for</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                methods.map((m) => (
+                  <tr>
+                    <td>
+                      <div class="font-medium">{m.name}</div>
+                      <div class="mt-1 text-xs text-[var(--dim)]">{m.code}</div>
+                    </td>
+                    <td>{m.cost}</td>
+                    <td>{m.setup}</td>
+                    <td>
+                      <span class="display stat-grad text-base">
+                        {m.survivability}
+                      </span>
+                    </td>
+                    <td class="text-[var(--ink-2)]">{m.bestFor}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Walkthrough
+         ============================================================ -->
+    <section id="walkthrough" class="py-20">
+      <div class="mb-14 max-w-3xl">
+        <div class="pill"><span>The walkthrough</span></div>
+        <h2 class="display mt-6 text-4xl leading-tight md:text-6xl">
+          One afternoon
+          <span class="stat-grad italic">this weekend.</span>
+        </h2>
+        <p class="mt-6 text-lg text-[var(--ink-2)]">
+          The conservative default setup, end to end. Stamped steel,
+          distributed across two locations, with a sealed inheritance letter.
+          Roughly four hours of effort spread over two days. About $90 in
+          hardware. Survives most of what's likely to happen.
+        </p>
+      </div>
+
+      <ol class="space-y-4">
+        {
+          walkthrough.map((s) => (
+            <li class="glass rounded-2xl p-6 md:p-7">
+              <div class="grid grid-cols-12 items-baseline gap-4 md:gap-6">
+                <div class="col-span-2 md:col-span-1">
+                  <div class="display stat-grad text-3xl md:text-4xl">
+                    {String(s.n).padStart(2, "0")}
+                  </div>
+                </div>
+                <div class="col-span-10 md:col-span-8">
+                  <div class="display text-xl md:text-2xl">{s.label}</div>
+                  <p class="mt-2 text-sm leading-relaxed text-[var(--ink-2)] md:text-base">
+                    {s.body}
+                  </p>
+                </div>
+                <div class="col-span-12 md:col-span-3 md:text-right">
+                  <div class="tag tag-neutral">≈ {s.time}</div>
+                </div>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+
+      <div class="glass mt-10 flex flex-wrap items-center justify-between gap-4 rounded-2xl p-6 md:p-7">
+        <div>
+          <div class="text-xs uppercase tracking-[0.15em] text-[var(--dim)]">Total</div>
+          <div class="display mt-1 text-2xl">
+            <span class="stat-grad">≈ 4 hours</span>
+            <span class="text-[var(--dim)] text-lg">over a weekend</span>
+            <span class="ml-3 text-[var(--ink-2)] text-base">·</span>
+            <span class="ml-3 stat-grad">≈ $90</span>
+            <span class="text-[var(--dim)] text-lg">in hardware</span>
+          </div>
+        </div>
+        <a href={url("/app/setup")} class="btn btn-primary">
+          Build your plan in the wizard →
+        </a>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Mistakes
+         ============================================================ -->
+    <section id="mistakes" class="py-20">
+      <div class="mb-14 max-w-3xl">
+        <div class="pill"><span>Common mistakes</span></div>
+        <h2 class="display mt-6 text-4xl leading-tight md:text-6xl">
+          The six ways
+          <span class="stat-grad italic">people lose it.</span>
+        </h2>
+        <p class="mt-6 text-lg text-[var(--ink-2)]">
+          Almost every permanent loss this site has documented falls into one
+          of these patterns. None of them is exotic. All of them are
+          preventable, cheaply, this weekend.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        {
+          mistakes.map((m, i) => (
+            <article class="glass rounded-2xl p-7">
+              <div class="flex items-baseline justify-between text-xs">
+                <div class="tag tag-warn">Mistake {String(i + 1).padStart(2, "0")}</div>
+              </div>
+              <h3 class="display mt-4 text-xl">{m.title}</h3>
+              <p class="mt-2 text-sm leading-relaxed text-[var(--ink-2)]">{m.body}</p>
+              <div class="mt-5 border-t hairline pt-4">
+                <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--ok)]">
+                  Instead
+                </div>
+                <p class="mt-1 text-sm text-[var(--ink)]">{m.instead}</p>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Recovery testing
+         ============================================================ -->
+    <section class="py-20">
+      <div class="glass rounded-[32px] p-8 md:p-14">
+        <div class="grid grid-cols-12 gap-10">
+          <div class="col-span-12 md:col-span-7">
+            <div class="pill"><span>Annual rehearsal</span></div>
+            <h2 class="display mt-6 text-3xl leading-tight md:text-5xl">
+              An untested backup
+              <span class="stat-grad italic">is not a backup.</span>
+            </h2>
+            <p class="mt-6 text-base leading-relaxed text-[var(--ink-2)]">
+              The most common reason recoveries fail is not that the medium
+              degraded — it's that the procedure was never actually rehearsed.
+              Once a year is enough. Schedule it the way you schedule a smoke
+              alarm test.
+            </p>
+
+            <ul class="mt-8 space-y-3 text-sm">
+              {
+                [
+                  "Pick a fresh, offline device. A spare hardware wallet, factory-reset.",
+                  "Restore the seed from your primary backup, by hand. No copy-paste.",
+                  "Confirm the first receiving address matches what your records show.",
+                  "Wipe the device. Note the date. Calendar the next test for one year.",
+                ].map((l, i) => (
+                  <li class="flex items-start gap-3 text-[var(--ink-2)]">
+                    <span class="tag tag-accent mt-0.5 shrink-0">{i + 1}</span>
+                    <span>{l}</span>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+
+          <div class="col-span-12 md:col-span-5">
+            <div class="glass-dark rounded-2xl p-6">
+              <div class="text-xs uppercase tracking-[0.15em] text-[var(--ice-deep)]">
+                Schedule
+              </div>
+              <div class="display mt-4 text-2xl">Next test</div>
+              <div class="display stat-grad mt-1 text-3xl">May 2027</div>
+              <div class="mt-1 text-xs text-[var(--dim)]">
+                Set by you the first time you complete a rehearsal.
+              </div>
+              <div class="mt-6 grid grid-cols-2 gap-3 text-xs">
+                <div class="glass rounded-xl p-3">
+                  <div class="text-[var(--dim)]">Time</div>
+                  <div class="display mt-1 text-base">≈ 30 min</div>
+                </div>
+                <div class="glass rounded-xl p-3">
+                  <div class="text-[var(--dim)]">Cost</div>
+                  <div class="display mt-1 text-base">$0</div>
+                </div>
+              </div>
+              <button class="btn btn-secondary btn-sm mt-6 w-full justify-center">
+                Add to calendar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Inheritance
+         ============================================================ -->
+    <section class="py-20">
+      <div class="mb-14 max-w-3xl">
+        <div class="pill"><span>Inheritance</span></div>
+        <h2 class="display mt-6 text-4xl leading-tight md:text-6xl">
+          What if you're
+          <span class="stat-grad italic">not around?</span>
+        </h2>
+        <p class="mt-6 text-lg text-[var(--ink-2)]">
+          The hardest custody question, and the one most people avoid. There
+          are two patterns that work. Both require an afternoon's planning
+          while you're alive, and neither requires telling anyone the phrase.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div class="glass rounded-3xl p-8">
+          <div class="tag tag-accent">Pattern A</div>
+          <h3 class="display mt-4 text-2xl">The sealed letter</h3>
+          <p class="mt-3 text-sm leading-relaxed text-[var(--ink-2)]">
+            A printed document — held by your attorney, or in a sealed envelope
+            with a trusted relative — describing where each backup is and how a
+            non-technical person would use them.
+          </p>
+          <ul class="mt-6 space-y-2 text-sm text-[var(--ink-2)]">
+            <li class="flex items-start gap-2"><span class="text-[var(--accent)]">·</span> Locations of each backup</li>
+            <li class="flex items-start gap-2"><span class="text-[var(--accent)]">·</span> A step-by-step restore procedure</li>
+            <li class="flex items-start gap-2"><span class="text-[var(--accent)]">·</span> Contact for one technical helper</li>
+            <li class="flex items-start gap-2"><span class="text-[var(--accent)]">·</span> Rehearsed once — with the helper, not the heir</li>
+          </ul>
+        </div>
+
+        <div class="glass rounded-3xl p-8">
+          <div class="tag tag-accent">Pattern B</div>
+          <h3 class="display mt-4 text-2xl">Multisig with trustee</h3>
+          <p class="mt-3 text-sm leading-relaxed text-[var(--ink-2)]">
+            A 2-of-3 multisig where one key is held by a professional trustee,
+            who never holds enough to spend alone but can co-sign with the heir
+            once your estate has been settled.
+          </p>
+          <ul class="mt-6 space-y-2 text-sm text-[var(--ink-2)]">
+            <li class="flex items-start gap-2"><span class="text-[var(--accent)]">·</span> No single party can ever spend alone</li>
+            <li class="flex items-start gap-2"><span class="text-[var(--accent)]">·</span> Heir-initiated recovery</li>
+            <li class="flex items-start gap-2"><span class="text-[var(--accent)]">·</span> Annual co-signing rehearsal</li>
+            <li class="flex items-start gap-2"><span class="text-[var(--accent)]">·</span> Recommended past mid-six figures</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         FAQ
+         ============================================================ -->
+    <section id="faq" class="py-20">
+      <div class="mb-14 max-w-3xl">
+        <div class="pill"><span>Questions</span></div>
+        <h2 class="display mt-6 text-4xl leading-tight md:text-6xl">
+          The
+          <span class="stat-grad italic">honest</span>
+          answers.
+        </h2>
+        <p class="mt-6 text-lg text-[var(--ink-2)]">
+          No marketing. No vendor preference. If a question has an unsatisfying
+          answer, the answer is unsatisfying.
+        </p>
+      </div>
+
+      <div class="space-y-3">
+        {
+          faqs.map((f, i) => (
+            <details class="glass group rounded-2xl p-6 open:bg-white/75" open={i === 0}>
+              <summary class="flex cursor-pointer items-center justify-between gap-4">
+                <span class="display text-lg md:text-xl">{f.q}</span>
+                <span class="frost flex size-8 shrink-0 items-center justify-center rounded-full text-[var(--ice-deep)] transition group-open:rotate-45">
+                  +
+                </span>
+              </summary>
+              <p class="mt-4 max-w-3xl text-sm leading-relaxed text-[var(--ink-2)] md:text-base">
+                {f.a}
+              </p>
+            </details>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Final CTA
+         ============================================================ -->
+    <section class="py-20">
+      <div class="glass relative overflow-hidden rounded-[40px] p-10 text-center md:p-20">
+        <div class="frost absolute -top-32 left-1/2 size-96 -translate-x-1/2 rounded-full opacity-60"></div>
+        <div class="relative">
+          <div class="pill mx-auto inline-flex"><span>Start here</span></div>
+          <h2 class="display mx-auto mt-6 max-w-3xl text-4xl leading-tight md:text-7xl">
+            One afternoon now.
+            <br />
+            <span class="stat-grad italic">Decades of peace later.</span>
+          </h2>
+          <p class="mx-auto mt-6 max-w-md text-base text-[var(--ink-2)]">
+            Set up properly once. Test it annually. Forget about it the rest of
+            the time. That's the whole site.
+          </p>
+          <div class="mt-10 flex flex-wrap justify-center gap-3">
+            <a href="#walkthrough" class="btn btn-primary btn-lg">
+              Start the walkthrough →
+            </a>
+            <a href="#methods" class="btn btn-secondary btn-lg">
+              Or compare methods first
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>

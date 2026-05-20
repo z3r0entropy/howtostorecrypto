@@ -1,0 +1,417 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* ============================================================
+   Design tokens — Cold
+   ============================================================ */
+:root {
+  --bg: #f4f8fc;
+  --bg-2: #e6eef7;
+  --surface: #ffffff;
+
+  --ink: #0c1a2e;
+  --ink-2: #3b4a63;
+  --dim: #6f7e94;
+  --dimmer: #95a3b8;
+
+  --ice: #aac6e6;
+  --ice-deep: #1f3a68;
+  --accent: #2f6fe0;
+  --accent-deep: #1d4fb0;
+
+  --warn: #c45c3a;
+  --ok: #2f9468;
+
+  --glass: rgba(255, 255, 255, 0.55);
+  --glass-strong: rgba(255, 255, 255, 0.75);
+  --hairline: rgba(12, 26, 46, 0.08);
+  --hairline-strong: rgba(12, 26, 46, 0.16);
+
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+  --radius-2xl: 36px;
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  /* Leave room for the fixed construction banner. */
+  padding-top: 44px;
+  font-family: var(--font-sans);
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  font-feature-settings: "ss01", "cv11";
+  background:
+    radial-gradient(circle at 80% -10%, #cfe1f5 0%, transparent 50%),
+    radial-gradient(circle at 0% 30%, #e8d8f5 0%, transparent 40%),
+    radial-gradient(circle at 50% 100%, #d8eaf8 0%, transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+}
+
+/* ============================================================
+   Construction banner — fixed across the very top of every page
+   ============================================================ */
+.construction-banner {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: #fff7e6;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent),
+    repeating-linear-gradient(
+      135deg,
+      #b3471f 0 14px,
+      #9c3a16 14px 28px
+    );
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 12px -4px rgba(0, 0, 0, 0.35);
+}
+.construction-banner strong { color: #ffffff; font-weight: 600; }
+.construction-banner__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #fff7e6;
+  color: #b3471f;
+  font-weight: 700;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+@media print {
+  .construction-banner { display: none; }
+  body { padding-top: 0; }
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+/* ============================================================
+   Type — display style for big numbers / hero
+   ============================================================ */
+.display {
+  letter-spacing: -0.03em;
+  font-weight: 500;
+}
+
+.stat-grad {
+  background: linear-gradient(180deg, var(--ice-deep) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ============================================================
+   Glass / frost / surfaces
+   ============================================================ */
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(30px) saturate(140%);
+  -webkit-backdrop-filter: blur(30px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
+    0 30px 60px -20px rgba(31, 58, 104, 0.15),
+    0 8px 20px -10px rgba(31, 58, 104, 0.08);
+}
+
+.glass-strong {
+  background: var(--glass-strong);
+  backdrop-filter: blur(30px) saturate(140%);
+  -webkit-backdrop-filter: blur(30px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
+    0 30px 60px -20px rgba(31, 58, 104, 0.18);
+}
+
+.glass-dark {
+  background: rgba(12, 26, 46, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(12, 26, 46, 0.08);
+}
+
+.frost {
+  background: radial-gradient(
+    circle at 30% 20%,
+    rgba(255, 255, 255, 0.9),
+    rgba(232, 243, 255, 0.5) 60%,
+    rgba(170, 198, 230, 0.2)
+  );
+}
+
+.ring-soft {
+  box-shadow:
+    0 0 0 6px rgba(255, 255, 255, 0.5),
+    0 30px 60px -20px rgba(31, 58, 104, 0.25);
+}
+
+/* ============================================================
+   Pill / chips
+   ============================================================ */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  padding: 0.375rem 0.875rem;
+  font-size: 0.6875rem;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.pill-dot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  border-radius: 999px;
+  padding: 1rem 1.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  outline-color: var(--accent);
+}
+
+.btn-primary {
+  background: var(--ink);
+  color: var(--surface);
+  box-shadow: 0 10px 30px -10px rgba(12, 26, 46, 0.4);
+}
+.btn-primary:hover {
+  background: var(--ice-deep);
+}
+
+.btn-secondary {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  border-color: rgba(255, 255, 255, 0.7);
+  color: var(--ink);
+}
+.btn-secondary:hover {
+  background: var(--glass-strong);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-2);
+}
+.btn-ghost:hover {
+  background: rgba(12, 26, 46, 0.06);
+  color: var(--ink);
+}
+
+.btn-sm {
+  padding: 0.625rem 1.125rem;
+  font-size: 0.75rem;
+}
+
+.btn-lg {
+  padding: 1.125rem 2rem;
+  font-size: 0.9375rem;
+}
+
+/* ============================================================
+   Hairlines / dividers
+   ============================================================ */
+.hairline {
+  border-color: var(--hairline);
+}
+
+.hairline-strong {
+  border-color: var(--hairline-strong);
+}
+
+/* ============================================================
+   Animation — floating elements
+   ============================================================ */
+.float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.float-slow {
+  animation: float 10s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* ============================================================
+   Tables
+   ============================================================ */
+.table-cold {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.875rem;
+}
+
+.table-cold thead th {
+  text-align: left;
+  font-weight: 500;
+  color: var(--dim);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--hairline-strong);
+}
+
+.table-cold tbody td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--hairline);
+  vertical-align: top;
+}
+
+.table-cold tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.table-cold tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* ============================================================
+   Forms
+   ============================================================ */
+.input {
+  display: block;
+  width: 100%;
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  padding: 0.875rem 1rem;
+  font-size: 0.9375rem;
+  color: var(--ink);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input::placeholder {
+  color: var(--dimmer);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(47, 111, 224, 0.12);
+}
+
+.label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--ink-2);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+/* ============================================================
+   Tag
+   ============================================================ */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.tag-neutral {
+  background: rgba(12, 26, 46, 0.08);
+  color: var(--ink-2);
+}
+
+.tag-accent {
+  background: rgba(47, 111, 224, 0.12);
+  color: var(--accent-deep);
+}
+
+.tag-warn {
+  background: rgba(196, 92, 58, 0.14);
+  color: var(--warn);
+}
+
+.tag-ok {
+  background: rgba(47, 148, 104, 0.14);
+  color: var(--ok);
+}
+
+/* ============================================================
+   Misc
+   ============================================================ */
+.kbd {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 0.125rem 0.375rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--hairline);
+  box-shadow: inset 0 -1px 0 var(--hairline);
+}
+
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}

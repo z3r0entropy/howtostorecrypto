@@ -1,0 +1,40 @@
+{
+  "name": "howtostorecrypto",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "typecheck": "astro check",
+    "lint": "biome check src",
+    "lint:fix": "biome check --write src",
+    "format": "biome format --write src",
+    "check": "npm run typecheck && npm run lint"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^5.0.6",
+    "@astrojs/preact": "^5.1.3",
+    "@astrojs/sitemap": "^3.7.2",
+    "@tailwindcss/vite": "^4.3.0",
+    "astro": "^6.3.5",
+    "esbuild": "^0.28.0",
+    "preact": "^10.29.2",
+    "tailwindcss": "^4.3.0"
+  },
+  "optionalDependencies": {
+    "@clack/prompts": "^1.4.0",
+    "lightningcss-darwin-arm64": "^1.32.0"
+  },
+  "overrides": {
+    "vite": "^7.3.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@biomejs/biome": "^2.4.15",
+    "typescript": "^6.0.3"
+  }
+}

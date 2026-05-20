@@ -1,0 +1,52 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import LocationsBrowser from "~/components/LocationsBrowser";
+import { axisMeta } from "~/data/locations";
+---
+
+<Layout
+  title="Backup locations — How to Store Crypto"
+  description="A filterable database of every place a backup of your seed phrase can live, with loss-of-access and theft resistance ratings."
+>
+  <main class="mx-auto max-w-6xl px-6 pt-32 pb-20 md:px-10">
+    <header class="mb-10">
+      <div class="pill"><span class="pill-dot"></span> Reference database</div>
+      <h1 class="display mt-6 text-[clamp(2.25rem,5vw,4.5rem)] leading-[0.95]">
+        Where to put a
+        <span class="stat-grad italic">backup.</span>
+      </h1>
+      <p class="mt-4 max-w-2xl text-base text-[var(--ink-2)]">
+        Every viable location, rated on the two axes that actually matter.
+        Filter by category and stake. Click any row to expand the full notes.
+      </p>
+    </header>
+
+    <!-- Axis primer -->
+    <section class="glass mb-8 rounded-2xl p-6 md:p-8">
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div>
+          <div class="flex items-center gap-2 text-xs uppercase tracking-[0.15em]" style="color: var(--accent)">
+            <span class="size-2 rounded-full" style="background: var(--accent)"></span>
+            {axisMeta.loss.label}
+          </div>
+          <p class="mt-2 text-sm text-[var(--ink-2)]">{axisMeta.loss.explain}</p>
+        </div>
+        <div>
+          <div class="flex items-center gap-2 text-xs uppercase tracking-[0.15em]" style="color: var(--warn)">
+            <span class="size-2 rounded-full" style="background: var(--warn)"></span>
+            {axisMeta.theft.label}
+          </div>
+          <p class="mt-2 text-sm text-[var(--ink-2)]">{axisMeta.theft.explain}</p>
+        </div>
+      </div>
+      <p class="mt-6 border-t hairline pt-4 text-xs text-[var(--dim)]">
+        Most decisions improve one and worsen the other. A good setup uses two
+        or three locations whose axes complement each other — e.g. a fire-rated
+        home safe (decent loss, weak theft) paired with a bank deposit box
+        (decent loss, strong theft).
+      </p>
+    </section>
+
+    <LocationsBrowser client:load />
+  </main>
+</Layout>

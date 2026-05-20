@@ -1,0 +1,76 @@
+---
+import { url } from "~/lib/url";
+import Layout from "~/layouts/Layout.astro";
+
+const quizzes = [
+  {
+    title: "Knowledge quiz",
+    sub: "Ten multiple-choice questions on the actual mechanics — seeds, multisig, passphrases, recovery. Your score becomes the recommended starting tier for the setup wizard.",
+    href: "/app/quiz/knowledge",
+    eyebrow: "Self-assessment",
+    time: "≈ 5 min",
+    cta: "Take the quiz",
+  },
+  {
+    title: "Setup audit",
+    sub: "Nine questions about your current setup. We identify single points of failure and theft exposure, ranked by severity, each with one specific fix.",
+    href: "/app/quiz/audit",
+    eyebrow: "Diagnostic",
+    time: "≈ 4 min",
+    cta: "Run the audit",
+    accent: true,
+  },
+];
+---
+
+<Layout
+  title="Quizzes — How to Store Crypto"
+  description="Test your crypto knowledge or audit your current setup for single points of failure and theft risks."
+>
+  <main class="mx-auto max-w-5xl px-6 pt-32 pb-20 md:px-10">
+    <header class="mb-12">
+      <div class="pill"><span class="pill-dot"></span> Two quizzes</div>
+      <h1 class="display mt-6 text-[clamp(2.25rem,5vw,4.5rem)] leading-[0.95]">
+        Two different
+        <span class="stat-grad italic">questions.</span>
+      </h1>
+      <p class="mt-4 max-w-2xl text-base text-[var(--ink-2)]">
+        One tests what you know. The other tests what you've actually done.
+        Both take less than five minutes and stay entirely in your browser.
+      </p>
+    </header>
+
+    <section class="grid grid-cols-1 gap-6 md:grid-cols-2">
+      {
+        quizzes.map((q) => (
+          <a
+            href={url(q.href)}
+            class:list={[
+              "glass group block rounded-3xl p-8 transition hover:bg-white/75",
+              q.accent && "ring-2 ring-[var(--accent)]/30 shadow-2xl shadow-[var(--accent)]/10",
+            ]}
+          >
+            <div class="flex items-baseline justify-between text-xs uppercase tracking-[0.2em] text-[var(--ice-deep)]">
+              <span>{q.eyebrow}</span>
+              <span>{q.time}</span>
+            </div>
+            <h2 class="display mt-6 text-3xl">{q.title}</h2>
+            <p class="mt-3 text-base leading-relaxed text-[var(--ink-2)]">{q.sub}</p>
+            <div class="mt-10 inline-flex items-center gap-2 text-sm text-[var(--accent)] transition group-hover:text-[var(--accent-deep)]">
+              {q.cta}
+              <span class="transition group-hover:translate-x-1">→</span>
+            </div>
+          </a>
+        ))
+      }
+    </section>
+
+    <section class="mt-16">
+      <div class="glass rounded-2xl p-6 text-sm text-[var(--ink-2)]">
+        <strong class="text-[var(--ink)]">Privacy:</strong> Neither quiz sends
+        anything anywhere. Answers live in your browser; nothing is logged,
+        analyzed, or persisted on a server.
+      </div>
+    </section>
+  </main>
+</Layout>
