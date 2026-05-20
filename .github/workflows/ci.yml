@@ -42,3 +42,13 @@ jobs:
           BASE_PATH: /
           NODE_ENV: production
         run: npm run build
+
+      - name: Build offline bundle
+        run: npm run build:bundle
+
+      - name: Upload offline bundle as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: offline-bundle
+          path: dist/offline.zip
+          retention-days: 30

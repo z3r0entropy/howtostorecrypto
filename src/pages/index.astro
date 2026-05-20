@@ -2,6 +2,10 @@
 import { url } from "~/lib/url";
 import Layout from "~/layouts/Layout.astro";
 
+const siteUrl = "https://howtostorecrypto.com";
+const updatedISO = "2026-05-20";
+const updatedHuman = "20 May 2026";
+
 const methods = [
   {
     code: "M1",
@@ -151,12 +155,93 @@ const faqs = [
     a: "BIP-39 phrases are fine. The keys they derive use ECDSA, which is theoretically vulnerable to a sufficiently large quantum computer. None exist. The community will migrate before that changes; the work to do today does not change.",
   },
 ];
+
+// ============================================================
+// Structured data (Schema.org). Google reads JSON-LD reliably;
+// emitting these gives the page semantic richness and a shot at
+// rich-result treatment in the SERP. Three blocks:
+//   1. Article — the page itself
+//   2. HowTo — the walkthrough
+//   3. FAQPage — the FAQ section
+// ============================================================
+
+const pageTitle = "How to Store Crypto Safely — A Calm 2026 Self-Custody Guide";
+const pageDescription =
+  "From exchange to multisig — find the storage strategy that fits you. Vendor-neutral guide to seed phrases, hardware wallets, multisig, recovery, inheritance.";
+
+const articleJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: "How to Store Crypto Safely",
+  description: pageDescription,
+  inLanguage: "en",
+  isAccessibleForFree: true,
+  datePublished: "2026-05-19",
+  dateModified: updatedISO,
+  url: `${siteUrl}/`,
+  mainEntityOfPage: `${siteUrl}/`,
+  image: `${siteUrl}/og.svg`,
+  author: { "@type": "Organization", name: "How to Store Crypto" },
+  publisher: {
+    "@type": "Organization",
+    name: "How to Store Crypto",
+    logo: { "@type": "ImageObject", url: `${siteUrl}/og.svg` },
+  },
+  about: [
+    { "@type": "Thing", name: "Cryptocurrency self-custody" },
+    { "@type": "Thing", name: "Seed phrase backup" },
+    { "@type": "Thing", name: "Cold storage" },
+    { "@type": "Thing", name: "Hardware wallet" },
+    { "@type": "Thing", name: "Multisignature wallet" },
+  ],
+};
+
+const howToJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: "How to set up cold storage for your crypto",
+  description:
+    "The conservative default setup, end to end: stamped steel backup, distributed across two locations, with a sealed inheritance letter.",
+  totalTime: "PT4H",
+  estimatedCost: { "@type": "MonetaryAmount", currency: "USD", value: "90" },
+  supply: [
+    { "@type": "HowToSupply", name: "Hardware wallet (sealed package)" },
+    { "@type": "HowToSupply", name: "Two 316 stainless steel backup plates" },
+    { "@type": "HowToSupply", name: "Cold-stamping kit" },
+    { "@type": "HowToSupply", name: "Fire-rated home safe" },
+  ],
+  step: walkthrough.map((s) => ({
+    "@type": "HowToStep",
+    position: s.n,
+    name: s.label,
+    text: s.body,
+  })),
+};
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+};
 ---
 
 <Layout
-  title="How to Store Crypto — Self-custody, without the panic"
-  description="A patient, vendor-neutral guide to storing your crypto so you don't lose it. Methods, walkthrough, common mistakes, recovery testing, inheritance."
+  title={pageTitle}
+  description={pageDescription}
+  ogType="article"
+  publishedTime="2026-05-19"
+  modifiedTime={updatedISO}
+  keywords="how to store crypto, store crypto safely, crypto cold storage, seed phrase backup, self-custody, hardware wallet backup, multisig, shamir backup, bitcoin storage, crypto inheritance"
 >
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(articleJsonLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(howToJsonLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+  </Fragment>
   <main class="mx-auto max-w-6xl px-6 pt-32 md:px-10">
     <!-- ============================================================
          Hero
@@ -165,17 +250,18 @@ const faqs = [
       <div class="col-span-12 md:col-span-7">
         <div class="pill mb-8">
           <span class="pill-dot"></span>
-          Updated 20 May 2026 · reading time ≈ 9 min
+          Updated <time datetime={updatedISO}>{updatedHuman}</time> · reading time ≈ 9 min
         </div>
         <h1 class="display text-[clamp(2.75rem,7.5vw,6.5rem)] leading-[0.95]">
-          Self-custody,
+          How to store crypto,
           <br />
           <span class="stat-grad italic">without the panic.</span>
         </h1>
         <p class="mt-10 max-w-xl text-lg leading-relaxed text-[var(--ink-2)] md:text-xl">
-          A patient, vendor-neutral guide to storing your crypto so you don't
-          lose it. Written for people who want to do this once, do it right,
-          and then mostly stop thinking about it.
+          A patient, vendor-neutral guide to self-custody and cold storage —
+          seed phrase backup, hardware wallets, multisig, Shamir and
+          inheritance. Written for people who want to do this once, do it
+          right, and then mostly stop thinking about it.
         </p>
         <div class="mt-10 flex flex-wrap gap-3">
           <a href="#walkthrough" class="btn btn-primary btn-lg">
