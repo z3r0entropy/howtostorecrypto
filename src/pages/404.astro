@@ -1,0 +1,214 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import { url } from "~/lib/url";
+
+// Astro statically pre-renders this as /404.html. At runtime the requested
+// path is unknown to the server, so we read it in the browser and display
+// it for the bit. Falls back to "—" if scripts are off.
+const requested = "—";
+
+const destinations = [
+  {
+    label: "Home",
+    sub: "The landing page. Framework, methods, walkthrough.",
+    href: "/",
+  },
+  {
+    label: "Tools",
+    sub: "Wizard, audit, knowledge quiz, locations database.",
+    href: "/app",
+  },
+  {
+    label: "Plan a setup",
+    sub: "Seven-step wizard to a printable custody plan.",
+    href: "/app/setup",
+  },
+  {
+    label: "Audit a setup",
+    sub: "Describe what you have; get a ranked risk report.",
+    href: "/app/quiz/audit",
+  },
+  {
+    label: "Backup locations",
+    sub: "Filterable database, rated on loss-of-access and theft.",
+    href: "/app/locations",
+  },
+  {
+    label: "Brand & design",
+    sub: "The system the rest of the site is built on.",
+    href: "/brand",
+  },
+];
+---
+
+<Layout
+  title="404 — How to Store Crypto"
+  description="A site about not losing things just lost a thing. The irony is not lost on us."
+>
+  <main class="mx-auto max-w-5xl px-6 pt-32 pb-20 md:px-10">
+    <!-- Hero -->
+    <section class="grid grid-cols-12 items-center gap-10 pb-16">
+      <div class="col-span-12 md:col-span-7">
+        <div class="pill">
+          <span class="pill-dot" style="background: var(--warn)"></span>
+          Incident · 404 · page lost
+        </div>
+        <h1 class="display mt-6 text-[clamp(3rem,9vw,7.5rem)] leading-[0.92]">
+          We
+          <span class="stat-grad italic">lost</span>
+          this page.
+        </h1>
+        <p class="mt-6 max-w-lg text-lg text-[var(--ink-2)]">
+          A whole site about not losing things just lost a thing. The irony
+          is not lost on us. The page is, though.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href={url("/")} class="btn btn-primary btn-lg">Take me home →</a>
+          <a href={url("/app")} class="btn btn-secondary btn-lg">Try the tools</a>
+        </div>
+
+        <!-- Diagnostic strip -->
+        <div class="mt-12 grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div class="glass rounded-2xl p-4">
+            <div class="text-[10px] uppercase tracking-[0.15em] text-[var(--dim)]">Severity</div>
+            <div class="display mt-1 text-2xl text-[var(--accent)]">Low</div>
+            <div class="text-xs text-[var(--ink-2)]">It's just a page.</div>
+          </div>
+          <div class="glass rounded-2xl p-4">
+            <div class="text-[10px] uppercase tracking-[0.15em] text-[var(--dim)]">Risk axis</div>
+            <div class="display mt-1 text-2xl">Loss</div>
+            <div class="text-xs text-[var(--ink-2)]">Not theft. We didn't steal it.</div>
+          </div>
+          <div class="glass rounded-2xl p-4">
+            <div class="text-[10px] uppercase tracking-[0.15em] text-[var(--dim)]">Recovery</div>
+            <div class="display mt-1 text-2xl">Manual</div>
+            <div class="text-xs text-[var(--ink-2)]">Pick a link below.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Artwork: the brand mark, contents missing -->
+      <div class="col-span-12 md:col-span-5">
+        <div class="relative aspect-square w-full">
+          <div class="absolute inset-0 rounded-full frost ring-soft float"></div>
+          <div class="glass absolute inset-[10%] flex flex-col items-center justify-center rounded-[28px] text-center">
+            <!-- The hex with its contents replaced by ?. The container survived; the contents did not. -->
+            <svg
+              width="140"
+              height="140"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="var(--ice-deep)"
+              stroke-width="1.4"
+              stroke-linejoin="round"
+              aria-label="Hex container with missing contents"
+            >
+              <path d="M12 2 L20 6.5 L20 16.5 L12 21 L4 16.5 L4 6.5 Z" />
+              <text
+                x="12"
+                y="14.7"
+                text-anchor="middle"
+                font-size="7"
+                font-weight="700"
+                stroke="none"
+                fill="var(--warn)"
+                style="font-family: ui-sans-serif, system-ui;"
+              >?</text>
+            </svg>
+            <div class="display stat-grad mt-2 text-7xl">404</div>
+            <div class="mt-1 text-[11px] uppercase tracking-[0.2em] text-[var(--dim)]">
+              container intact · contents missing
+            </div>
+          </div>
+
+          <div
+            class="glass absolute -left-6 top-1/3 rounded-2xl px-4 py-3 text-xs float"
+            style="animation-delay: -2s;"
+          >
+            <div class="text-[10px] uppercase tracking-[0.15em] text-[var(--dim)]">Backups</div>
+            <div class="mt-1 text-[var(--ink)]">None on file</div>
+          </div>
+          <div
+            class="glass absolute -right-4 bottom-1/4 rounded-2xl px-4 py-3 text-xs float"
+            style="animation-delay: -4s;"
+          >
+            <div class="text-[10px] uppercase tracking-[0.15em] text-[var(--dim)]">Survivability</div>
+            <div class="mt-1 text-[var(--warn)]">0 / 10</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Diagnostic terminal-style block -->
+    <section class="my-16">
+      <div class="glass rounded-2xl p-6 md:p-7">
+        <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--ice-deep)]">
+          Incident report
+        </div>
+        <div class="mt-3 grid grid-cols-12 gap-x-3 gap-y-1 font-mono text-sm">
+          <div class="col-span-12 text-[var(--dim)] md:col-span-2">requested</div>
+          <div class="col-span-12 text-[var(--ink)] break-all md:col-span-10">
+            <span data-requested-path>{requested}</span>
+          </div>
+
+          <div class="col-span-12 text-[var(--dim)] md:col-span-2">status</div>
+          <div class="col-span-12 text-[var(--warn)] md:col-span-10">404 · not found</div>
+
+          <div class="col-span-12 text-[var(--dim)] md:col-span-2">cause</div>
+          <div class="col-span-12 text-[var(--ink)] md:col-span-10">
+            stale link, moved page, or our work-in-progress restructuring
+          </div>
+
+          <div class="col-span-12 text-[var(--dim)] md:col-span-2">fix</div>
+          <div class="col-span-12 text-[var(--ok)] md:col-span-10">
+            pick a working entry point below
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Working pages -->
+    <section class="mb-16">
+      <div class="mb-6 text-xs uppercase tracking-[0.15em] text-[var(--dim)]">
+        Working entry points
+      </div>
+      <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+        {
+          destinations.map((d) => (
+            <a
+              href={url(d.href)}
+              class="glass group flex items-baseline justify-between gap-4 rounded-2xl p-5 transition hover:bg-white/75"
+            >
+              <div>
+                <div class="display text-lg">{d.label}</div>
+                <div class="mt-1 text-xs text-[var(--ink-2)]">{d.sub}</div>
+              </div>
+              <span class="font-mono text-xs text-[var(--accent)] transition group-hover:translate-x-1">
+                →
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- Tiny closing joke -->
+    <section class="mb-8 text-center">
+      <p class="text-xs italic text-[var(--dim)]">
+        "Two copies in two locations" applies to web pages too, apparently.
+        We're working on it.
+      </p>
+    </section>
+  </main>
+</Layout>
+
+<script is:inline>
+  // Show the actually-requested path in the incident report.
+  // Inline so it runs before hydration; uses no module syntax.
+  (function () {
+    var el = document.querySelector("[data-requested-path]");
+    if (el && typeof location !== "undefined") {
+      el.textContent = location.pathname + location.search;
+    }
+  })();
+</script>
