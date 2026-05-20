@@ -1,7 +1,7 @@
 import { defineConfig } from "astro/config";
 import preact from "@astrojs/preact";
 import mdx from "@astrojs/mdx";
-import sitemap from "@astrojs/sitemap";
+import sitemap, { ChangeFreqEnum } from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 
 // Production hosts at the apex howtostorecrypto.com (see public/CNAME).
@@ -13,7 +13,24 @@ export default defineConfig({
   site,
   base,
   trailingSlash: "ignore",
-  integrations: [preact({ compat: false }), mdx(), sitemap()],
+  integrations: [
+    preact({ compat: false }),
+    mdx(),
+    sitemap({
+      changefreq: ChangeFreqEnum.MONTHLY,
+      priority: 0.7,
+      lastmod: new Date(),
+      serialize(item) {
+        // Boost the landing page; it's the canonical entry point and the
+        // page we actually want ranking for "how to store crypto".
+        if (item.url === `${site}/` || item.url === site) {
+          item.priority = 1.0;
+          item.changefreq = ChangeFreqEnum.WEEKLY;
+        }
+        return item;
+      },
+    }),
+  ],
   vite: {
     plugins: [tailwindcss()],
   },

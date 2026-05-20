@@ -1,0 +1,81 @@
+name: Release
+
+# Triggered by either:
+#   - pushing a tag matching v* (e.g. `git tag v0.1.0 && git push --tags`)
+#   - the "Run workflow" button in the Actions tab (workflow_dispatch),
+#     which lets you cut a release without tagging first.
+#
+# The job builds the site + offline bundle and attaches `offline.zip` to a
+# GitHub Release at the given tag. Releases are retained indefinitely, so
+# the bundle is downloadable from a stable URL years later:
+#
+#   https://github.com/z3r0entropy/howtostorecrypto/releases/download/<tag>/offline.zip
+#
+# The "always points at the newest release" alias also works:
+#
+#   https://github.com/z3r0entropy/howtostorecrypto/releases/latest/download/offline.zip
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag for this release (e.g. v0.2.0). Will be created if it doesn't exist."
+        required: true
+      prerelease:
+        description: "Mark as pre-release?"
+        required: false
+        default: "false"
+        type: choice
+        options: ["false", "true"]
+
+permissions:
+  contents: write  # required to create releases and tags
+
+concurrency:
+  group: release-${{ github.event.inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # needed for auto-generated release notes
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        env:
+          SITE_URL: https://howtostorecrypto.com
+          BASE_PATH: /
+          NODE_ENV: production
+        run: npm run build
+
+      - name: Build offline bundle
+        run: npm run build:bundle
+
+      - name: Compute tag name
+        id: tag
+        run: echo "name=${{ github.event.inputs.tag || github.ref_name }}" >> "$GITHUB_OUTPUT"
+
+      - name: Create or update release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.name }}
+          name: ${{ steps.tag.outputs.name }}
+          prerelease: ${{ github.event.inputs.prerelease == 'true' }}
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          files: dist/offline.zip

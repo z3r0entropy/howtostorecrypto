@@ -1,8 +1,12 @@
 @import "tailwindcss";
 
+/* Self-hosted Inter — single variable woff2, bundled into _astro/ by Astro.
+   No external CDN; works fully offline. */
+@import "@fontsource-variable/inter";
+
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 /* ============================================================
