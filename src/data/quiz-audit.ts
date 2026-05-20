@@ -22,11 +22,12 @@ export type Finding = {
   fix: string;
 };
 
-export const axisMeta: Record<RiskAxis, { label: string; short: string; tone: "loss" | "theft" }> = {
-  loss: { label: "Loss-of-access risk", short: "loss", tone: "loss" },
-  theft: { label: "Theft & coercion risk", short: "theft", tone: "theft" },
-  both: { label: "Loss & theft risk", short: "both", tone: "loss" },
-};
+export const axisMeta: Record<RiskAxis, { label: string; short: string; tone: "loss" | "theft" }> =
+  {
+    loss: { label: "Loss-of-access risk", short: "loss", tone: "loss" },
+    theft: { label: "Theft & coercion risk", short: "theft", tone: "theft" },
+    both: { label: "Loss & theft risk", short: "both", tone: "loss" },
+  };
 
 export type AuditChoice = {
   id: string;
@@ -73,6 +74,11 @@ export const auditQuestions: AuditQuestion[] = [
     q: "How many separate physical locations hold those copies?",
     help: "Two copies in the same building counts as one location.",
     choices: [
+      {
+        id: "0",
+        text: "Zero — I have no physical copies",
+        // Critical finding already raised by a1; no additional finding here.
+      },
       {
         id: "1",
         text: "One location",
@@ -278,7 +284,10 @@ export const auditQuestions: AuditQuestion[] = [
     q: "If you died tomorrow, would anyone know how to recover the wallet?",
     help: "Not just where the backup is — the actual procedure to use it.",
     choices: [
-      { id: "yes-procedure", text: "Yes — there's a written, rehearsed procedure with an attorney or trusted party" },
+      {
+        id: "yes-procedure",
+        text: "Yes — there's a written, rehearsed procedure with an attorney or trusted party",
+      },
       {
         id: "yes-location",
         text: "Someone knows where the backup is, but no procedure",

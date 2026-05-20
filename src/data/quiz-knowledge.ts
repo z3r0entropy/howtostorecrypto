@@ -32,7 +32,8 @@ export const knowledgeQuestions: Question[] = [
       { id: "c", text: "16 or 32" },
       { id: "d", text: "Exactly 20" },
     ],
-    rationale: "BIP-39 phrases are 12, 15, 18, 21, or 24 words. 12 and 24 are by far the most common.",
+    rationale:
+      "BIP-39 phrases are 12, 15, 18, 21, or 24 words. 12 and 24 are by far the most common.",
   },
   {
     id: "k3",
@@ -62,7 +63,11 @@ export const knowledgeQuestions: Question[] = [
     id: "k5",
     q: "A 'BIP-39 passphrase' (sometimes called the 25th word) is…",
     choices: [
-      { id: "a", text: "An optional extra secret that, combined with your seed, derives a different wallet.", correct: true },
+      {
+        id: "a",
+        text: "An optional extra secret that, combined with your seed, derives a different wallet.",
+        correct: true,
+      },
       { id: "b", text: "The first word of your seed phrase." },
       { id: "c", text: "A backup PIN for your hardware wallet." },
       { id: "d", text: "A recovery question your wallet asks if you forget the PIN." },
@@ -87,7 +92,11 @@ export const knowledgeQuestions: Question[] = [
     q: "What is SLIP-39 / Shamir Secret Sharing?",
     choices: [
       { id: "a", text: "An encryption algorithm for hardware wallets." },
-      { id: "b", text: "A scheme that splits a secret into shares; any threshold (e.g., 2 of 3) reconstructs.", correct: true },
+      {
+        id: "b",
+        text: "A scheme that splits a secret into shares; any threshold (e.g., 2 of 3) reconstructs.",
+        correct: true,
+      },
       { id: "c", text: "A way to backup to multiple cloud providers." },
       { id: "d", text: "The replacement for BIP-39." },
     ],
@@ -111,7 +120,11 @@ export const knowledgeQuestions: Question[] = [
     q: "You die unexpectedly. What's the best inheritance setup for your heirs?",
     choices: [
       { id: "a", text: "Tell your spouse the seed phrase, just in case." },
-      { id: "b", text: "Sealed letter held by an attorney with location + procedure, rehearsed once.", correct: true },
+      {
+        id: "b",
+        text: "Sealed letter held by an attorney with location + procedure, rehearsed once.",
+        correct: true,
+      },
       { id: "c", text: "Hide a USB drive with the seed somewhere clever in your home." },
       { id: "d", text: "Memorise it and trust your family figures it out." },
     ],

@@ -24,7 +24,10 @@ export const tierMeta: Record<Tier, { label: string; sub: string; hint: string }
   },
 };
 
-export const stakesMeta: Record<Stakes, { label: string; sub: string; range: string; hint: string }> = {
+export const stakesMeta: Record<
+  Stakes,
+  { label: string; sub: string; range: string; hint: string }
+> = {
   modest: {
     label: "Modest",
     sub: "You'd be annoyed, not destroyed.",
@@ -86,39 +89,31 @@ export const strategies: Record<StrategyKey, Strategy> = {
       "One location (the safest spot you have)",
     ],
     pros: ["Easy", "Cheap", "Better than custodial"],
-    cons: [
-      "Single point of failure",
-      "Paper degrades and burns",
-      "No inheritance plan",
-    ],
+    cons: ["Single point of failure", "Paper degrades and burns", "No inheritance plan"],
     approxCost: "$70 – $120",
     approxSetup: "1 hour",
     survivability: "4 / 10",
     locationsNeeded: 1,
-  lossDefense: 1,
-  theftDefense: 1,
-  lossNote: "One paper copy in one place — fire, flood, or misplacement is total loss.",
-  theftNote: "Single-sig: anyone who finds the paper has everything.",
+    lossDefense: 1,
+    theftDefense: 1,
+    lossNote: "One paper copy in one place — fire, flood, or misplacement is total loss.",
+    theftNote: "Single-sig: anyone who finds the paper has everything.",
   },
   "hw-steel": {
     key: "hw-steel",
     name: "Hardware wallet + steel plate (single location)",
     oneLiner: "Survives the small disasters. Vulnerable to the big ones.",
-    components: [
-      "One hardware wallet",
-      "One stamped 316 stainless plate",
-      "One location",
-    ],
+    components: ["One hardware wallet", "One stamped 316 stainless plate", "One location"],
     pros: ["Survives fire and water", "Cheap", "Simple"],
     cons: ["One location → one bad event away from gone", "No inheritance plan"],
     approxCost: "$120 – $200",
     approxSetup: "2 hours",
     survivability: "6 / 10",
     locationsNeeded: 1,
-  lossDefense: 2,
-  theftDefense: 1,
-  lossNote: "Steel survives the disasters, but one location is still one event away.",
-  theftNote: "Single-sig: anyone who finds the plate has everything.",
+    lossDefense: 2,
+    theftDefense: 1,
+    lossNote: "Steel survives the disasters, but one location is still one event away.",
+    theftNote: "Single-sig: anyone who finds the plate has everything.",
   },
   "hw-steel-2loc": {
     key: "hw-steel-2loc",
@@ -140,10 +135,10 @@ export const strategies: Record<StrategyKey, Strategy> = {
     approxSetup: "4 hours over a weekend",
     survivability: "8 / 10",
     locationsNeeded: 2,
-  lossDefense: 3,
-  theftDefense: 1,
-  lossNote: "Two metal plates in two places. Survives a house-loss event.",
-  theftNote: "Still single-sig — a thief who finds one plate has the whole wallet.",
+    lossDefense: 3,
+    theftDefense: 1,
+    lossNote: "Two metal plates in two places. Survives a house-loss event.",
+    theftNote: "Still single-sig — a thief who finds one plate has the whole wallet.",
   },
   "hw-steel-passphrase": {
     key: "hw-steel-passphrase",
@@ -156,10 +151,7 @@ export const strategies: Record<StrategyKey, Strategy> = {
       "Separate plan for the 25th-word passphrase",
       "Sealed inheritance letter that covers both",
     ],
-    pros: [
-      "Plate-find no longer means total loss",
-      "Plausible deniability if coerced",
-    ],
+    pros: ["Plate-find no longer means total loss", "Plausible deniability if coerced"],
     cons: [
       "Two secrets, two storage plans",
       "Inheritance gets more complex",
@@ -169,10 +161,12 @@ export const strategies: Record<StrategyKey, Strategy> = {
     approxSetup: "6 hours, with rehearsal",
     survivability: "9 / 10",
     locationsNeeded: 2,
-  lossDefense: 3,
-  theftDefense: 3,
-  lossNote: "Steel x 2 covers loss. Passphrase adds a new failure mode if forgotten — store it as carefully as the seed.",
-  theftNote: "A found plate is useless without the passphrase. Strong defense against opportunistic theft and coercion.",
+    lossDefense: 3,
+    theftDefense: 3,
+    lossNote:
+      "Steel x 2 covers loss. Passphrase adds a new failure mode if forgotten — store it as carefully as the seed.",
+    theftNote:
+      "A found plate is useless without the passphrase. Strong defense against opportunistic theft and coercion.",
   },
   "multisig-2of3": {
     key: "multisig-2of3",
@@ -199,10 +193,12 @@ export const strategies: Record<StrategyKey, Strategy> = {
     approxSetup: "A focused weekend",
     survivability: "10 / 10",
     locationsNeeded: 3,
-  lossDefense: 3,
-  theftDefense: 3,
-  lossNote: "Lose any one of three keys — still recover. Geographic separation removes single-event loss.",
-  theftNote: "Compromise of any one key is not enough to spend. Resists theft, coercion, and supply-chain compromise.",
+    lossDefense: 3,
+    theftDefense: 3,
+    lossNote:
+      "Lose any one of three keys — still recover. Geographic separation removes single-event loss.",
+    theftNote:
+      "Compromise of any one key is not enough to spend. Resists theft, coercion, and supply-chain compromise.",
   },
   "multisig-shamir": {
     key: "multisig-shamir",
@@ -228,15 +224,18 @@ export const strategies: Record<StrategyKey, Strategy> = {
     approxSetup: "Two weekends",
     survivability: "10 / 10",
     locationsNeeded: 5,
-  lossDefense: 3,
-  theftDefense: 3,
-  lossNote: "Multisig handles spend protection; Shamir distributes recovery materials so loss is never catastrophic.",
-  theftNote: "Multiple layers — compromising one share or one multisig key still doesn't yield a spendable wallet.",
+    lossDefense: 3,
+    theftDefense: 3,
+    lossNote:
+      "Multisig handles spend protection; Shamir distributes recovery materials so loss is never catastrophic.",
+    theftNote:
+      "Multiple layers — compromising one share or one multisig key still doesn't yield a spendable wallet.",
   },
   "multisig-trustee": {
     key: "multisig-trustee",
     name: "Multisig 2-of-3 with a professional trustee key",
-    oneLiner: "One key held by a regulated trustee. Heir-initiated recovery without ever exposing a phrase.",
+    oneLiner:
+      "One key held by a regulated trustee. Heir-initiated recovery without ever exposing a phrase.",
     components: [
       "Two personal hardware wallets, two of your own locations",
       "One key held by a professional collaborative-custody trustee",
@@ -257,15 +256,19 @@ export const strategies: Record<StrategyKey, Strategy> = {
     approxSetup: "Two weekends + onboarding",
     survivability: "10 / 10",
     locationsNeeded: 3,
-  lossDefense: 3,
-  theftDefense: 3,
-  lossNote: "Heir-initiated recovery survives your death without you ever sharing a phrase.",
-  theftNote: "Trustee key alone can't spend. Even full trustee compromise leaves your two personal keys in control.",
+    lossDefense: 3,
+    theftDefense: 3,
+    lossNote: "Heir-initiated recovery survives your death without you ever sharing a phrase.",
+    theftNote:
+      "Trustee key alone can't spend. Even full trustee compromise leaves your two personal keys in control.",
   },
 };
 
 // Recommendation matrix: tier × stakes → strategy key, with a fallback secondary.
-export const recommendation: Record<Tier, Record<Stakes, { primary: StrategyKey; alt?: StrategyKey }>> = {
+export const recommendation: Record<
+  Tier,
+  Record<Stakes, { primary: StrategyKey; alt?: StrategyKey }>
+> = {
   beginner: {
     modest: { primary: "hw-steel", alt: "single-hw" },
     significant: { primary: "hw-steel-2loc", alt: "hw-steel" },

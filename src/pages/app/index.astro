@@ -1,4 +1,5 @@
 ---
+import { url } from "~/lib/url";
 import Layout from "~/layouts/Layout.astro";
 
 const tools = [
@@ -62,7 +63,7 @@ const tools = [
       {
         tools.map((t) => (
           <a
-            href={t.href}
+            href={url(t.href)}
             class:list={[
               "glass group relative block rounded-3xl p-8 transition hover:bg-white/75",
               t.accent && "ring-2 ring-[var(--accent)]/30 shadow-2xl shadow-[var(--accent)]/10",
@@ -95,17 +96,17 @@ const tools = [
         </h2>
 
         <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
-          <a href="/app/quiz/audit" class="glass-dark rounded-2xl p-6 transition hover:bg-white/40">
+          <a href={url("/app/quiz/audit")} class="glass-dark rounded-2xl p-6 transition hover:bg-white/40">
             <div class="text-xs uppercase tracking-[0.15em] text-[var(--dim)]">Yes</div>
             <div class="display mt-2 text-xl">Audit what you have</div>
             <p class="mt-2 text-sm text-[var(--ink-2)]">
-              Eight questions about your current setup. Output is a ranked
+              Nine questions about your current setup. Output is a ranked
               list of risks with one fix each.
             </p>
             <div class="mt-4 text-sm text-[var(--accent)]">Open the audit →</div>
           </a>
 
-          <a href="/app/setup" class="glass-dark rounded-2xl p-6 transition hover:bg-white/40">
+          <a href={url("/app/setup")} class="glass-dark rounded-2xl p-6 transition hover:bg-white/40">
             <div class="text-xs uppercase tracking-[0.15em] text-[var(--dim)]">No</div>
             <div class="display mt-2 text-xl">Plan a setup from scratch</div>
             <p class="mt-2 text-sm text-[var(--ink-2)]">

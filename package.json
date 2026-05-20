@@ -8,7 +8,12 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "typecheck": "astro check",
+    "lint": "biome check src",
+    "lint:fix": "biome check --write src",
+    "format": "biome format --write src",
+    "check": "npm run typecheck && npm run lint"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.6",
@@ -26,5 +31,10 @@
   },
   "overrides": {
     "vite": "^7.3.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@biomejs/biome": "^2.4.15",
+    "typescript": "^6.0.3"
   }
 }

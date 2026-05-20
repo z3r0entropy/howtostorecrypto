@@ -1,18 +1,18 @@
 import { useMemo, useState } from "preact/hooks";
 import {
   auditQuestions,
-  gradeAudit,
   axisMeta,
-  type Severity,
   type Finding,
-  type RiskAxis,
+  gradeAudit,
+  type Severity,
 } from "~/data/quiz-audit";
+import { url } from "~/lib/url";
 
 const severityMeta: Record<Severity, { label: string; color: string; weight: number }> = {
   critical: { label: "Critical", color: "var(--warn)", weight: 4 },
-  high:     { label: "High",     color: "#d97706",     weight: 3 },
-  medium:   { label: "Medium",   color: "#eab308",     weight: 2 },
-  low:      { label: "Low",      color: "var(--accent)", weight: 1 },
+  high: { label: "High", color: "#d97706", weight: 3 },
+  medium: { label: "Medium", color: "#eab308", weight: 2 },
+  low: { label: "Low", color: "var(--accent)", weight: 1 },
 };
 
 export default function AuditQuiz() {
@@ -28,9 +28,9 @@ export default function AuditQuiz() {
     setAnswers((a) => ({ ...a, [qid]: cid }));
   }
   function submit() {
-    if (answered < total) {
-      if (!confirm(`Answered ${answered} of ${total}. Submit anyway? Unanswered questions add no findings.`)) return;
-    }
+    // Hard-require complete answers: a partial submission would produce a
+    // misleadingly clean report for unanswered risk areas.
+    if (answered < total) return;
     setSubmitted(true);
     document.getElementById("aq-result")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
@@ -48,7 +48,10 @@ export default function AuditQuiz() {
           <div class="display stat-grad text-xl">{answered}</div>
           <div class="text-[var(--ink-2)]">of {total} answered</div>
         </div>
-        <div class="hidden h-1.5 max-w-xs flex-1 rounded-full bg-[var(--hairline)] md:block" style="margin: 0 1rem">
+        <div
+          class="hidden h-1.5 max-w-xs flex-1 rounded-full bg-[var(--hairline)] md:block"
+          style="margin: 0 1rem"
+        >
           <div
             class="h-full rounded-full"
             style={`width: ${(answered / total) * 100}%; background: linear-gradient(90deg, var(--ice-deep), var(--accent))`}
@@ -57,14 +60,16 @@ export default function AuditQuiz() {
         {!submitted ? (
           <button
             onClick={submit}
-            disabled={answered === 0}
+            disabled={answered < total}
             class="btn btn-primary btn-sm"
-            style={answered === 0 ? "opacity: 0.4; cursor: not-allowed" : ""}
+            style={answered < total ? "opacity: 0.4; cursor: not-allowed" : ""}
           >
-            Show report →
+            {answered < total ? `Answer ${total - answered} more` : "Show report →"}
           </button>
         ) : (
-          <button onClick={reset} class="btn btn-secondary btn-sm">↺ Re-audit</button>
+          <button onClick={reset} class="btn btn-secondary btn-sm">
+            ↺ Re-audit
+          </button>
         )}
       </div>
 
@@ -77,9 +82,7 @@ export default function AuditQuiz() {
                 Q. {String(qi + 1).padStart(2, "0")}
               </div>
               <h3 class="display mt-3 text-lg leading-snug md:text-xl">{q.q}</h3>
-              {q.help && (
-                <p class="mt-2 text-xs text-[var(--dim)]">{q.help}</p>
-              )}
+              {q.help && <p class="mt-2 text-xs text-[var(--dim)]">{q.help}</p>}
 
               <div class="mt-5 space-y-2">
                 {q.choices.map((c) => {
@@ -93,10 +96,23 @@ export default function AuditQuiz() {
                       class={`flex w-full items-start gap-3 rounded-xl p-4 text-left text-sm transition ${cls}`}
                       disabled={submitted}
                     >
-                      <span class={`mt-0.5 size-4 shrink-0 rounded-full border ${picked ? "border-[var(--accent)] bg-[var(--accent)]" : "border-[var(--dimmer)]"}`}>
+                      <span
+                        class={`mt-0.5 size-4 shrink-0 rounded-full border ${picked ? "border-[var(--accent)] bg-[var(--accent)]" : "border-[var(--dimmer)]"}`}
+                      >
                         {picked && (
-                          <svg viewBox="0 0 16 16" class="size-full p-0.5 text-white">
-                            <path fill="none" stroke="currentColor" stroke-width="2" d="M3 8l3 3 7-7" />
+                          <svg
+                            viewBox="0 0 16 16"
+                            class="size-full p-0.5 text-white"
+                            role="img"
+                            aria-label="Selected"
+                          >
+                            <title>Selected</title>
+                            <path
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              d="M3 8l3 3 7-7"
+                            />
                           </svg>
                         )}
                       </span>
@@ -120,14 +136,21 @@ export default function AuditQuiz() {
           {/* Headline card */}
           <div class="glass rounded-3xl p-8 md:p-12">
             <div class="flex flex-wrap items-baseline justify-between gap-3">
-              <div class="pill"><span class="pill-dot"></span> Your audit report</div>
-              <button onClick={reset} class="btn btn-ghost btn-sm">↺ Re-audit</button>
+              <div class="pill">
+                <span class="pill-dot"></span> Your audit report
+              </div>
+              <button onClick={reset} class="btn btn-ghost btn-sm">
+                ↺ Re-audit
+              </button>
             </div>
 
             <div class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
               <div>
                 <div class="text-xs uppercase tracking-[0.15em] text-[var(--dim)]">Score</div>
-                <div class="display stat-grad mt-2 text-6xl">{result.score}<span class="text-3xl text-[var(--dim)]"> / 100</span></div>
+                <div class="display stat-grad mt-2 text-6xl">
+                  {result.score}
+                  <span class="text-3xl text-[var(--dim)]"> / 100</span>
+                </div>
               </div>
               <div>
                 <div class="text-xs uppercase tracking-[0.15em] text-[var(--dim)]">Grade</div>
@@ -173,10 +196,10 @@ export default function AuditQuiz() {
               </div>
 
               <div class="flex flex-wrap gap-3">
-                <a href="/app/setup" class="btn btn-primary">
+                <a href={url("/app/setup")} class="btn btn-primary">
                   Plan a setup from this →
                 </a>
-                <a href="/app/locations" class="btn btn-secondary">
+                <a href={url("/app/locations")} class="btn btn-secondary">
                   Browse better locations →
                 </a>
               </div>
@@ -187,8 +210,7 @@ export default function AuditQuiz() {
             <div class="glass rounded-3xl p-8 text-center">
               <div class="display stat-grad text-5xl">✓</div>
               <p class="mt-4 text-base text-[var(--ink-2)]">
-                No findings from the answers given. Schedule the annual rehearsal
-                and keep going.
+                No findings from the answers given. Schedule the annual rehearsal and keep going.
               </p>
             </div>
           )}
@@ -199,21 +221,28 @@ export default function AuditQuiz() {
 }
 
 function AxisCard({ axis, findings }: { axis: "loss" | "theft"; findings: Finding[] }) {
-  const meta = axis === "loss"
-    ? { label: axisMeta.loss.label, tint: "var(--accent)" }
-    : { label: axisMeta.theft.label, tint: "var(--warn)" };
+  const meta =
+    axis === "loss"
+      ? { label: axisMeta.loss.label, tint: "var(--accent)" }
+      : { label: axisMeta.theft.label, tint: "var(--warn)" };
   const sorted = sortedFindings(findings);
   const worst = sorted[0];
 
   return (
     <div class="glass rounded-2xl p-6">
-      <div class="flex items-center gap-2 text-xs uppercase tracking-[0.15em]" style={`color: ${meta.tint}`}>
+      <div
+        class="flex items-center gap-2 text-xs uppercase tracking-[0.15em]"
+        style={`color: ${meta.tint}`}
+      >
         <span class="size-2 rounded-full" style={`background: ${meta.tint}`}></span>
         {meta.label}
       </div>
       <div class="display mt-3 text-5xl">
         {findings.length}
-        <span class="text-2xl text-[var(--dim)]"> {findings.length === 1 ? "finding" : "findings"}</span>
+        <span class="text-2xl text-[var(--dim)]">
+          {" "}
+          {findings.length === 1 ? "finding" : "findings"}
+        </span>
       </div>
       {worst ? (
         <div class="mt-4 border-t hairline pt-4">
@@ -260,5 +289,7 @@ function FindingRow({ f }: { f: Finding }) {
 }
 
 function sortedFindings(findings: Finding[]) {
-  return findings.slice().sort((a, b) => severityMeta[b.severity].weight - severityMeta[a.severity].weight);
+  return findings
+    .slice()
+    .sort((a, b) => severityMeta[b.severity].weight - severityMeta[a.severity].weight);
 }

@@ -1,5 +1,6 @@
 import { useMemo, useState } from "preact/hooks";
-import { knowledgeQuestions, gradeKnowledge } from "~/data/quiz-knowledge";
+import { gradeKnowledge, knowledgeQuestions } from "~/data/quiz-knowledge";
+import { url } from "~/lib/url";
 
 export default function KnowledgeQuiz() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -8,10 +9,7 @@ export default function KnowledgeQuiz() {
 
   const answered = Object.keys(answers).length;
   const total = knowledgeQuestions.length;
-  const result = useMemo(
-    () => (submitted ? gradeKnowledge(answers) : null),
-    [submitted, answers]
-  );
+  const result = useMemo(() => (submitted ? gradeKnowledge(answers) : null), [submitted, answers]);
 
   function pick(qid: string, cid: string) {
     if (submitted) return;
@@ -58,7 +56,9 @@ export default function KnowledgeQuiz() {
             See results →
           </button>
         ) : (
-          <button onClick={reset} class="btn btn-secondary btn-sm">↺ Retake</button>
+          <button onClick={reset} class="btn btn-secondary btn-sm">
+            ↺ Retake
+          </button>
         )}
       </div>
 
@@ -129,8 +129,12 @@ export default function KnowledgeQuiz() {
       {result && (
         <section id="kq-result" class="glass mt-10 rounded-3xl p-8 md:p-12">
           <div class="flex flex-wrap items-baseline justify-between gap-3">
-            <div class="pill"><span class="pill-dot"></span> Your result</div>
-            <button onClick={reset} class="btn btn-ghost btn-sm">↺ Retake</button>
+            <div class="pill">
+              <span class="pill-dot"></span> Your result
+            </div>
+            <button onClick={reset} class="btn btn-ghost btn-sm">
+              ↺ Retake
+            </button>
           </div>
 
           <div class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -142,9 +146,15 @@ export default function KnowledgeQuiz() {
               </div>
             </div>
             <div>
-              <div class="text-xs uppercase tracking-[0.15em] text-[var(--dim)]">Suggested tier</div>
+              <div class="text-xs uppercase tracking-[0.15em] text-[var(--dim)]">
+                Suggested tier
+              </div>
               <div class="display mt-2 text-3xl">
-                {result.level === "beginner" ? "Beginner" : result.level === "advanced" ? "Advanced" : "Expert"}
+                {result.level === "beginner"
+                  ? "Beginner"
+                  : result.level === "advanced"
+                    ? "Advanced"
+                    : "Expert"}
               </div>
             </div>
             <div>
@@ -161,7 +171,7 @@ export default function KnowledgeQuiz() {
 
           <div class="mt-8 flex flex-wrap gap-3">
             {result.nextPath.map((n, i) => (
-              <a href={n.href} class={i === 0 ? "btn btn-primary" : "btn btn-secondary"}>
+              <a href={url(n.href)} class={i === 0 ? "btn btn-primary" : "btn btn-secondary"}>
                 {n.label} →
               </a>
             ))}

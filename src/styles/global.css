@@ -51,6 +51,8 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
+  /* Leave room for the fixed construction banner. */
+  padding-top: 44px;
   font-family: var(--font-sans);
   color: var(--ink);
   letter-spacing: -0.01em;
@@ -61,6 +63,52 @@ body {
     radial-gradient(circle at 50% 100%, #d8eaf8 0%, transparent 60%),
     var(--bg);
   background-attachment: fixed;
+}
+
+/* ============================================================
+   Construction banner — fixed across the very top of every page
+   ============================================================ */
+.construction-banner {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: #fff7e6;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent),
+    repeating-linear-gradient(
+      135deg,
+      #b3471f 0 14px,
+      #9c3a16 14px 28px
+    );
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 12px -4px rgba(0, 0, 0, 0.35);
+}
+.construction-banner strong { color: #ffffff; font-weight: 600; }
+.construction-banner__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #fff7e6;
+  color: #b3471f;
+  font-weight: 700;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+@media print {
+  .construction-banner { display: none; }
+  body { padding-top: 0; }
 }
 
 ::selection {
@@ -172,6 +220,12 @@ body {
 
 .btn:active {
   transform: translateY(1px);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  outline-color: var(--accent);
 }
 
 .btn-primary {

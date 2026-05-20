@@ -72,8 +72,7 @@ export const axisMeta = {
   },
 } as const;
 
-export const resistanceLabel = (r: Resistance) =>
-  ["None", "Weak", "Decent", "Strong"][r];
+export const resistanceLabel = (r: Resistance) => ["None", "Weak", "Decent", "Strong"][r];
 
 export const locations: LocationRow[] = [
   {
@@ -94,7 +93,8 @@ export const locations: LocationRow[] = [
     notes:
       "Look for UL Class 350 ratings. Cheap 'fire safes' from big-box stores are mostly for paper documents at ~1 hour.",
     lossNotes: "Survives short fires and minor water. Not survivable across a house-loss event.",
-    theftNotes: "A determined burglar with time defeats most home safes. Bolt-down helps; concealment helps more.",
+    theftNotes:
+      "A determined burglar with time defeats most home safes. Bolt-down helps; concealment helps more.",
   },
   {
     slug: "bank-deposit-box",
@@ -150,16 +150,8 @@ export const locations: LocationRow[] = [
     name: "Attorney's vault / safe",
     category: "trusted-person",
     tagline: "Sealed envelope held by your estate attorney. Excellent for inheritance.",
-    pros: [
-      "Legally bound custody",
-      "Survives you (the whole point)",
-      "Independent location",
-    ],
-    cons: [
-      "Costs money",
-      "Slow access — by appointment",
-      "Need to choose a serious attorney",
-    ],
+    pros: ["Legally bound custody", "Survives you (the whole point)", "Independent location"],
+    cons: ["Costs money", "Slow access — by appointment", "Need to choose a serious attorney"],
     bestFor: ["tertiary"],
     lossResistance: 3,
     theftResistance: 3,
@@ -168,7 +160,8 @@ export const locations: LocationRow[] = [
     access: "days",
     costAnnualUsd: "$100 – $500 / yr",
     recommendedFor: ["significant", "life-defining"],
-    notes: "Best paired with a will or trust that references the envelope's contents and the recovery procedure.",
+    notes:
+      "Best paired with a will or trust that references the envelope's contents and the recovery procedure.",
     lossNotes:
       "Strong, but choose a firm with succession plans. A retiring solo lawyer can become a single point of failure.",
     theftNotes:
@@ -179,11 +172,7 @@ export const locations: LocationRow[] = [
     name: "Second property (vacation home, etc.)",
     category: "home",
     tagline: "If you have one, it's a near-perfect second location.",
-    pros: [
-      "True geographic separation",
-      "Same convenience as home",
-      "No third party involved",
-    ],
+    pros: ["True geographic separation", "Same convenience as home", "No third party involved"],
     cons: [
       "Requires owning a second property",
       "Empty for long stretches → theft risk",
@@ -197,8 +186,10 @@ export const locations: LocationRow[] = [
     access: "days",
     costAnnualUsd: "$0 (presuming you already own it)",
     recommendedFor: ["significant", "life-defining"],
-    lossNotes: "Survives the typical disasters; you're exposed to a long absence and unnoticed damage.",
-    theftNotes: "Empty homes attract opportunists. A safe well bolted-down helps; a hidden one helps more.",
+    lossNotes:
+      "Survives the typical disasters; you're exposed to a long absence and unnoticed damage.",
+    theftNotes:
+      "Empty homes attract opportunists. A safe well bolted-down helps; a hidden one helps more.",
   },
   {
     slug: "commercial-vault",
@@ -210,12 +201,7 @@ export const locations: LocationRow[] = [
       "Insured (within limits)",
       "Designed for exactly this use case",
     ],
-    cons: [
-      "Annual fees",
-      "Slow access",
-      "Counterparty introduced",
-      "Concentrated in major cities",
-    ],
+    cons: ["Annual fees", "Slow access", "Counterparty introduced", "Concentrated in major cities"],
     bestFor: ["secondary", "tertiary"],
     lossResistance: 3,
     theftResistance: 3,
@@ -225,7 +211,8 @@ export const locations: LocationRow[] = [
     costAnnualUsd: "$200 – $1,500 / yr",
     recommendedFor: ["life-defining"],
     notes: "Read the contract — many limit liability to a fixed dollar amount per box.",
-    lossNotes: "Purpose-built fire/flood/EMP protection. The remaining risk is the vendor folding or being acquired.",
+    lossNotes:
+      "Purpose-built fire/flood/EMP protection. The remaining risk is the vendor folding or being acquired.",
     theftNotes: "Highest tier available outside government facilities. Audited, bonded, armed.",
   },
   {
@@ -233,11 +220,7 @@ export const locations: LocationRow[] = [
     name: "Buried / hidden cache",
     category: "outdoor",
     tagline: "A waterproof container buried in a memorable location.",
-    pros: [
-      "Free",
-      "Excellent against burglary",
-      "Doesn't depend on anyone else",
-    ],
+    pros: ["Free", "Excellent against burglary", "Doesn't depend on anyone else"],
     cons: [
       "Loss of the location knowledge = loss",
       "Construction, weather, animals can move it",
@@ -251,7 +234,8 @@ export const locations: LocationRow[] = [
     access: "weeks",
     costAnnualUsd: "$0",
     recommendedFor: ["life-defining"],
-    notes: "Document the location in your sealed letter; pin against a permanent landmark, not vegetation.",
+    notes:
+      "Document the location in your sealed letter; pin against a permanent landmark, not vegetation.",
     lossNotes:
       "Highest loss-of-access risk on this list. Forgetting the location, construction changes, animals — all silent failures.",
     theftNotes: "Excellent — no one looks where they don't know to look.",
@@ -277,23 +261,16 @@ export const locations: LocationRow[] = [
     recommendedFor: [],
     notes: "Don't.",
     lossNotes: "A job change, layoff, office move, or company failure all sever your access.",
-    theftNotes: "Cleaners, IT, colleagues, security staff all have plausible reasons to be in the space. Audit trails are weak.",
+    theftNotes:
+      "Cleaners, IT, colleagues, security staff all have plausible reasons to be in the space. Audit trails are weak.",
   },
   {
     slug: "trusted-friend",
     name: "Trusted friend, different city",
     category: "trusted-person",
     tagline: "Tamper-evident envelope, never opened, geographically separate.",
-    pros: [
-      "Free",
-      "Real geographic separation",
-      "Reasonable for inheritance fallback",
-    ],
-    cons: [
-      "Requires real trust",
-      "Their security is your security",
-      "Awkward when life changes",
-    ],
+    pros: ["Free", "Real geographic separation", "Reasonable for inheritance fallback"],
+    cons: ["Requires real trust", "Their security is your security", "Awkward when life changes"],
     bestFor: ["secondary", "tertiary"],
     lossResistance: 1,
     theftResistance: 2,
@@ -304,23 +281,16 @@ export const locations: LocationRow[] = [
     recommendedFor: ["modest", "significant"],
     lossNotes:
       "Friends move, fall out of touch, change phones. Schedule annual contact specifically to confirm the envelope.",
-    theftNotes: "Their household security becomes yours. Sealed package required; opened = compromised.",
+    theftNotes:
+      "Their household security becomes yours. Sealed package required; opened = compromised.",
   },
   {
     slug: "self-storage",
     name: "Self-storage unit",
     category: "commercial",
     tagline: "Cheap, anonymous, mediocre. Adequate as a tertiary backup.",
-    pros: [
-      "Cheap",
-      "Independent of your home",
-      "Anonymous to anyone who knows you",
-    ],
-    cons: [
-      "Variable security",
-      "Climate not always controlled",
-      "Auctioned if you stop paying",
-    ],
+    pros: ["Cheap", "Independent of your home", "Anonymous to anyone who knows you"],
+    cons: ["Variable security", "Climate not always controlled", "Auctioned if you stop paying"],
     bestFor: ["tertiary"],
     lossResistance: 1,
     theftResistance: 1,
@@ -330,8 +300,10 @@ export const locations: LocationRow[] = [
     costAnnualUsd: "$300 – $1,200 / yr",
     recommendedFor: ["significant"],
     notes: "Choose a facility with electronic logs, individual alarms, and climate control.",
-    lossNotes: "Miss a payment → the unit is auctioned and your backup with it. Set autopay and a dead-man review.",
-    theftNotes: "Cut-the-lock burglaries are routine; facility staff have master access. Choose carefully.",
+    lossNotes:
+      "Miss a payment → the unit is auctioned and your backup with it. Set autopay and a dead-man review.",
+    theftNotes:
+      "Cut-the-lock burglaries are routine; facility staff have master access. Choose carefully.",
   },
   {
     slug: "in-floor-safe",
@@ -343,11 +315,7 @@ export const locations: LocationRow[] = [
       "Always available",
       "Survives most fires if positioned well",
     ],
-    cons: [
-      "Requires installation",
-      "Not portable when you move",
-      "Still a single location",
-    ],
+    cons: ["Requires installation", "Not portable when you move", "Still a single location"],
     bestFor: ["primary"],
     lossResistance: 1,
     theftResistance: 3,
@@ -356,7 +324,8 @@ export const locations: LocationRow[] = [
     access: "instant",
     costAnnualUsd: "$0 (after $400–$1,500 install)",
     recommendedFor: ["significant", "life-defining"],
-    lossNotes: "Slab floods, in-wall leaks, and total house-loss events still apply. Single location.",
+    lossNotes:
+      "Slab floods, in-wall leaks, and total house-loss events still apply. Single location.",
     theftNotes: "Excellent against opportunistic burglary — you can't steal what you can't find.",
   },
   {
@@ -369,11 +338,7 @@ export const locations: LocationRow[] = [
       "Insured custody of one key",
       "Annual rehearsal supported",
     ],
-    cons: [
-      "Annual fee",
-      "Counterparty re-introduced (constrained)",
-      "Vendor selection matters",
-    ],
+    cons: ["Annual fee", "Counterparty re-introduced (constrained)", "Vendor selection matters"],
     bestFor: ["tertiary"],
     lossResistance: 2,
     theftResistance: 3,
@@ -383,19 +348,17 @@ export const locations: LocationRow[] = [
     costAnnualUsd: "$200 – $500 / yr",
     recommendedFor: ["life-defining"],
     notes: "Only meaningful inside a multisig setup; pointless for single-sig.",
-    lossNotes: "The trustee can fold or be acquired. The multisig means it's not catastrophic — you still have other keys.",
-    theftNotes: "Their key alone can't move funds. Even a full compromise of the trustee is not catastrophic.",
+    lossNotes:
+      "The trustee can fold or be acquired. The multisig means it's not catastrophic — you still have other keys.",
+    theftNotes:
+      "Their key alone can't move funds. Even a full compromise of the trustee is not catastrophic.",
   },
   {
     slug: "encrypted-cloud",
     name: "Self-hosted encrypted cloud copy",
     category: "commercial",
     tagline: "An encrypted backup file on a vault you control. Tertiary only.",
-    pros: [
-      "Survives total physical destruction",
-      "Free or near-free",
-      "Restorable from anywhere",
-    ],
+    pros: ["Survives total physical destruction", "Free or near-free", "Restorable from anywhere"],
     cons: [
       "Only as strong as your passphrase",
       "Adds a second secret",
@@ -411,7 +374,8 @@ export const locations: LocationRow[] = [
     recommendedFor: ["significant", "life-defining"],
     notes:
       "Acceptable as a tertiary if (a) the file is encrypted with a strong, separately-stored passphrase, and (b) the storage is on something you self-host.",
-    lossNotes: "Survives physical loss. Forgotten passphrase is total loss; cloud provider folding is total loss without a local copy.",
+    lossNotes:
+      "Survives physical loss. Forgotten passphrase is total loss; cloud provider folding is total loss without a local copy.",
     theftNotes:
       "A connected, sync-able copy. The encryption is the only thing between an attacker and the seed. Strong passphrase, separately stored.",
   },
@@ -435,7 +399,8 @@ export const locations: LocationRow[] = [
     costAnnualUsd: "$0",
     recommendedFor: [],
     notes: "Two copies in the same building is one copy.",
-    lossNotes: "Provides no redundancy against the events redundancy is for. Two copies, one event, both gone.",
+    lossNotes:
+      "Provides no redundancy against the events redundancy is for. Two copies, one event, both gone.",
     theftNotes: "A burglar with time finds both. Same as one copy.",
   },
   {

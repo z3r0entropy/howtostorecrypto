@@ -1,4 +1,5 @@
 ---
+import { url } from "~/lib/url";
 import Layout from "~/layouts/Layout.astro";
 
 const quizzes = [
@@ -43,7 +44,7 @@ const quizzes = [
       {
         quizzes.map((q) => (
           <a
-            href={q.href}
+            href={url(q.href)}
             class:list={[
               "glass group block rounded-3xl p-8 transition hover:bg-white/75",
               q.accent && "ring-2 ring-[var(--accent)]/30 shadow-2xl shadow-[var(--accent)]/10",

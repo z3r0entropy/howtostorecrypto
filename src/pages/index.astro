@@ -1,4 +1,5 @@
 ---
+import { url } from "~/lib/url";
 import Layout from "~/layouts/Layout.astro";
 
 const methods = [
@@ -223,7 +224,7 @@ const faqs = [
                 />
               ))}
             </div>
-            <div class="pill mt-8 !text-[var(--ice-deep)]">
+            <div class="pill mt-8 text-[var(--ice-deep)]!">
               ❄ offline · isolated · permanent
             </div>
           </div>
@@ -448,8 +449,8 @@ const faqs = [
             <span class="text-[var(--dim)] text-lg">in hardware</span>
           </div>
         </div>
-        <a href="#" class="btn btn-primary">
-          Open the printable checklist →
+        <a href={url("/app/setup")} class="btn btn-primary">
+          Build your plan in the wizard →
         </a>
       </div>
     </section>

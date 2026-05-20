@@ -1,14 +1,21 @@
 import { useMemo, useState } from "preact/hooks";
 import {
-  locations,
-  categoryMeta,
   axisMeta,
-  resistanceLabel,
   type Category,
+  categoryMeta,
   type LocationRow,
+  locations,
+  resistanceLabel,
 } from "~/data/locations";
 
 type SortKey = "loss" | "theft" | "cost" | "alphabetical";
+
+// Parse the first numeric value from a cost label like "$300 – $1,200 / yr".
+// Returns Infinity for unparseable strings so they sort last.
+function costRank(value: string): number {
+  const match = value.replace(/,/g, "").match(/\d+(?:\.\d+)?/);
+  return match ? Number(match[0]) : Number.POSITIVE_INFINITY;
+}
 
 export default function LocationsBrowser() {
   const [search, setSearch] = useState("");
@@ -20,9 +27,7 @@ export default function LocationsBrowser() {
   const cats = Object.keys(categoryMeta) as Category[];
 
   function toggleCat(c: Category) {
-    setActiveCats((curr) =>
-      curr.includes(c) ? curr.filter((x) => x !== c) : [...curr, c]
-    );
+    setActiveCats((curr) => (curr.includes(c) ? curr.filter((x) => x !== c) : [...curr, c]));
   }
 
   const filtered = useMemo(() => {
@@ -33,7 +38,7 @@ export default function LocationsBrowser() {
         (l) =>
           l.name.toLowerCase().includes(s) ||
           l.tagline.toLowerCase().includes(s) ||
-          l.notes?.toLowerCase().includes(s)
+          l.notes?.toLowerCase().includes(s),
       );
     }
     if (activeCats.length > 0) {
@@ -44,10 +49,16 @@ export default function LocationsBrowser() {
     }
     list.sort((a, b) => {
       switch (sort) {
-        case "loss": return b.lossResistance - a.lossResistance;
-        case "theft": return b.theftResistance - a.theftResistance;
-        case "cost": return a.costAnnualUsd.localeCompare(b.costAnnualUsd);
-        case "alphabetical": return a.name.localeCompare(b.name);
+        case "loss":
+          return b.lossResistance - a.lossResistance;
+        case "theft":
+          return b.theftResistance - a.theftResistance;
+        case "cost":
+          return costRank(a.costAnnualUsd) - costRank(b.costAnnualUsd);
+        case "alphabetical":
+          return a.name.localeCompare(b.name);
+        default:
+          return 0;
       }
     });
     return list;
@@ -59,7 +70,9 @@ export default function LocationsBrowser() {
       <section class="glass rounded-3xl p-6 md:p-8">
         <div class="grid grid-cols-12 gap-4">
           <div class="col-span-12 md:col-span-6">
-            <label class="label" for="search">Search</label>
+            <label class="label" for="search">
+              Search
+            </label>
             <input
               id="search"
               class="input"
@@ -70,7 +83,9 @@ export default function LocationsBrowser() {
           </div>
 
           <div class="col-span-6 md:col-span-3">
-            <label class="label" for="stake">Stakes</label>
+            <label class="label" for="stake">
+              Stakes
+            </label>
             <select
               id="stake"
               class="input"
@@ -85,7 +100,9 @@ export default function LocationsBrowser() {
           </div>
 
           <div class="col-span-6 md:col-span-3">
-            <label class="label" for="sort">Sort by</label>
+            <label class="label" for="sort">
+              Sort by
+            </label>
             <select
               id="sort"
               class="input"
@@ -110,7 +127,7 @@ export default function LocationsBrowser() {
                   onClick={() => toggleCat(c)}
                   class={`pill cursor-pointer transition ${
                     active
-                      ? "!bg-[var(--ink)] !text-white !border-[var(--ink)]"
+                      ? "bg-[var(--ink)]! text-white! border-[var(--ink)]!"
                       : "hover:bg-white/80"
                   }`}
                 >
@@ -132,7 +149,8 @@ export default function LocationsBrowser() {
 
         <div class="mt-6 flex flex-wrap items-baseline justify-between gap-3 border-t hairline pt-4 text-xs text-[var(--dim)]">
           <span>
-            <span class="display stat-grad text-base">{filtered.length}</span> of {locations.length} locations
+            <span class="display stat-grad text-base">{filtered.length}</span> of {locations.length}{" "}
+            locations
           </span>
           <div class="flex items-center gap-4">
             <span class="flex items-center gap-1.5">
@@ -217,11 +235,10 @@ function LocationRowCard({
               <div class="text-xs uppercase tracking-[0.15em]" style="color: var(--accent)">
                 {axisMeta.loss.label}
               </div>
-              <p class="mt-2 text-sm text-[var(--ink-2)]">
-                {l.lossNotes ?? "—"}
-              </p>
+              <p class="mt-2 text-sm text-[var(--ink-2)]">{l.lossNotes ?? "—"}</p>
               <div class="mt-2 text-xs text-[var(--dim)]">
-                Rating: <strong class="text-[var(--ink)]">{resistanceLabel(l.lossResistance)}</strong>
+                Rating:{" "}
+                <strong class="text-[var(--ink)]">{resistanceLabel(l.lossResistance)}</strong>
                 {" · "}fire {resistanceLabel(l.fire)} · water {resistanceLabel(l.water)}
               </div>
             </div>
@@ -229,11 +246,10 @@ function LocationRowCard({
               <div class="text-xs uppercase tracking-[0.15em]" style="color: var(--warn)">
                 {axisMeta.theft.label}
               </div>
-              <p class="mt-2 text-sm text-[var(--ink-2)]">
-                {l.theftNotes ?? "—"}
-              </p>
+              <p class="mt-2 text-sm text-[var(--ink-2)]">{l.theftNotes ?? "—"}</p>
               <div class="mt-2 text-xs text-[var(--dim)]">
-                Rating: <strong class="text-[var(--ink)]">{resistanceLabel(l.theftResistance)}</strong>
+                Rating:{" "}
+                <strong class="text-[var(--ink)]">{resistanceLabel(l.theftResistance)}</strong>
               </div>
             </div>
           </div>
@@ -243,7 +259,10 @@ function LocationRowCard({
               <div class="text-xs uppercase tracking-[0.15em] text-[var(--ok)]">Pros</div>
               <ul class="mt-2 space-y-1 text-sm">
                 {l.pros.map((p) => (
-                  <li class="flex items-start gap-2"><span class="mt-0.5 text-[var(--ok)]">+</span>{p}</li>
+                  <li class="flex items-start gap-2">
+                    <span class="mt-0.5 text-[var(--ok)]">+</span>
+                    {p}
+                  </li>
                 ))}
               </ul>
             </div>
@@ -251,7 +270,10 @@ function LocationRowCard({
               <div class="text-xs uppercase tracking-[0.15em] text-[var(--warn)]">Cons</div>
               <ul class="mt-2 space-y-1 text-sm">
                 {l.cons.map((c) => (
-                  <li class="flex items-start gap-2"><span class="mt-0.5 text-[var(--warn)]">−</span>{c}</li>
+                  <li class="flex items-start gap-2">
+                    <span class="mt-0.5 text-[var(--warn)]">−</span>
+                    {c}
+                  </li>
                 ))}
               </ul>
             </div>
@@ -287,7 +309,9 @@ function AxisStrip({ axis, rating }: { axis: "loss" | "theft"; rating: number })
       <div class="text-[10px] uppercase tracking-[0.15em] text-[var(--dim)]">{label}</div>
       <div class="mt-1 flex gap-0.5">
         {[1, 2, 3].map((i) => (
-          <span class={`h-1.5 w-6 rounded-full ${i <= rating ? tone : "bg-[var(--hairline)]"}`}></span>
+          <span
+            class={`h-1.5 w-6 rounded-full ${i <= rating ? tone : "bg-[var(--hairline)]"}`}
+          ></span>
         ))}
       </div>
       <div class="mt-1 text-[11px] text-[var(--ink-2)]">{resistanceLabel(rating as any)}</div>

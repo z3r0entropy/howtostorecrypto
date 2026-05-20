@@ -1,23 +1,24 @@
+import type { ComponentChildren } from "preact";
 import { useEffect, useMemo, useState } from "preact/hooks";
-import type { JSX } from "preact";
+import {
+  categoryMeta,
+  type LocationRow,
+  axisMeta as locAxis,
+  locations,
+  resistanceLabel,
+} from "~/data/locations";
 
 import {
-  tierMeta,
-  stakesMeta,
-  strategies,
   recommendation,
   reminderCadence,
-  type Tier,
   type Stakes,
   type StrategyKey,
+  stakesMeta,
+  strategies,
+  type Tier,
+  tierMeta,
 } from "~/data/strategies";
-import {
-  locations,
-  categoryMeta,
-  axisMeta as locAxis,
-  resistanceLabel,
-  type LocationRow,
-} from "~/data/locations";
+import { url } from "~/lib/url";
 
 type InheritancePattern = "sealed-letter" | "trustee" | "none";
 
@@ -54,7 +55,6 @@ const steps = [
   { key: "reminders", label: "Reminders" },
   { key: "summary", label: "Summary" },
 ] as const;
-type StepKey = typeof steps[number]["key"];
 
 export default function SetupWizard({ initialTier }: { initialTier?: string }) {
   const [state, setState] = useState<State>(initialState);
@@ -68,8 +68,17 @@ export default function SetupWizard({ initialTier }: { initialTier?: string }) {
       if (raw) {
         const parsed = JSON.parse(raw);
         setState({ ...initialState, ...parsed.state });
-        setStepIdx(parsed.stepIdx ?? 0);
-      } else if (initialTier && (initialTier === "beginner" || initialTier === "advanced" || initialTier === "expert")) {
+        // Clamp persisted stepIdx — stale or hand-edited storage shouldn't
+        // crash later reads of `steps[stepIdx]`.
+        const persisted = Number(parsed.stepIdx);
+        const safeIdx = Number.isInteger(persisted)
+          ? Math.min(Math.max(persisted, 0), steps.length - 1)
+          : 0;
+        setStepIdx(safeIdx);
+      } else if (
+        initialTier &&
+        (initialTier === "beginner" || initialTier === "advanced" || initialTier === "expert")
+      ) {
         setState((s) => ({ ...s, tier: initialTier as Tier }));
         setStepIdx(1);
       }
@@ -159,19 +168,27 @@ export default function SetupWizard({ initialTier }: { initialTier?: string }) {
   const currentStep = steps[stepIdx].key;
   const canNext = (() => {
     switch (currentStep) {
-      case "tier": return !!state.tier;
-      case "stakes": return !!state.stakes;
-      case "strategy": return !!state.strategyKey;
+      case "tier":
+        return !!state.tier;
+      case "stakes":
+        return !!state.stakes;
+      case "strategy":
+        return !!state.strategyKey;
       case "locations":
         return strategy ? state.locationSlugs.length >= strategy.locationsNeeded : false;
-      case "inheritance": return !!state.inheritance;
-      case "reminders": return true;
-      case "summary": return false;
+      case "inheritance":
+        return !!state.inheritance;
+      case "reminders":
+        return true;
+      case "summary":
+        return false;
     }
   })();
 
   if (!hydrated) {
-    return <div class="glass min-h-[400px] rounded-3xl p-10 text-center text-[var(--dim)]">Loading…</div>;
+    return (
+      <div class="glass min-h-[400px] rounded-3xl p-10 text-center text-[var(--dim)]">Loading…</div>
+    );
   }
 
   return (
@@ -226,10 +243,14 @@ export default function SetupWizard({ initialTier }: { initialTier?: string }) {
       </div>
 
       <div class="mt-10 flex flex-wrap items-center justify-between gap-3">
-        <button onClick={reset} class="btn btn-ghost btn-sm">↺ Restart</button>
+        <button onClick={reset} class="btn btn-ghost btn-sm">
+          ↺ Restart
+        </button>
         <div class="flex gap-3">
           {stepIdx > 0 && (
-            <button onClick={prev} class="btn btn-secondary">← Back</button>
+            <button onClick={prev} class="btn btn-secondary">
+              ← Back
+            </button>
           )}
           {currentStep !== "summary" && (
             <button
@@ -275,8 +296,8 @@ function Stepper({
                 active
                   ? "bg-[var(--ink)] text-white"
                   : reachable
-                  ? "text-[var(--ink-2)] hover:bg-white/70"
-                  : "text-[var(--dimmer)] cursor-not-allowed"
+                    ? "text-[var(--ink-2)] hover:bg-white/70"
+                    : "text-[var(--dimmer)] cursor-not-allowed"
               }`}
             >
               <span class="mr-1.5 inline-block opacity-60">{String(i + 1).padStart(2, "0")}</span>
@@ -292,23 +313,22 @@ function Stepper({
 /* ============================================================
    Step 1: Tier
    ============================================================ */
-function StepTier({
-  value,
-  onChange,
-}: {
-  value: Tier | null;
-  onChange: (v: Tier) => void;
-}) {
+function StepTier({ value, onChange }: { value: Tier | null; onChange: (v: Tier) => void }) {
   return (
     <section class="glass rounded-3xl p-8 md:p-10">
-      <div class="pill"><span>Step 1 · Your level</span></div>
+      <div class="pill">
+        <span>Step 1 · Your level</span>
+      </div>
       <h2 class="display mt-6 text-3xl leading-tight md:text-5xl">
         How comfortable are you
         <span class="stat-grad italic"> with self-custody?</span>
       </h2>
       <p class="mt-4 text-[var(--ink-2)]">
         Honest answer. You can also{" "}
-        <a href="/app/quiz/knowledge" class="text-[var(--accent)] hover:text-[var(--accent-deep)]">
+        <a
+          href={url("/app/quiz/knowledge")}
+          class="text-[var(--accent)] hover:text-[var(--accent-deep)]"
+        >
           take the knowledge quiz
         </a>{" "}
         to find out — it pre-fills this step.
@@ -325,9 +345,7 @@ function StepTier({
                 active ? "ring-2 ring-[var(--accent)] shadow-lg" : ""
               }`}
             >
-              <div class="text-xs uppercase tracking-[0.15em] text-[var(--ice-deep)]">
-                Tier
-              </div>
+              <div class="text-xs uppercase tracking-[0.15em] text-[var(--ice-deep)]">Tier</div>
               <div class="display mt-2 text-2xl">{m.label}</div>
               <div class="mt-1 text-sm text-[var(--ink)]">{m.sub}</div>
               <p class="mt-4 text-xs leading-relaxed text-[var(--ink-2)]">{m.hint}</p>
@@ -342,24 +360,20 @@ function StepTier({
 /* ============================================================
    Step 2: Stakes
    ============================================================ */
-function StepStakes({
-  value,
-  onChange,
-}: {
-  value: Stakes | null;
-  onChange: (v: Stakes) => void;
-}) {
+function StepStakes({ value, onChange }: { value: Stakes | null; onChange: (v: Stakes) => void }) {
   return (
     <section class="glass rounded-3xl p-8 md:p-10">
-      <div class="pill"><span>Step 2 · The stakes</span></div>
+      <div class="pill">
+        <span>Step 2 · The stakes</span>
+      </div>
       <h2 class="display mt-6 text-3xl leading-tight md:text-5xl">
         How bad would
         <span class="stat-grad italic"> losing it </span>
         be?
       </h2>
       <p class="mt-4 text-[var(--ink-2)]">
-        The right setup is the one matched to the consequence of losing it,
-        not the size of the holding in absolute terms.
+        The right setup is the one matched to the consequence of losing it, not the size of the
+        holding in absolute terms.
       </p>
 
       <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -412,12 +426,13 @@ function StepStrategy({
 
   return (
     <section class="glass rounded-3xl p-8 md:p-10">
-      <div class="pill"><span>Step 3 · Strategy</span></div>
+      <div class="pill">
+        <span>Step 3 · Strategy</span>
+      </div>
       <h2 class="display mt-6 text-3xl leading-tight md:text-5xl">
         For
-        <span class="stat-grad italic"> {tierMeta[tier].label} </span>
-        × <span class="stat-grad italic">{stakesMeta[stakes].label}</span>,
-        we recommend:
+        <span class="stat-grad italic"> {tierMeta[tier].label} </span>×{" "}
+        <span class="stat-grad italic">{stakesMeta[stakes].label}</span>, we recommend:
       </h2>
 
       <div class="mt-8 space-y-4">
@@ -487,9 +502,7 @@ function DefenseBar({
   return (
     <div class="rounded-xl border hairline p-3">
       <div class="flex items-center justify-between">
-        <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">
-          {label}
-        </div>
+        <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">{label}</div>
         <div class="flex gap-1">
           {[1, 2, 3].map((i) => (
             <span
@@ -526,40 +539,41 @@ function StepLocations({
   }
 
   const filtered = locations.filter(
-    (l) => l.bestFor.length > 0 && l.recommendedFor.includes(stakes)
+    (l) => l.bestFor.length > 0 && l.recommendedFor.includes(stakes),
   );
-  const remaining = locations.filter(
-    (l) => !filtered.find((f) => f.slug === l.slug)
-  );
+  const remaining = locations.filter((l) => !filtered.find((f) => f.slug === l.slug));
 
   const have = value.length;
   const need = strategy.locationsNeeded;
 
   return (
     <section class="glass rounded-3xl p-8 md:p-10">
-      <div class="pill"><span>Step 4 · Locations</span></div>
+      <div class="pill">
+        <span>Step 4 · Locations</span>
+      </div>
       <h2 class="display mt-6 text-3xl leading-tight md:text-5xl">
         Pick
         <span class="stat-grad italic"> {need} </span>
         {need === 1 ? "location" : "locations"}.
       </h2>
       <p class="mt-4 text-[var(--ink-2)]">
-        Each will hold one copy of the backup. Filtered to the options most
-        commonly used at your stakes; you can always add others from the{" "}
-        <a href="/app/locations" class="text-[var(--accent)] hover:text-[var(--accent-deep)]">
+        Each will hold one copy of the backup. Filtered to the options most commonly used at your
+        stakes; you can always add others from the{" "}
+        <a
+          href={url("/app/locations")}
+          class="text-[var(--accent)] hover:text-[var(--accent-deep)]"
+        >
           full database
-        </a>.
+        </a>
+        .
       </p>
 
       <div class="mt-6 flex flex-wrap items-center justify-between gap-3">
         <div class="text-sm text-[var(--ink-2)]">
-          <span class="display stat-grad text-2xl">{have}</span>
-          {" "}of {need} selected
+          <span class="display stat-grad text-2xl">{have}</span> of {need} selected
           {have > need && <span class="ml-2 text-[var(--dim)]">— extras are fine</span>}
         </div>
-        {have >= need && (
-          <span class="tag tag-ok">Enough to continue</span>
-        )}
+        {have >= need && <span class="tag tag-ok">Enough to continue</span>}
       </div>
 
       <div class="mt-6 space-y-3">
@@ -576,7 +590,12 @@ function StepLocations({
           </summary>
           <div class="mt-4 space-y-3">
             {remaining.map((l) => (
-              <LocationCard l={l} selected={value.includes(l.slug)} onToggle={() => toggle(l.slug)} compact />
+              <LocationCard
+                l={l}
+                selected={value.includes(l.slug)}
+                onToggle={() => toggle(l.slug)}
+                compact
+              />
             ))}
           </div>
         </details>
@@ -617,9 +636,7 @@ function LocationCard({
         </div>
       </div>
 
-      <p class={`mt-3 text-sm text-[var(--ink-2)] ${compact ? "line-clamp-2" : ""}`}>
-        {l.tagline}
-      </p>
+      <p class={`mt-3 text-sm text-[var(--ink-2)] ${compact ? "line-clamp-2" : ""}`}>{l.tagline}</p>
 
       <div class="mt-4 grid grid-cols-2 gap-3">
         <AxisRow axis="loss" rating={l.lossResistance} />
@@ -629,13 +646,7 @@ function LocationCard({
   );
 }
 
-function AxisRow({
-  axis,
-  rating,
-}: {
-  axis: "loss" | "theft";
-  rating: number;
-}) {
+function AxisRow({ axis, rating }: { axis: "loss" | "theft"; rating: number }) {
   const label = axis === "loss" ? locAxis.loss.short : locAxis.theft.short;
   const fullLabel = axis === "loss" ? locAxis.loss.label : locAxis.theft.label;
   const tone = axis === "loss" ? "bg-[var(--accent)]" : "bg-[var(--warn)]";
@@ -646,12 +657,12 @@ function AxisRow({
       </div>
       <div class="flex gap-0.5">
         {[1, 2, 3].map((i) => (
-          <span class={`h-1.5 w-4 rounded-full ${i <= rating ? tone : "bg-[var(--hairline)]"}`}></span>
+          <span
+            class={`h-1.5 w-4 rounded-full ${i <= rating ? tone : "bg-[var(--hairline)]"}`}
+          ></span>
         ))}
       </div>
-      <div class="text-[11px] text-[var(--ink-2)]">
-        {resistanceLabel(rating as 0 | 1 | 2 | 3)}
-      </div>
+      <div class="text-[11px] text-[var(--ink-2)]">{resistanceLabel(rating as 0 | 1 | 2 | 3)}</div>
     </div>
   );
 }
@@ -672,14 +683,15 @@ function StepInheritance({
 }) {
   return (
     <section class="glass rounded-3xl p-8 md:p-10">
-      <div class="pill"><span>Step 5 · Inheritance</span></div>
+      <div class="pill">
+        <span>Step 5 · Inheritance</span>
+      </div>
       <h2 class="display mt-6 text-3xl leading-tight md:text-5xl">
         What happens
         <span class="stat-grad italic"> if you're not around?</span>
       </h2>
       <p class="mt-4 text-[var(--ink-2)]">
-        The hardest custody question. Pick a pattern; we'll include it in the
-        summary.
+        The hardest custody question. Pick a pattern; we'll include it in the summary.
       </p>
 
       <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -713,9 +725,7 @@ function StepInheritance({
                 active ? "ring-2 ring-[var(--accent)] shadow-lg" : ""
               }`}
             >
-              <div class="text-xs uppercase tracking-[0.15em] text-[var(--ice-deep)]">
-                Pattern
-              </div>
+              <div class="text-xs uppercase tracking-[0.15em] text-[var(--ice-deep)]">Pattern</div>
               <div class="display mt-2 text-xl">{o.label}</div>
               <div class="mt-1 text-sm text-[var(--ink)]">{o.sub}</div>
               <p class="mt-3 text-xs leading-relaxed text-[var(--ink-2)]">{o.body}</p>
@@ -736,7 +746,11 @@ function StepInheritance({
             class="input max-w-md"
             value={contact}
             onInput={(e) => onContact((e.target as HTMLInputElement).value)}
-            placeholder={value === "sealed-letter" ? "e.g. M. Stein, Stein & Co. (NYC)" : "e.g. Casa, Unchained, Nunchuk"}
+            placeholder={
+              value === "sealed-letter"
+                ? "e.g. M. Stein, Stein & Co. (NYC)"
+                : "e.g. Casa, Unchained, Nunchuk"
+            }
           />
           <p class="mt-2 text-xs text-[var(--dim)]">
             Used in the summary. Stored only in your browser; never sent anywhere.
@@ -761,14 +775,16 @@ function StepReminders({
 }) {
   return (
     <section class="glass rounded-3xl p-8 md:p-10">
-      <div class="pill"><span>Step 6 · Reminders</span></div>
+      <div class="pill">
+        <span>Step 6 · Reminders</span>
+      </div>
       <h2 class="display mt-6 text-3xl leading-tight md:text-5xl">
         Schedule the
         <span class="stat-grad italic"> rehearsals.</span>
       </h2>
       <p class="mt-4 text-[var(--ink-2)]">
-        Pre-filled from your stakes. Adjust freely. Both are calendar
-        reminders only — we don't have your data.
+        Pre-filled from your stakes. Adjust freely. Both are calendar reminders only — we don't have
+        your data.
       </p>
 
       <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -777,10 +793,10 @@ function StepReminders({
             Recovery test
           </div>
           <div class="display mt-2 text-xl">Restore + verify, then wipe.</div>
-          <p class="mt-2 text-sm text-[var(--ink-2)]">
-            Confirms your backup actually works.
-          </p>
-          <label class="label mt-4" for="r-test">Cadence</label>
+          <p class="mt-2 text-sm text-[var(--ink-2)]">Confirms your backup actually works.</p>
+          <label class="label mt-4" for="r-test">
+            Cadence
+          </label>
           <select
             id="r-test"
             class="input"
@@ -794,14 +810,14 @@ function StepReminders({
         </div>
 
         <div class="glass-dark rounded-2xl p-6">
-          <div class="text-xs uppercase tracking-[0.15em] text-[var(--ice-deep)]">
-            Setup review
-          </div>
+          <div class="text-xs uppercase tracking-[0.15em] text-[var(--ice-deep)]">Setup review</div>
           <div class="display mt-2 text-xl">Walk through every location + contact.</div>
           <p class="mt-2 text-sm text-[var(--ink-2)]">
             Catches stale assumptions when life changes.
           </p>
-          <label class="label mt-4" for="r-review">Cadence</label>
+          <label class="label mt-4" for="r-review">
+            Cadence
+          </label>
           <select
             id="r-review"
             class="input"
@@ -838,11 +854,10 @@ function StepSummary({
   return (
     <section class="glass rounded-3xl p-8 md:p-12 print:bg-white print:shadow-none">
       <div class="flex flex-wrap items-baseline justify-between gap-3">
-        <div class="pill"><span class="pill-dot"></span> Your plan · saved locally</div>
-        <button
-          onClick={() => window.print()}
-          class="btn btn-secondary btn-sm"
-        >
+        <div class="pill">
+          <span class="pill-dot"></span> Your plan · saved locally
+        </div>
+        <button onClick={() => window.print()} class="btn btn-secondary btn-sm">
           🖨 Print
         </button>
       </div>
@@ -883,9 +898,13 @@ function StepSummary({
               <li class="glass-dark rounded-xl p-4">
                 <div class="flex items-baseline justify-between gap-2">
                   <div>
-                    <span class="text-xs text-[var(--dim)] mr-2">{String(i + 1).padStart(2, "0")}</span>
+                    <span class="text-xs text-[var(--dim)] mr-2">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
                     <span class="font-medium">{l.name}</span>
-                    <span class="ml-2 text-xs text-[var(--dim)]">{categoryMeta[l.category].label}</span>
+                    <span class="ml-2 text-xs text-[var(--dim)]">
+                      {categoryMeta[l.category].label}
+                    </span>
                   </div>
                   <span class="text-xs text-[var(--dim)]">{l.costAnnualUsd}</span>
                 </div>
@@ -900,15 +919,15 @@ function StepSummary({
         {state.inheritance === "sealed-letter" && (
           <p>
             <strong>Sealed letter</strong> held by{" "}
-            <strong>{state.inheritanceContact || "[contact to be named]"}</strong>.
-            Rehearse the procedure once with the technical helper.
+            <strong>{state.inheritanceContact || "[contact to be named]"}</strong>. Rehearse the
+            procedure once with the technical helper.
           </p>
         )}
         {state.inheritance === "trustee" && (
           <p>
             <strong>Multisig with trustee</strong> — considering{" "}
-            <strong>{state.inheritanceContact || "[trustee to be named]"}</strong>.
-            Annual fee. Heir-initiated recovery procedure.
+            <strong>{state.inheritanceContact || "[trustee to be named]"}</strong>. Annual fee.
+            Heir-initiated recovery procedure.
           </p>
         )}
         {state.inheritance === "none" && (
@@ -921,12 +940,12 @@ function StepSummary({
       <SummaryBlock title="Reminders">
         <ul class="space-y-2">
           <li>
-            <strong>Recovery test:</strong> {state.reminderTest}.
-            Restore on a fresh, offline device. Verify first address. Wipe.
+            <strong>Recovery test:</strong> {state.reminderTest}. Restore on a fresh, offline
+            device. Verify first address. Wipe.
           </li>
           <li>
-            <strong>Setup review:</strong> {state.reminderReview}.
-            Walk through every location, every contact, every assumption.
+            <strong>Setup review:</strong> {state.reminderReview}. Walk through every location,
+            every contact, every assumption.
           </li>
         </ul>
       </SummaryBlock>
@@ -940,7 +959,11 @@ function StepSummary({
             "Distribute backups to chosen locations (one trip per location).",
             "Write the inheritance letter / engage trustee.",
             "Test recovery on a fresh device. Wipe.",
-            "Calendar the next test (" + state.reminderTest + ") and review (" + state.reminderReview + ").",
+            "Calendar the next test (" +
+              state.reminderTest +
+              ") and review (" +
+              state.reminderReview +
+              ").",
           ].map((item, i) => (
             <li class="flex items-start gap-2">
               <span class="display stat-grad mt-0.5 w-6 text-base">
@@ -969,7 +992,7 @@ function SummaryStat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function SummaryBlock({ title, children }: { title: string; children: JSX.Element | JSX.Element[] | string }) {
+function SummaryBlock({ title, children }: { title: string; children: ComponentChildren }) {
   return (
     <div class="mt-8 border-t hairline pt-6">
       <div class="text-xs uppercase tracking-[0.15em] text-[var(--ice-deep)]">{title}</div>
