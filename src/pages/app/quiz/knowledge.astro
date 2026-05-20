@@ -1,0 +1,25 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import KnowledgeQuiz from "~/components/KnowledgeQuiz";
+---
+
+<Layout
+  title="Knowledge quiz — How to Store Crypto"
+  description="Ten multiple-choice questions on the mechanics of self-custody. Your score recommends a starting path."
+>
+  <main class="mx-auto max-w-3xl px-6 pt-32 pb-20 md:px-10">
+    <header class="mb-10">
+      <div class="pill"><span class="pill-dot"></span> Self-assessment</div>
+      <h1 class="display mt-6 text-[clamp(2.25rem,5vw,4.5rem)] leading-[0.95]">
+        Test your
+        <span class="stat-grad italic">crypto knowledge.</span>
+      </h1>
+      <p class="mt-4 text-base text-[var(--ink-2)]">
+        Ten questions. No right answers held against you — the only outcome is
+        a recommended starting point and an explanation per question.
+      </p>
+    </header>
+
+    <KnowledgeQuiz client:load />
+  </main>
+</Layout>

@@ -1,0 +1,26 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import AuditQuiz from "~/components/AuditQuiz";
+---
+
+<Layout
+  title="Setup audit — How to Store Crypto"
+  description="Describe your current backup setup. Get a ranked list of risks split by loss-of-access and theft, each with one specific fix."
+>
+  <main class="mx-auto max-w-3xl px-6 pt-32 pb-20 md:px-10">
+    <header class="mb-10">
+      <div class="pill"><span class="pill-dot"></span> Diagnostic</div>
+      <h1 class="display mt-6 text-[clamp(2.25rem,5vw,4.5rem)] leading-[0.95]">
+        Audit your
+        <span class="stat-grad italic">current setup.</span>
+      </h1>
+      <p class="mt-4 text-base text-[var(--ink-2)]">
+        Nine questions. The report splits findings by loss-of-access vs theft
+        and gives one specific fix per finding, ranked by severity. Nothing
+        leaves your browser.
+      </p>
+    </header>
+
+    <AuditQuiz client:load />
+  </main>
+</Layout>

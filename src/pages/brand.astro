@@ -1,0 +1,786 @@
+---
+import Layout from "~/layouts/Layout.astro";
+
+const colors = [
+  { name: "bg", hex: "#f4f8fc", use: "Page background (washed by atmospheric gradients)" },
+  { name: "bg-2", hex: "#e6eef7", use: "Subtler surface tint" },
+  { name: "surface", hex: "#ffffff", use: "Solid surfaces — used sparingly" },
+  { name: "ink", hex: "#0c1a2e", use: "Primary text, primary button" },
+  { name: "ink-2", hex: "#3b4a63", use: "Secondary text, body paragraphs" },
+  { name: "dim", hex: "#6f7e94", use: "Captions, labels, eyebrows" },
+  { name: "dimmer", hex: "#95a3b8", use: "Tertiary text, placeholder" },
+  { name: "ice", hex: "#aac6e6", use: "Soft accent — sparingly" },
+  { name: "ice-deep", hex: "#1f3a68", use: "Interactive hover state for primary" },
+  { name: "accent", hex: "#2f6fe0", use: "Links, focus rings, recommended badges" },
+  { name: "accent-deep", hex: "#1d4fb0", use: "Active link, accent-deep tags" },
+  { name: "warn", hex: "#c45c3a", use: "Mistakes, warnings — never critical" },
+  { name: "ok", hex: "#2f9468", use: "Confirmations, instead-do-this notes" },
+];
+
+const typeScale = [
+  { name: "Display 7XL", className: "display text-7xl", sample: "Aa 24" },
+  { name: "Display 5XL", className: "display text-5xl", sample: "Aa 24" },
+  { name: "Display 3XL", className: "display text-3xl", sample: "Aa 24" },
+  { name: "Display XL", className: "display text-xl", sample: "Aa 24" },
+  { name: "Body LG", className: "text-lg", sample: "The quick brown fox" },
+  { name: "Body MD", className: "text-base", sample: "The quick brown fox" },
+  { name: "Body SM", className: "text-sm text-[var(--ink-2)]", sample: "The quick brown fox" },
+  { name: "Eyebrow", className: "text-xs uppercase tracking-[0.2em] text-[var(--dim)]", sample: "Section eyebrow" },
+  { name: "Mono", className: "text-sm", sample: "M1 STEEL · 0.875rem", mono: true },
+];
+
+const spacing = [
+  ["2xs", "4px", "0.25rem"],
+  ["xs", "8px", "0.5rem"],
+  ["sm", "12px", "0.75rem"],
+  ["md", "16px", "1rem"],
+  ["lg", "24px", "1.5rem"],
+  ["xl", "32px", "2rem"],
+  ["2xl", "48px", "3rem"],
+  ["3xl", "64px", "4rem"],
+  ["4xl", "96px", "6rem"],
+];
+
+const radii = [
+  ["xs", "6px", "Tag, kbd"],
+  ["sm", "10px", "Small inputs"],
+  ["md", "16px", "Inputs, small cards"],
+  ["lg", "22px", "Standard chips"],
+  ["xl", "28px", "Hero feature card"],
+  ["2xl", "36px", "Large surface containers"],
+];
+
+const voice = [
+  {
+    do: "Patient and practical.",
+    dont: "Urgent and panic-mongering.",
+    why: "The audience already knows the stakes. They don't need to be sold on them.",
+  },
+  {
+    do: "Vendor-neutral.",
+    dont: "Comparing brands by name in the main copy.",
+    why: "The brand market shifts faster than guides should. Vendor specifics live in dated deep-dives.",
+  },
+  {
+    do: "Acknowledge trade-offs.",
+    dont: "Pretending one method is right for everyone.",
+    why: "Different people, different holdings, different lives. Honest trade-offs earn trust.",
+  },
+  {
+    do: "Plain language.",
+    dont: "Cypherpunk jargon as filler.",
+    why: "Terminology is used when it carries weight. Otherwise, English.",
+  },
+  {
+    do: "Lowercase headlines feel calmer; sentence-case is the default. Title-case is reserved for the brand mark.",
+    dont: "All-caps shouting outside of small labels and tags.",
+    why: "The design language is quiet. The copy should match.",
+  },
+];
+---
+
+<Layout
+  title="Brand & design system — How to Store Crypto"
+  description="The design language behind the site: logo, color, typography, components, patterns, and voice."
+>
+  <main class="mx-auto max-w-6xl px-6 pt-32 pb-20 md:px-10">
+    <!-- ============================================================
+         Page header
+         ============================================================ -->
+    <header class="mb-20">
+      <div class="pill"><span class="pill-dot"></span> Design system · v0.1 · 20 May 2026</div>
+      <h1 class="display mt-6 text-[clamp(2.5rem,6vw,5.5rem)] leading-[0.95]">
+        Brand &amp;
+        <span class="stat-grad italic">design system.</span>
+      </h1>
+      <p class="mt-6 max-w-2xl text-lg text-[var(--ink-2)]">
+        The visual language behind <a href="/" class="text-[var(--accent)] hover:text-[var(--accent-deep)]">How&nbsp;to&nbsp;Store&nbsp;Crypto</a>.
+        Tokens, components, patterns, and the editorial tone that ties them
+        together. Mostly intended as a reference for me as I add the rest of
+        the site.
+      </p>
+    </header>
+
+    <!-- Table of contents -->
+    <nav class="glass mb-20 rounded-2xl p-2">
+      <ul class="flex flex-wrap gap-1 text-xs">
+        {
+          [
+            ["Logo", "#logo"],
+            ["Color", "#color"],
+            ["Typography", "#type"],
+            ["Spacing", "#spacing"],
+            ["Radii & elevation", "#radii"],
+            ["Buttons", "#buttons"],
+            ["Pills & tags", "#tags"],
+            ["Cards & surfaces", "#cards"],
+            ["Forms", "#forms"],
+            ["Tables", "#tables"],
+            ["Patterns", "#patterns"],
+            ["Voice & tone", "#voice"],
+          ].map(([l, h]) => (
+            <li>
+              <a
+                href={h}
+                class="rounded-full px-3 py-1.5 text-[var(--ink-2)] transition hover:bg-white/70"
+              >
+                {l}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <!-- ============================================================
+         Logo
+         ============================================================ -->
+    <section id="logo" class="mb-24">
+      <header class="mb-10">
+        <div class="text-xs uppercase tracking-[0.2em] text-[var(--dim)]">01 · Logo</div>
+        <h2 class="display mt-2 text-4xl">The mark</h2>
+        <p class="mt-3 max-w-2xl text-[var(--ink-2)]">
+          A hex with an inner crystal facet. Reads as a container, a vault, a
+          gem, and a hint of cold storage all at once. Drawn with a single
+          weight; never filled. Pairs with the wordmark set in Inter Medium.
+        </p>
+      </header>
+
+      <div class="grid grid-cols-12 gap-6">
+        <!-- Mark on light -->
+        <div class="glass col-span-12 flex aspect-square items-center justify-center rounded-2xl md:col-span-3">
+          <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="#1f3a68" stroke-width="1.4" stroke-linejoin="round">
+            <path d="M12 2 L20 6.5 L20 16.5 L12 21 L4 16.5 L4 6.5 Z" />
+            <path d="M12 7 L16 11.5 L12 16 L8 11.5 Z" />
+          </svg>
+        </div>
+
+        <!-- Mark on dark -->
+        <div class="col-span-12 flex aspect-square items-center justify-center rounded-2xl bg-[var(--ink)] md:col-span-3">
+          <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="#f4f8fc" stroke-width="1.4" stroke-linejoin="round">
+            <path d="M12 2 L20 6.5 L20 16.5 L12 21 L4 16.5 L4 6.5 Z" />
+            <path d="M12 7 L16 11.5 L12 16 L8 11.5 Z" />
+          </svg>
+        </div>
+
+        <!-- Lockup -->
+        <div class="glass col-span-12 flex aspect-square items-center justify-center rounded-2xl md:col-span-6">
+          <div class="flex items-center gap-4">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#0c1a2e" stroke-width="1.4" stroke-linejoin="round">
+              <path d="M12 2 L20 6.5 L20 16.5 L12 21 L4 16.5 L4 6.5 Z" />
+              <path d="M12 7 L16 11.5 L12 16 L8 11.5 Z" />
+            </svg>
+            <span class="display text-3xl text-[var(--ink)]">How to Store Crypto</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sizes / usage notes -->
+      <div class="glass mt-6 grid grid-cols-1 gap-6 rounded-2xl p-7 md:grid-cols-3">
+        <div>
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">Min size</div>
+          <div class="mt-2 flex items-end gap-6">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0c1a2e" stroke-width="1.6" stroke-linejoin="round">
+              <path d="M12 2 L20 6.5 L20 16.5 L12 21 L4 16.5 L4 6.5 Z" />
+              <path d="M12 7 L16 11.5 L12 16 L8 11.5 Z" />
+            </svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0c1a2e" stroke-width="1.4" stroke-linejoin="round">
+              <path d="M12 2 L20 6.5 L20 16.5 L12 21 L4 16.5 L4 6.5 Z" />
+              <path d="M12 7 L16 11.5 L12 16 L8 11.5 Z" />
+            </svg>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#0c1a2e" stroke-width="1.4" stroke-linejoin="round">
+              <path d="M12 2 L20 6.5 L20 16.5 L12 21 L4 16.5 L4 6.5 Z" />
+              <path d="M12 7 L16 11.5 L12 16 L8 11.5 Z" />
+            </svg>
+          </div>
+          <p class="mt-3 text-xs text-[var(--ink-2)]">
+            16px is the floor for the mark alone. For the lockup, 24px tall.
+          </p>
+        </div>
+        <div>
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">Clear space</div>
+          <p class="mt-2 text-xs text-[var(--ink-2)]">
+            Leave the mark's height of clear space around all sides. Don't
+            crowd it against text or borders.
+          </p>
+        </div>
+        <div>
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">Don't</div>
+          <ul class="mt-2 space-y-1 text-xs text-[var(--ink-2)]">
+            <li>· Fill the shape</li>
+            <li>· Recolor the strokes</li>
+            <li>· Stretch or skew</li>
+            <li>· Drop a shadow on the mark itself</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Color
+         ============================================================ -->
+    <section id="color" class="mb-24">
+      <header class="mb-10">
+        <div class="text-xs uppercase tracking-[0.2em] text-[var(--dim)]">02 · Color</div>
+        <h2 class="display mt-2 text-4xl">Palette</h2>
+        <p class="mt-3 max-w-2xl text-[var(--ink-2)]">
+          The palette is mostly cool greys and one calm accent blue. Two
+          semantic colors handle warnings and confirmations. Backgrounds are
+          atmospheric gradients, never flat fields.
+        </p>
+      </header>
+
+      <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+        {
+          colors.map((c) => (
+            <div class="glass overflow-hidden rounded-2xl">
+              <div
+                class="h-24 border-b hairline"
+                style={`background: ${c.hex}`}
+              ></div>
+              <div class="p-4">
+                <div class="display text-sm">--{c.name}</div>
+                <div class="mt-1 font-mono text-xs text-[var(--dim)]">
+                  {c.hex}
+                </div>
+                <div class="mt-3 text-xs leading-relaxed text-[var(--ink-2)]">
+                  {c.use}
+                </div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- Gradient sample -->
+      <div class="glass mt-6 overflow-hidden rounded-2xl">
+        <div
+          class="h-32"
+          style="background: linear-gradient(180deg, #1f3a68 0%, #2f6fe0 100%)"
+        ></div>
+        <div class="p-4">
+          <div class="display text-sm">stat-grad</div>
+          <div class="mt-1 font-mono text-xs text-[var(--dim)]">
+            linear-gradient(180deg, --ice-deep → --accent)
+          </div>
+          <div class="mt-2 text-xs text-[var(--ink-2)]">
+            Used as a text-clip on display numerals and italic emphasis spans.
+            Never as a fill on large surfaces.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Typography
+         ============================================================ -->
+    <section id="type" class="mb-24">
+      <header class="mb-10">
+        <div class="text-xs uppercase tracking-[0.2em] text-[var(--dim)]">03 · Typography</div>
+        <h2 class="display mt-2 text-4xl">One sans. One mono.</h2>
+        <p class="mt-3 max-w-2xl text-[var(--ink-2)]">
+          <strong>Inter</strong> handles everything from body to display, with
+          the <code class="kbd">.display</code> class tightening tracking for
+          large sizes. <strong>JetBrains Mono</strong> for labels, technical
+          callouts, and the rare code snippet. Italics are used as emphasis
+          (often clipped with the brand gradient), never paragraphs.
+        </p>
+      </header>
+
+      <div class="glass overflow-hidden rounded-2xl">
+        <div class="overflow-x-auto">
+          <table class="table-cold min-w-[640px]">
+            <thead>
+              <tr>
+                <th style="width: 22%">Token</th>
+                <th style="width: 28%">Class</th>
+                <th>Sample</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                typeScale.map((t) => (
+                  <tr>
+                    <td>
+                      <div class="font-medium">{t.name}</div>
+                    </td>
+                    <td>
+                      <code class="kbd">{t.className}</code>
+                    </td>
+                    <td>
+                      <span class:list={[t.className, t.mono && "font-mono"]}>
+                        {t.sample}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Type pairing demo -->
+      <div class="glass mt-6 rounded-2xl p-8 md:p-10">
+        <div class="text-xs uppercase tracking-[0.2em] text-[var(--dim)]">eyebrow</div>
+        <h3 class="display mt-3 text-4xl">
+          A heading sets the
+          <span class="stat-grad italic">tone</span>
+          for the section.
+        </h3>
+        <p class="mt-4 max-w-xl text-base leading-relaxed text-[var(--ink-2)]">
+          Body copy sits below at <code class="kbd">text-base</code> in
+          <code class="kbd">--ink-2</code>. The italic emphasis with the brand
+          gradient is the only place we use any kind of decorative typography.
+          Used roughly once per section.
+        </p>
+        <p class="mt-3 font-mono text-xs text-[var(--dim)]">
+          MONO · for technical labels, key bindings (<span class="kbd">⌘ K</span>), and dates.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Spacing
+         ============================================================ -->
+    <section id="spacing" class="mb-24">
+      <header class="mb-10">
+        <div class="text-xs uppercase tracking-[0.2em] text-[var(--dim)]">04 · Spacing</div>
+        <h2 class="display mt-2 text-4xl">Generous, calm scale</h2>
+        <p class="mt-3 max-w-2xl text-[var(--ink-2)]">
+          Tailwind's standard scale, used generously. Sections breathe at <code class="kbd">py-20</code> minimum. Cards use <code class="kbd">p-7</code> or <code class="kbd">p-8</code>. Tightness is reserved for tables and dense data.
+        </p>
+      </header>
+
+      <div class="glass overflow-hidden rounded-2xl">
+        <div class="overflow-x-auto">
+          <table class="table-cold min-w-[480px]">
+            <thead>
+              <tr>
+                <th>Token</th>
+                <th>Pixels</th>
+                <th>Rem</th>
+                <th>Visual</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                spacing.map(([name, px, rem]) => (
+                  <tr>
+                    <td><code class="kbd">space-{name}</code></td>
+                    <td>{px}</td>
+                    <td>{rem}</td>
+                    <td>
+                      <div
+                        class="rounded-sm bg-[var(--ink-2)]"
+                        style={`height: 8px; width: ${px}`}
+                      ></div>
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Radii & elevation
+         ============================================================ -->
+    <section id="radii" class="mb-24">
+      <header class="mb-10">
+        <div class="text-xs uppercase tracking-[0.2em] text-[var(--dim)]">05 · Radii &amp; elevation</div>
+        <h2 class="display mt-2 text-4xl">Soft, deliberate</h2>
+        <p class="mt-3 max-w-2xl text-[var(--ink-2)]">
+          Larger radii on the largest surfaces. Elevation comes from the glass
+          system — diffuse drop shadows and a 1-pixel inner highlight — not
+          from heavy box shadows.
+        </p>
+      </header>
+
+      <div class="grid grid-cols-2 gap-4 md:grid-cols-3">
+        {
+          radii.map(([name, px, use]) => (
+            <div class="glass p-6" style={`border-radius: ${px}`}>
+              <div class="display text-base">radius-{name}</div>
+              <div class="mt-1 font-mono text-xs text-[var(--dim)]">{px}</div>
+              <div class="mt-2 text-xs text-[var(--ink-2)]">{use}</div>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Buttons
+         ============================================================ -->
+    <section id="buttons" class="mb-24">
+      <header class="mb-10">
+        <div class="text-xs uppercase tracking-[0.2em] text-[var(--dim)]">06 · Buttons</div>
+        <h2 class="display mt-2 text-4xl">Three weights. Three sizes.</h2>
+        <p class="mt-3 max-w-2xl text-[var(--ink-2)]">
+          Pill-shaped, with consistent gap-2 between label and adjacent glyph.
+          One primary per view. Secondary and ghost are interchangeable for
+          supporting actions.
+        </p>
+      </header>
+
+      <div class="glass space-y-8 rounded-2xl p-8">
+        <!-- Weights -->
+        <div>
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">Weight</div>
+          <div class="mt-3 flex flex-wrap items-center gap-3">
+            <button class="btn btn-primary">Primary action →</button>
+            <button class="btn btn-secondary">Secondary action</button>
+            <button class="btn btn-ghost">Ghost action</button>
+          </div>
+        </div>
+
+        <!-- Sizes -->
+        <div class="border-t hairline pt-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">Size</div>
+          <div class="mt-3 flex flex-wrap items-center gap-3">
+            <button class="btn btn-primary btn-sm">Small →</button>
+            <button class="btn btn-primary">Default →</button>
+            <button class="btn btn-primary btn-lg">Large →</button>
+          </div>
+        </div>
+
+        <!-- States -->
+        <div class="border-t hairline pt-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">States</div>
+          <div class="mt-3 flex flex-wrap items-center gap-3">
+            <button class="btn btn-primary">Default</button>
+            <button class="btn btn-primary" style="background: var(--ice-deep)">Hover</button>
+            <button class="btn btn-primary" disabled style="opacity: 0.4; cursor: not-allowed">Disabled</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Pills & tags
+         ============================================================ -->
+    <section id="tags" class="mb-24">
+      <header class="mb-10">
+        <div class="text-xs uppercase tracking-[0.2em] text-[var(--dim)]">07 · Pills &amp; tags</div>
+        <h2 class="display mt-2 text-4xl">Small, glassy badges</h2>
+        <p class="mt-3 max-w-2xl text-[var(--ink-2)]">
+          Two related shapes. <strong>Pills</strong> are glassy, rounded-full,
+          used for status, eyebrows, and inline navigation. <strong>Tags</strong>
+          are colored, rectangular, used for inline metadata.
+        </p>
+      </header>
+
+      <div class="glass space-y-8 rounded-2xl p-8">
+        <div>
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">Pill</div>
+          <div class="mt-3 flex flex-wrap gap-3">
+            <span class="pill"><span class="pill-dot"></span>Live · 20 May 2026</span>
+            <span class="pill">Methods</span>
+            <span class="pill">Reading time ≈ 9 min</span>
+            <span class="pill">⌘ K to search</span>
+          </div>
+        </div>
+
+        <div class="border-t hairline pt-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">Tag variants</div>
+          <div class="mt-3 flex flex-wrap gap-3">
+            <span class="tag tag-neutral">neutral</span>
+            <span class="tag tag-accent">accent</span>
+            <span class="tag tag-ok">ok</span>
+            <span class="tag tag-warn">warn</span>
+          </div>
+          <p class="mt-3 text-xs text-[var(--dim)]">
+            Tags carry weak semantics. Use sparingly; one or two per card.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Cards & surfaces
+         ============================================================ -->
+    <section id="cards" class="mb-24">
+      <header class="mb-10">
+        <div class="text-xs uppercase tracking-[0.2em] text-[var(--dim)]">08 · Cards &amp; surfaces</div>
+        <h2 class="display mt-2 text-4xl">The glass system</h2>
+        <p class="mt-3 max-w-2xl text-[var(--ink-2)]">
+          Every container is one of four surfaces. <code class="kbd">.glass</code> is the default — translucent, blurred, with a soft inner highlight. <code class="kbd">.glass-strong</code> for content-dense surfaces that need legibility. <code class="kbd">.glass-dark</code> for inverted callouts. <code class="kbd">.frost</code> for the circular hero artwork.
+        </p>
+      </header>
+
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div class="glass rounded-2xl p-7">
+          <div class="text-xs uppercase tracking-[0.15em] text-[var(--ice-deep)]">.glass</div>
+          <h3 class="display mt-3 text-2xl">Default surface</h3>
+          <p class="mt-2 text-sm text-[var(--ink-2)]">
+            Used for cards, sections, the footer, the FAQ. The bread and butter.
+          </p>
+        </div>
+        <div class="glass-strong rounded-2xl p-7">
+          <div class="text-xs uppercase tracking-[0.15em] text-[var(--ice-deep)]">.glass-strong</div>
+          <h3 class="display mt-3 text-2xl">Content-dense surface</h3>
+          <p class="mt-2 text-sm text-[var(--ink-2)]">
+            For tables, forms, long-form text. More opaque, easier to read.
+          </p>
+        </div>
+        <div class="glass-dark rounded-2xl p-7">
+          <div class="text-xs uppercase tracking-[0.15em] text-[var(--ice-deep)]">.glass-dark</div>
+          <h3 class="display mt-3 text-2xl">Inverted callout</h3>
+          <p class="mt-2 text-sm text-[var(--ink-2)]">
+            For pull-out cards that sit inside another glass surface. Lower contrast against the parent.
+          </p>
+        </div>
+        <div class="rounded-2xl frost p-7">
+          <div class="text-xs uppercase tracking-[0.15em] text-[var(--ice-deep)]">.frost</div>
+          <h3 class="display mt-3 text-2xl">Atmospheric circle</h3>
+          <p class="mt-2 text-sm text-[var(--ink-2)]">
+            Used behind the hero artwork and the final CTA. Not as a container for text on its own.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Forms
+         ============================================================ -->
+    <section id="forms" class="mb-24">
+      <header class="mb-10">
+        <div class="text-xs uppercase tracking-[0.2em] text-[var(--dim)]">09 · Forms</div>
+        <h2 class="display mt-2 text-4xl">Quiet inputs</h2>
+        <p class="mt-3 max-w-2xl text-[var(--ink-2)]">
+          Same glass surface as cards. Accent-color focus ring, never a hard
+          black border. Labels sit above; help text below.
+        </p>
+      </header>
+
+      <form class="glass max-w-xl space-y-5 rounded-2xl p-8" onsubmit="event.preventDefault()">
+        <div>
+          <label class="label" for="email">Email</label>
+          <input id="email" class="input" type="email" placeholder="you@example.com" />
+          <p class="mt-2 text-xs text-[var(--dim)]">
+            We don't actually have a newsletter. This is here for the demo.
+          </p>
+        </div>
+
+        <div>
+          <label class="label" for="role">What brings you here?</label>
+          <select id="role" class="input">
+            <option>I'm new to self-custody</option>
+            <option>I have a setup; want a second opinion</option>
+            <option>Planning inheritance</option>
+            <option>Just browsing</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="label" for="notes">Notes (optional)</label>
+          <textarea id="notes" class="input" rows="3" placeholder="Anything specific you're trying to figure out…"></textarea>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3 pt-2">
+          <button type="submit" class="btn btn-primary">Submit (no-op)</button>
+          <button type="reset" class="btn btn-ghost">Reset</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============================================================
+         Tables
+         ============================================================ -->
+    <section id="tables" class="mb-24">
+      <header class="mb-10">
+        <div class="text-xs uppercase tracking-[0.2em] text-[var(--dim)]">10 · Tables</div>
+        <h2 class="display mt-2 text-4xl">Quiet, scannable</h2>
+        <p class="mt-3 max-w-2xl text-[var(--ink-2)]">
+          Hairline rows, generous padding, eyebrow-style column headers, hover-tinted rows. Sit inside a glass container; the table itself never has a border.
+        </p>
+      </header>
+
+      <div class="glass overflow-hidden rounded-2xl">
+        <div class="border-b hairline-strong px-6 py-5">
+          <div class="text-xs uppercase tracking-[0.2em] text-[var(--ice-deep)]">
+            Sample data
+          </div>
+          <div class="display mt-1 text-2xl">A quick demo</div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="table-cold min-w-[640px]">
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Cost</th>
+                <th>Survivability</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="font-medium">Stamped steel</div><div class="mt-1 text-xs text-[var(--dim)]">M1</div></td>
+                <td>$70 – $200</td>
+                <td><span class="display stat-grad text-base">9 / 10</span></td>
+                <td><span class="tag tag-ok">recommended</span></td>
+              </tr>
+              <tr>
+                <td><div class="font-medium">Multisig 2-of-3</div><div class="mt-1 text-xs text-[var(--dim)]">M2</div></td>
+                <td>$300 – $700</td>
+                <td><span class="display stat-grad text-base">10 / 10</span></td>
+                <td><span class="tag tag-accent">advanced</span></td>
+              </tr>
+              <tr>
+                <td><div class="font-medium">Shamir shares</div><div class="mt-1 text-xs text-[var(--dim)]">M3</div></td>
+                <td>$80 – $200</td>
+                <td><span class="display stat-grad text-base">8 / 10</span></td>
+                <td><span class="tag tag-neutral">situational</span></td>
+              </tr>
+              <tr>
+                <td><div class="font-medium">Sealed paper</div><div class="mt-1 text-xs text-[var(--dim)]">M4</div></td>
+                <td>$20 – $60</td>
+                <td><span class="display stat-grad text-base">5 / 10</span></td>
+                <td><span class="tag tag-warn">backup-only</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Patterns
+         ============================================================ -->
+    <section id="patterns" class="mb-24">
+      <header class="mb-10">
+        <div class="text-xs uppercase tracking-[0.2em] text-[var(--dim)]">11 · Patterns</div>
+        <h2 class="display mt-2 text-4xl">Recurring layouts</h2>
+        <p class="mt-3 max-w-2xl text-[var(--ink-2)]">
+          The handful of compositions the rest of the site can lean on. Each is
+          shown at production scale so the proportions are exactly what to
+          copy.
+        </p>
+      </header>
+
+      <!-- Stat row -->
+      <div class="mb-10">
+        <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">Stat row</div>
+        <div class="mt-3 grid grid-cols-2 gap-4 md:grid-cols-4">
+          {
+            [
+              { v: "≈ $90", l: "in hardware" },
+              { v: "4 hrs", l: "this weekend" },
+              { v: "30 min", l: "annual rehearsal" },
+              { v: "0", l: "ongoing fees" },
+            ].map((s) => (
+              <div class="glass rounded-2xl p-6 text-center">
+                <div class="display stat-grad text-3xl md:text-4xl">{s.v}</div>
+                <div class="mt-2 text-xs text-[var(--ink-2)]">{s.l}</div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- FAQ accordion -->
+      <div class="mb-10">
+        <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">FAQ accordion</div>
+        <div class="mt-3 space-y-3">
+          <details class="glass group rounded-2xl p-6 open:bg-white/75" open>
+            <summary class="flex cursor-pointer items-center justify-between gap-4">
+              <span class="display text-lg md:text-xl">A common question goes here?</span>
+              <span class="frost flex size-8 shrink-0 items-center justify-center rounded-full text-[var(--ice-deep)] transition group-open:rotate-45">+</span>
+            </summary>
+            <p class="mt-4 max-w-3xl text-sm leading-relaxed text-[var(--ink-2)] md:text-base">
+              The answer sits beneath the summary in body copy, at most a
+              short paragraph or two. If it runs longer, it probably belongs
+              in its own page.
+            </p>
+          </details>
+          <details class="glass group rounded-2xl p-6">
+            <summary class="flex cursor-pointer items-center justify-between gap-4">
+              <span class="display text-lg md:text-xl">Another question, collapsed by default?</span>
+              <span class="frost flex size-8 shrink-0 items-center justify-center rounded-full text-[var(--ice-deep)] transition group-open:rotate-45">+</span>
+            </summary>
+            <p class="mt-4 max-w-3xl text-sm leading-relaxed text-[var(--ink-2)] md:text-base">
+              Subsequent items default to collapsed. The first item is opened
+              on page load so the pattern is discoverable without a click.
+            </p>
+          </details>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div>
+        <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">Final CTA</div>
+        <div class="glass relative mt-3 overflow-hidden rounded-[40px] p-10 text-center md:p-16">
+          <div class="frost absolute -top-32 left-1/2 size-96 -translate-x-1/2 rounded-full opacity-60"></div>
+          <div class="relative">
+            <div class="pill mx-auto inline-flex"><span>Start here</span></div>
+            <h3 class="display mx-auto mt-6 max-w-2xl text-3xl leading-tight md:text-5xl">
+              One afternoon now.
+              <br />
+              <span class="stat-grad italic">Decades of peace later.</span>
+            </h3>
+            <div class="mt-8 flex flex-wrap justify-center gap-3">
+              <button class="btn btn-primary btn-lg">Primary CTA →</button>
+              <button class="btn btn-secondary btn-lg">Secondary CTA</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Voice & tone
+         ============================================================ -->
+    <section id="voice" class="mb-24">
+      <header class="mb-10">
+        <div class="text-xs uppercase tracking-[0.2em] text-[var(--dim)]">12 · Voice &amp; tone</div>
+        <h2 class="display mt-2 text-4xl">How the site talks</h2>
+        <p class="mt-3 max-w-2xl text-[var(--ink-2)]">
+          The visual design is quiet. The copy should match. Five rules cover
+          almost every editorial decision.
+        </p>
+      </header>
+
+      <div class="glass overflow-hidden rounded-2xl">
+        <div class="overflow-x-auto">
+          <table class="table-cold min-w-[720px]">
+            <thead>
+              <tr>
+                <th style="width: 28%">Do</th>
+                <th style="width: 28%">Don't</th>
+                <th>Why</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                voice.map((v) => (
+                  <tr>
+                    <td class="text-[var(--ok)]">{v.do}</td>
+                    <td class="text-[var(--warn)]">{v.dont}</td>
+                    <td class="text-[var(--ink-2)]">{v.why}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final note -->
+    <section class="mb-12">
+      <div class="glass rounded-2xl p-8 text-center">
+        <p class="text-sm text-[var(--ink-2)]">
+          This system will evolve as the site grows. Updates are versioned and
+          dated at the top of the page.
+        </p>
+        <div class="mt-6 flex flex-wrap justify-center gap-3">
+          <a href="/" class="btn btn-secondary btn-sm">← Back to landing</a>
+          <a href="#logo" class="btn btn-ghost btn-sm">↑ Top</a>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
