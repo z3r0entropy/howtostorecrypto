@@ -9,7 +9,9 @@ import {
 } from "~/data/locations";
 
 import {
-  recommendation,
+  type Adversary,
+  adversaryMeta,
+  recommend,
   reminderCadence,
   type Stakes,
   type StrategyKey,
@@ -17,6 +19,8 @@ import {
   strategies,
   type Tier,
   tierMeta,
+  type Usage,
+  usageMeta,
 } from "~/data/strategies";
 import { url } from "~/lib/url";
 
@@ -24,7 +28,9 @@ type InheritancePattern = "sealed-letter" | "trustee" | "none";
 
 type State = {
   tier: Tier | null;
+  usage: Usage | null;
   stakes: Stakes | null;
+  adversary: Adversary | null;
   strategyKey: StrategyKey | null;
   locationSlugs: string[];
   inheritance: InheritancePattern | null;
@@ -33,11 +39,16 @@ type State = {
   reminderReview: string;
 };
 
-const STORAGE_KEY = "hsc.wizard.v1";
+// localStorage key is bumped (v1 → v2) because the State shape changed.
+// Old persisted state would hydrate with `usage`/`adversary` as undefined,
+// then break the gating logic; safer to start fresh.
+const STORAGE_KEY = "hsc.wizard.v2";
 
 const initialState: State = {
   tier: null,
+  usage: null,
   stakes: null,
+  adversary: null,
   strategyKey: null,
   locationSlugs: [],
   inheritance: null,
@@ -48,7 +59,9 @@ const initialState: State = {
 
 const steps = [
   { key: "tier", label: "Level" },
+  { key: "usage", label: "Usage" },
   { key: "stakes", label: "Stakes" },
+  { key: "adversary", label: "Threat" },
   { key: "strategy", label: "Strategy" },
   { key: "locations", label: "Locations" },
   { key: "inheritance", label: "Inheritance" },
@@ -97,9 +110,9 @@ export default function SetupWizard({ initialTier }: { initialTier?: string }) {
   }, [state, stepIdx, hydrated]);
 
   const recommended = useMemo(() => {
-    if (!state.tier || !state.stakes) return null;
-    return recommendation[state.tier][state.stakes];
-  }, [state.tier, state.stakes]);
+    if (!state.tier || !state.stakes || !state.usage || !state.adversary) return null;
+    return recommend(state.tier, state.stakes, state.usage, state.adversary);
+  }, [state.tier, state.stakes, state.usage, state.adversary]);
 
   // Auto-select recommended strategy when entering the strategy step for the first time
   useEffect(() => {
@@ -155,13 +168,18 @@ export default function SetupWizard({ initialTier }: { initialTier?: string }) {
     }
   }
 
-  // Step-by-step gating: you can move to step N only if N-1 is satisfied
+  // Step-by-step gating: you can move to step N only if N-1 is satisfied.
+  // For strategies that need no physical locations (e.g. exchange custody),
+  // the locations step is informational only and doesn't gate progression.
   function maxReachableStep() {
     if (!state.tier) return 0;
-    if (!state.stakes) return 1;
-    if (!state.strategyKey) return 2;
-    if (state.locationSlugs.length === 0) return 3;
-    if (!state.inheritance) return 4;
+    if (!state.usage) return 1;
+    if (!state.stakes) return 2;
+    if (!state.adversary) return 3;
+    if (!state.strategyKey) return 4;
+    const locsNeeded = strategy?.locationsNeeded ?? 0;
+    if (locsNeeded > 0 && state.locationSlugs.length === 0) return 5;
+    if (!state.inheritance) return 6;
     return steps.length - 1;
   }
 
@@ -170,8 +188,12 @@ export default function SetupWizard({ initialTier }: { initialTier?: string }) {
     switch (currentStep) {
       case "tier":
         return !!state.tier;
+      case "usage":
+        return !!state.usage;
       case "stakes":
         return !!state.stakes;
+      case "adversary":
+        return !!state.adversary;
       case "strategy":
         return !!state.strategyKey;
       case "locations":
@@ -199,8 +221,14 @@ export default function SetupWizard({ initialTier }: { initialTier?: string }) {
         {currentStep === "tier" && (
           <StepTier value={state.tier} onChange={(v) => update("tier", v)} />
         )}
+        {currentStep === "usage" && (
+          <StepUsage value={state.usage} onChange={(v) => update("usage", v)} />
+        )}
         {currentStep === "stakes" && (
           <StepStakes value={state.stakes} onChange={(v) => update("stakes", v)} />
+        )}
+        {currentStep === "adversary" && (
+          <StepAdversary value={state.adversary} onChange={(v) => update("adversary", v)} />
         )}
         {currentStep === "strategy" && state.tier && state.stakes && recommended && (
           <StepStrategy
@@ -358,13 +386,54 @@ function StepTier({ value, onChange }: { value: Tier | null; onChange: (v: Tier)
 }
 
 /* ============================================================
-   Step 2: Stakes
+   Step 2: Usage
+   ============================================================ */
+function StepUsage({ value, onChange }: { value: Usage | null; onChange: (v: Usage) => void }) {
+  return (
+    <section class="glass rounded-3xl p-8 md:p-10">
+      <div class="pill">
+        <span>Step 2 · Usage</span>
+      </div>
+      <h2 class="display mt-6 text-3xl leading-tight md:text-5xl">
+        How will you
+        <span class="stat-grad italic"> actually use it?</span>
+      </h2>
+      <p class="mt-4 text-[var(--ink-2)]">
+        The right setup is different for someone who trades weekly than for someone who's
+        bought-and-forgotten. This is the single biggest swing factor in the recommendation.
+      </p>
+
+      <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+        {(Object.keys(usageMeta) as Usage[]).map((u) => {
+          const m = usageMeta[u];
+          const active = value === u;
+          return (
+            <button
+              onClick={() => onChange(u)}
+              class={`glass-dark rounded-2xl p-6 text-left transition hover:bg-white/40 ${
+                active ? "ring-2 ring-[var(--accent)] shadow-lg" : ""
+              }`}
+            >
+              <div class="text-xs uppercase tracking-[0.15em] text-[var(--ice-deep)]">Pattern</div>
+              <div class="display mt-2 text-2xl">{m.label}</div>
+              <div class="mt-1 text-sm text-[var(--ink)]">{m.sub}</div>
+              <p class="mt-4 text-xs leading-relaxed text-[var(--ink-2)]">{m.hint}</p>
+            </button>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+/* ============================================================
+   Step 3: Stakes
    ============================================================ */
 function StepStakes({ value, onChange }: { value: Stakes | null; onChange: (v: Stakes) => void }) {
   return (
     <section class="glass rounded-3xl p-8 md:p-10">
       <div class="pill">
-        <span>Step 2 · The stakes</span>
+        <span>Step 3 · The stakes</span>
       </div>
       <h2 class="display mt-6 text-3xl leading-tight md:text-5xl">
         How bad would
@@ -402,7 +471,56 @@ function StepStakes({ value, onChange }: { value: Stakes | null; onChange: (v: S
 }
 
 /* ============================================================
-   Step 3: Strategy
+   Step 4: Adversary
+   ============================================================ */
+function StepAdversary({
+  value,
+  onChange,
+}: {
+  value: Adversary | null;
+  onChange: (v: Adversary) => void;
+}) {
+  return (
+    <section class="glass rounded-3xl p-8 md:p-10">
+      <div class="pill">
+        <span>Step 4 · Threat model</span>
+      </div>
+      <h2 class="display mt-6 text-3xl leading-tight md:text-5xl">
+        Who's
+        <span class="stat-grad italic"> coming after this?</span>
+      </h2>
+      <p class="mt-4 max-w-2xl text-[var(--ink-2)]">
+        Most attacks against most people are opportunistic. If you're a visible or specific target,
+        the setup escalates — one compromised key shouldn't be enough.
+      </p>
+
+      <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+        {(Object.keys(adversaryMeta) as Adversary[]).map((a) => {
+          const m = adversaryMeta[a];
+          const active = value === a;
+          return (
+            <button
+              onClick={() => onChange(a)}
+              class={`glass-dark rounded-2xl p-6 text-left transition hover:bg-white/40 ${
+                active ? "ring-2 ring-[var(--accent)] shadow-lg" : ""
+              }`}
+            >
+              <div class="text-xs uppercase tracking-[0.15em] text-[var(--ice-deep)]">
+                Threat model
+              </div>
+              <div class="display mt-2 text-2xl">{m.label}</div>
+              <div class="mt-1 text-sm text-[var(--ink)]">{m.sub}</div>
+              <p class="mt-4 text-xs leading-relaxed text-[var(--ink-2)]">{m.hint}</p>
+            </button>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+/* ============================================================
+   Step 5: Strategy
    ============================================================ */
 function StepStrategy({
   tier,
@@ -413,7 +531,7 @@ function StepStrategy({
 }: {
   tier: Tier;
   stakes: Stakes;
-  recommended: { primary: StrategyKey; alt?: StrategyKey };
+  recommended: { primary: StrategyKey; alt?: StrategyKey; notes?: string[] };
   value: StrategyKey | null;
   onChange: (v: StrategyKey) => void;
 }) {
@@ -427,13 +545,21 @@ function StepStrategy({
   return (
     <section class="glass rounded-3xl p-8 md:p-10">
       <div class="pill">
-        <span>Step 3 · Strategy</span>
+        <span>Step 5 · Strategy</span>
       </div>
       <h2 class="display mt-6 text-3xl leading-tight md:text-5xl">
         For
         <span class="stat-grad italic"> {tierMeta[tier].label} </span>×{" "}
         <span class="stat-grad italic">{stakesMeta[stakes].label}</span>, we recommend:
       </h2>
+
+      {recommended.notes && recommended.notes.length > 0 && (
+        <div class="mt-6 space-y-2 border-l-2 border-[var(--accent)]/40 pl-4">
+          {recommended.notes.map((n) => (
+            <p class="text-sm leading-relaxed text-[var(--ink-2)]">{n}</p>
+          ))}
+        </div>
+      )}
 
       <div class="mt-8 space-y-4">
         {ordered.map((k) => {
@@ -517,7 +643,7 @@ function DefenseBar({
 }
 
 /* ============================================================
-   Step 4: Locations
+   Step 6: Locations
    ============================================================ */
 function StepLocations({
   strategy,
@@ -546,10 +672,60 @@ function StepLocations({
   const have = value.length;
   const need = strategy.locationsNeeded;
 
+  // Strategies like "keep-on-exchange" have no physical backup locations to
+  // pick — the custody is the exchange's. Render a different shell that
+  // explains this and lets the user continue.
+  if (need === 0) {
+    return (
+      <section class="glass rounded-3xl p-8 md:p-10">
+        <div class="pill">
+          <span>Step 6 · Locations</span>
+        </div>
+        <h2 class="display mt-6 text-3xl leading-tight md:text-5xl">
+          <span class="stat-grad italic">No physical locations</span> to pick.
+        </h2>
+        <p class="mt-4 max-w-2xl text-[var(--ink-2)]">
+          Your chosen strategy keeps the funds with the exchange, so there's no seed phrase to back
+          up and no plates to distribute. What matters instead is the account-recovery surface:
+        </p>
+        <ul class="mt-6 space-y-3 text-sm text-[var(--ink-2)]">
+          <li class="flex items-start gap-2">
+            <span class="mt-0.5 text-[var(--accent)]">·</span>
+            <span>
+              Hardware 2FA on the exchange account (YubiKey, not SMS) and the same on the email used
+              to recover it.
+            </span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="mt-0.5 text-[var(--accent)]">·</span>
+            <span>
+              2FA backup codes printed and stored somewhere your future self can find them.
+            </span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="mt-0.5 text-[var(--accent)]">·</span>
+            <span>Withdrawal address whitelisting where the exchange supports it.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="mt-0.5 text-[var(--accent)]">·</span>
+            <span>
+              A clear rule for yourself: any balance you'd genuinely miss losing gets moved off the
+              exchange.
+            </span>
+          </li>
+        </ul>
+        <p class="mt-6 max-w-2xl text-sm text-[var(--dim)]">
+          When you outgrow this — bigger balance, longer hold horizon — come back and re-run the
+          wizard. The recommendation will change.
+        </p>
+      </section>
+    );
+  }
+
   return (
     <section class="glass rounded-3xl p-8 md:p-10">
       <div class="pill">
-        <span>Step 4 · Locations</span>
+        <span>Step 6 · Locations</span>
       </div>
       <h2 class="display mt-6 text-3xl leading-tight md:text-5xl">
         Pick
@@ -668,7 +844,7 @@ function AxisRow({ axis, rating }: { axis: "loss" | "theft"; rating: number }) {
 }
 
 /* ============================================================
-   Step 5: Inheritance
+   Step 7: Inheritance
    ============================================================ */
 function StepInheritance({
   value,
@@ -684,7 +860,7 @@ function StepInheritance({
   return (
     <section class="glass rounded-3xl p-8 md:p-10">
       <div class="pill">
-        <span>Step 5 · Inheritance</span>
+        <span>Step 7 · Inheritance</span>
       </div>
       <h2 class="display mt-6 text-3xl leading-tight md:text-5xl">
         What happens
@@ -762,7 +938,7 @@ function StepInheritance({
 }
 
 /* ============================================================
-   Step 6: Reminders
+   Step 8: Reminders
    ============================================================ */
 function StepReminders({
   test,
@@ -776,7 +952,7 @@ function StepReminders({
   return (
     <section class="glass rounded-3xl p-8 md:p-10">
       <div class="pill">
-        <span>Step 6 · Reminders</span>
+        <span>Step 8 · Reminders</span>
       </div>
       <h2 class="display mt-6 text-3xl leading-tight md:text-5xl">
         Schedule the
@@ -834,7 +1010,7 @@ function StepReminders({
 }
 
 /* ============================================================
-   Step 7: Summary
+   Step 9: Summary
    ============================================================ */
 function StepSummary({
   state,

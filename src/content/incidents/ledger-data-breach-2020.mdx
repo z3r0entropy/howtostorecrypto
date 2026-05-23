@@ -1,0 +1,125 @@
+---
+title: "Ledger 2020 — when the customer database became the attack surface"
+status: "confirmed"
+statusNote: >-
+  The data breach itself is acknowledged by Ledger and is documented
+  in their own incident reports. The subsequent phishing-driven losses
+  of individual users are individually reported but rarely
+  independently confirmed in detail; treat the aggregate phishing
+  damage as an estimate, not a fact.
+occurredOn: "2020-06"
+reportedOn: "2020-07-29"
+amountUsd: 0
+amountUsdNote: >-
+  The breach itself did not steal crypto. It exposed personal details
+  of ~272,000 customers (including ~9,500 with full names and home
+  addresses), enabling years of targeted phishing and physical-mail
+  scam campaigns. Individual user losses tied to the leak run from
+  thousands to seven figures per case.
+asset: []
+victimType: "individual"
+attackVector: "phishing"
+rootCause: ["kyc-data-leak", "clicked-phishing-link"]
+summary: >-
+  In 2020, attackers extracted Ledger's e-commerce customer database
+  — including names, postal addresses, phone numbers, and emails —
+  and eventually published the full file online. The leak did not
+  expose any seed phrases, but it gave attackers a perfect targeting
+  list for years of subsequent phishing operations.
+preventedBy:
+  - method: "methods/self-custody"
+    explanation: >-
+      A hardware wallet user who keeps their seed phrase entirely
+      offline is not exposed by a vendor data breach. The phishing
+      that followed only succeeded against users who could be tricked
+      into entering their seed into a website or app — a step that
+      the seed itself never needs.
+  - method: "methods/verified-software"
+    explanation: >-
+      Most of the resulting losses came from victims installing a
+      "Ledger Live update" linked from a phishing email. Only ever
+      installing wallet software from the vendor's official channel,
+      and verifying release signatures, eliminates this entire attack
+      class even when an attacker knows your name and address.
+  - method: "methods/passphrase"
+    explanation: >-
+      A BIP-39 passphrase (the optional 25th word), stored separately
+      from the seed, means a leaked seed alone is insufficient. Some
+      victims of the post-leak phishing entered their 24 words but
+      never their passphrase — and lost only the funds on the
+      unpassphrased account.
+sources:
+  - publisher: "Ledger"
+    title: "Addressing the July 2020 e-commerce and marketing data breach"
+    publishedOn: "2020-07-29"
+    tier: 1
+  - publisher: "Ledger"
+    title: "December 2020 update on the data leak"
+    publishedOn: "2020-12-21"
+    tier: 1
+  - publisher: "Krebs on Security"
+    title: "Coverage of the 2020 Ledger customer-data leak"
+    publishedOn: "2020-12"
+    tier: 2
+relatedIncidents: []
+---
+
+## What happened
+
+In June 2020, a security researcher exploited an authenticated API key
+on Ledger's e-commerce site to extract part of the customer database.
+Ledger disclosed the breach in late July 2020, initially describing
+~1 million email addresses and ~9,500 records containing fuller
+personal information (name, postal address, phone number).
+
+In December 2020, the full database — approximately 272,000 customer
+records — was posted to public file-sharing sites. Customers' home
+addresses, phone numbers, names, and emails were now in the open.
+
+No seed phrases, private keys, or wallet data were ever exposed. A
+hardware wallet's value is precisely that the secret material *never
+leaves the device*; the e-commerce database had no business holding
+any of it and didn't.
+
+## What followed
+
+The phishing operations that followed are the actual incident, from a
+user's perspective. They came in three shapes:
+
+1. **Fake "Ledger Live" updates.** Emails warning of a "security
+   incident requiring you to migrate your assets" linked to lookalike
+   sites hosting trojaned versions of Ledger Live. Users who pasted
+   their 24-word seed into the recovery flow had their wallets emptied
+   within minutes.
+
+2. **Fake "replacement hardware."** Some affected customers received
+   physical packages — well-presented, addressed correctly — containing
+   what appeared to be a replacement Nano. The devices were
+   pre-tampered; using them as instructed handed the seed to the
+   attacker.
+
+3. **SIM swap and direct extortion.** With names, addresses, and phone
+   numbers, attackers had what they needed to attempt SIM-swap attacks
+   on associated accounts, and in some cases simply called or messaged
+   victims directly with credible threats.
+
+A meaningful number of losses are linked to these campaigns. Exact
+figures are hard to pin down because individual victims do not always
+report, and reports are not always independently verified — hence
+this entry's amount field is zero (the breach itself stole no crypto)
+and the downstream damage is described in prose rather than tallied.
+
+## Why it matters here
+
+The Ledger leak is the case that breaks the comforting frame "a hardware
+wallet keeps the secret material safe, so nothing else matters." The
+*device* did its job. The *vendor's CRM* did not. The result is a
+multi-year stream of perfectly targeted social-engineering attempts
+against people identifiable, by name and address, as crypto holders.
+
+The defences that worked are mundane and unrelated to which hardware
+wallet you own: install software only from official sources, verify
+signatures, treat any unsolicited communication about your wallet as
+hostile by default, and consider a separate identity (PO box, alias
+email, secondary phone) when buying anything that links your real
+address to a meaningful crypto holding.

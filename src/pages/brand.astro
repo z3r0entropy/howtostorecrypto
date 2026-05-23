@@ -1,6 +1,7 @@
 ---
 import { url } from "~/lib/url";
 import Layout from "~/layouts/Layout.astro";
+import worldLandPath from "~/lib/world-land-path.txt?raw";
 
 const colors = [
   { name: "bg", hex: "#f4f8fc", use: "Page background (washed by atmospheric gradients)" },
@@ -83,6 +84,7 @@ const voice = [
 <Layout
   title="Brand & design system — How to Store Crypto"
   description="The design language behind the site: logo, color, typography, components, patterns, and voice."
+  noindex={true}
 >
   <main class="mx-auto max-w-6xl px-6 pt-32 pb-20 md:px-10">
     <!-- ============================================================
@@ -107,6 +109,7 @@ const voice = [
       <ul class="flex flex-wrap gap-1 text-xs">
         {
           [
+            ["Visualizations", "#visuals"],
             ["Logo", "#logo"],
             ["Color", "#color"],
             ["Typography", "#type"],
@@ -132,6 +135,2183 @@ const voice = [
         }
       </ul>
     </nav>
+
+    <!-- ============================================================
+         Visualizations — design / plan / store visual elements
+         ============================================================ -->
+    <section id="visuals" class="mb-24">
+      <header class="mb-10">
+        <div class="text-xs uppercase tracking-[0.2em] text-[var(--dim)]">00 · Visualizations</div>
+        <h2 class="display mt-2 text-4xl">Hero artwork &amp; diagrams</h2>
+        <p class="mt-3 max-w-2xl text-[var(--ink-2)]">
+          The interactive, animated set pieces. Each one is meant to make a
+          single idea legible without prose — the seed phrase is a number,
+          entropy is unfathomable, multisig fails gracefully, cold beats hot.
+        </p>
+      </header>
+
+      <!-- ---------------------------------------------------------------
+           1 · Seed phrase orb (lifted from the landing hero)
+           --------------------------------------------------------------- -->
+      <div class="glass mb-6 rounded-2xl p-8 md:p-12">
+        <div class="grid grid-cols-12 items-center gap-10">
+          <div class="col-span-12 md:col-span-5">
+            <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">01 · Seed phrase orb</div>
+            <h3 class="display mt-3 text-3xl">The 24-word vault.</h3>
+            <p class="mt-3 text-sm text-[var(--ink-2)]">
+              The centerpiece of the landing hero. A frosted ring with the
+              seed-phrase count, two floating tiles for survivability and
+              brute-force facts. Slow vertical float on each element keeps the
+              composition alive without demanding attention.
+            </p>
+            <div class="mt-5 flex flex-wrap gap-2">
+              <span class="tag tag-neutral">.frost · .glass · .float</span>
+              <span class="tag tag-accent">Hero — index.astro</span>
+            </div>
+          </div>
+          <div class="col-span-12 md:col-span-7">
+            <div class="relative mx-auto aspect-square w-full max-w-md">
+              <div class="absolute inset-0 rounded-full frost ring-soft float"></div>
+              <div class="glass absolute inset-[10%] flex flex-col items-center justify-center rounded-[28px] text-center">
+                <div class="text-[10px] uppercase tracking-[0.2em] text-[var(--dim)]">
+                  your seed phrase
+                </div>
+                <div class="display mt-3 stat-grad text-7xl">24</div>
+                <div class="mt-2 text-sm text-[var(--ink-2)]">words · BIP-39</div>
+                <div class="mt-8 flex gap-1.5">
+                  {Array.from({ length: 24 }).map((_, i) => (
+                    <span
+                      class="size-1.5 rounded-full"
+                      style={`background: rgba(31,58,104,${0.15 + (i % 5) * 0.15})`}
+                    />
+                  ))}
+                </div>
+                <div class="pill mt-8 text-[var(--ice-deep)]!">
+                  ❄ offline · isolated · permanent
+                </div>
+              </div>
+
+              <div class="glass absolute -left-6 top-1/3 rounded-2xl px-4 py-3 text-xs float" style="animation-delay: -2s;">
+                <div class="text-[10px] uppercase tracking-[0.15em] text-[var(--dim)]">Survives</div>
+                <div class="mt-1 text-[var(--ink)]">🔥 1400°C · 💧 indefinitely</div>
+              </div>
+              <div class="glass absolute -right-4 bottom-1/4 rounded-2xl px-4 py-3 text-xs float" style="animation-delay: -4s;">
+                <div class="text-[10px] uppercase tracking-[0.15em] text-[var(--dim)]">Brute force</div>
+                <div class="mt-1 text-[var(--ink)]">≈ 10⁶⁰ years</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           2 · Entropy lattice + 3 · Multisig constellation (two-up)
+           --------------------------------------------------------------- -->
+      <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- Entropy lattice -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">02 · Entropy lattice</div>
+          <h3 class="display mt-3 text-2xl">256 bits, drifting.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            A 16×16 grid — one cell per bit of a BIP-39 seed. Cells shimmer on
+            independent delays, hinting at the vastness of the keyspace.
+            <strong>Tap any cell</strong> to lock it bright.
+          </p>
+
+          <div class="entropy-lattice mt-6 grid grid-cols-16 gap-1.5" id="entropy-lattice" aria-label="256-bit entropy visualization">
+            {Array.from({ length: 256 }).map((_, i) => (
+              <button
+                type="button"
+                class="entropy-cell"
+                aria-label={`bit ${i + 1}`}
+                style={`animation-delay: ${(i * 73) % 4000}ms; animation-duration: ${3500 + ((i * 113) % 2500)}ms;`}
+              ></button>
+            ))}
+          </div>
+          <div class="entropy-counter" aria-live="polite">
+            <span>locked · <strong id="entropy-locked">0</strong>/256</span>
+            <span id="entropy-search">remaining · 2²⁵⁶</span>
+          </div>
+
+          <div class="mt-6 grid grid-cols-3 gap-3 text-center">
+            <div>
+              <div class="display stat-grad text-2xl">2²⁵⁶</div>
+              <div class="mt-1 text-[10px] uppercase tracking-[0.15em] text-[var(--dim)]">possible seeds</div>
+            </div>
+            <div>
+              <div class="display stat-grad text-2xl">10⁷⁷</div>
+              <div class="mt-1 text-[10px] uppercase tracking-[0.15em] text-[var(--dim)]">≈ atoms in universe</div>
+            </div>
+            <div>
+              <div class="display stat-grad text-2xl">10⁶⁰ y</div>
+              <div class="mt-1 text-[10px] uppercase tracking-[0.15em] text-[var(--dim)]">to brute force</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Multisig constellation -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">03 · Multisig constellation</div>
+          <h3 class="display mt-3 text-2xl">2-of-3, gracefully.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            Three keys, one vault, a threshold of two. <strong>Tap a key</strong>
+            to lose it. One loss is survivable; two is not. The status line
+            updates with the threshold math.
+          </p>
+
+          <div class="multisig mt-6 relative mx-auto aspect-square w-full max-w-[320px]" id="multisig" data-lost="0">
+            <svg class="absolute inset-0 size-full" viewBox="0 0 200 200" fill="none" aria-hidden="true">
+              <line x1="100" y1="40" x2="40" y2="150"  class="multisig-edge" data-endpoints="1-2" stroke-width="1.2" />
+              <line x1="100" y1="40" x2="160" y2="150" class="multisig-edge" data-endpoints="1-3" stroke-width="1.2" />
+              <line x1="40" y1="150" x2="160" y2="150" class="multisig-edge" data-endpoints="2-3" stroke-width="1.2" />
+              <line x1="100" y1="40"  x2="100" y2="110" class="multisig-edge-vault" data-key="1" stroke-width="1.2" />
+              <line x1="40" y1="150"  x2="100" y2="110" class="multisig-edge-vault" data-key="2" stroke-width="1.2" />
+              <line x1="160" y1="150" x2="100" y2="110" class="multisig-edge-vault" data-key="3" stroke-width="1.2" />
+              <g class="multisig-vault">
+                <path d="M100 95 L110 102.5 L110 117.5 L100 125 L90 117.5 L90 102.5 Z" stroke-width="1.4" stroke-linejoin="round" />
+                <path d="M100 101 L105 106 L100 111 L95 106 Z" stroke-width="1.4" stroke-linejoin="round" />
+              </g>
+            </svg>
+
+            <button type="button" class="multisig-key" data-key="1" style="top: 14%; left: 50%; transform: translate(-50%, -50%);" aria-label="Key 1">
+              <span class="multisig-key__hex">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 2 L20 6.5 L20 16.5 L12 21 L4 16.5 L4 6.5 Z" />
+                  <path d="M12 7 L16 11.5 L12 16 L8 11.5 Z" />
+                </svg>
+              </span>
+              <span class="multisig-key__label">Key 1</span>
+            </button>
+            <button type="button" class="multisig-key" data-key="2" style="top: 78%; left: 18%; transform: translate(-50%, -50%);" aria-label="Key 2">
+              <span class="multisig-key__hex">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 2 L20 6.5 L20 16.5 L12 21 L4 16.5 L4 6.5 Z" />
+                  <path d="M12 7 L16 11.5 L12 16 L8 11.5 Z" />
+                </svg>
+              </span>
+              <span class="multisig-key__label">Key 2</span>
+            </button>
+            <button type="button" class="multisig-key" data-key="3" style="top: 78%; left: 82%; transform: translate(-50%, -50%);" aria-label="Key 3">
+              <span class="multisig-key__hex">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 2 L20 6.5 L20 16.5 L12 21 L4 16.5 L4 6.5 Z" />
+                  <path d="M12 7 L16 11.5 L12 16 L8 11.5 Z" />
+                </svg>
+              </span>
+              <span class="multisig-key__label">Key 3</span>
+            </button>
+          </div>
+
+          <div class="mt-6 flex items-center justify-between gap-3">
+            <div>
+              <div class="display text-lg" id="multisig-status">3 of 3 · funds safe</div>
+              <div class="mt-1 text-xs text-[var(--dim)]" id="multisig-detail">All keys present. Threshold is 2.</div>
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm" id="multisig-reset">Restore all</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           4 · Threat survivability + 5 · Cold-to-hot spectrum (two-up)
+           --------------------------------------------------------------- -->
+      <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- Threat survivability ring -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">04 · Threat ring</div>
+          <h3 class="display mt-3 text-2xl">Four threats, orbiting.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            A stamped-steel seed plate at center, with the four threats this
+            site cares about drifting around it. Each carries its survival
+            verdict; the orbit is slow and ambient.
+          </p>
+
+          <div class="threat-ring mt-6 mx-auto aspect-square w-full max-w-[340px]">
+            <div class="threat-ring__orbit">
+              <div class="threat-ring__icon" style="--orbit-angle: 0deg;">
+                <div class="threat-ring__counter">
+                  <svg class="threat-ring__icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+                    <path d="M12 3 C 10 6.5 7 8 7 12.5 C 7 15.8 9.2 18 12 18 C 14.8 18 17 15.8 17 12.5 C 17 10 14.5 8.5 13 6 Z" />
+                    <path d="M12 11 C 11 12.5 10.5 13.5 10.5 14.7 C 10.5 15.7 11.1 16.3 12 16.3 C 12.9 16.3 13.5 15.7 13.5 14.8 C 13.5 13.8 12.8 13 12 11 Z" />
+                  </svg>
+                  <div class="threat-ring__verdict">1400°C · fire</div>
+                </div>
+              </div>
+              <div class="threat-ring__icon" style="--orbit-angle: 90deg;">
+                <div class="threat-ring__counter">
+                  <svg class="threat-ring__icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+                    <path d="M12 3 C 8 8 6 11 6 14 A 6 6 0 0 0 18 14 C 18 11 16 8 12 3 Z" />
+                    <path d="M9 14 C 9 15.5 10 16.5 11.5 16.5" />
+                  </svg>
+                  <div class="threat-ring__verdict">∞ · water</div>
+                </div>
+              </div>
+              <div class="threat-ring__icon" style="--orbit-angle: 180deg;">
+                <div class="threat-ring__counter">
+                  <svg class="threat-ring__icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+                    <path d="M4 14 L10 8 L13 11 L7 17 Z" />
+                    <path d="M10 8 L17 5 L20 8 L13 11" />
+                    <path d="M6 15 L9 18" />
+                  </svg>
+                  <div class="threat-ring__verdict">won't dent</div>
+                </div>
+              </div>
+              <div class="threat-ring__icon" style="--orbit-angle: 270deg;">
+                <div class="threat-ring__counter">
+                  <svg class="threat-ring__icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+                    <path d="M7 3 L17 3 M7 21 L17 21" />
+                    <path d="M7 3 L7 6 L12 11 L7 16 L7 21" />
+                    <path d="M17 3 L17 6 L12 11 L17 16 L17 21" />
+                    <path d="M9 18 L15 18" />
+                  </svg>
+                  <div class="threat-ring__verdict">centuries</div>
+                </div>
+              </div>
+            </div>
+            <div class="threat-ring__core">
+              <div class="threat-ring__plate">
+                <div class="text-[9px] uppercase tracking-[0.2em] text-[var(--dim)]">316 stainless</div>
+                <div class="display mt-1 stat-grad text-3xl">M1</div>
+                <div class="mt-1 text-[10px] uppercase tracking-[0.15em] text-[var(--dim)]">stamped plate</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cold-to-hot spectrum -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">05 · Custody spectrum</div>
+          <h3 class="display mt-3 text-2xl">Cold ↔ hot, animated.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            The custody continuum, from a steel plate buried in the garden to
+            an exchange's hot wallet. A drifting marker pings each station in
+            turn, the way attention drifts when you're deciding where to keep
+            things.
+          </p>
+
+          <div class="spectrum mt-8" id="custody-spectrum">
+            <div class="spectrum__track">
+              <div class="spectrum__marker" aria-hidden="true"></div>
+              <button type="button" class="spectrum__tick" style="left: 0%;"   data-station="steel"    aria-label="Steel"></button>
+              <button type="button" class="spectrum__tick" style="left: 25%;"  data-station="multisig" aria-label="Multisig"></button>
+              <button type="button" class="spectrum__tick" style="left: 50%;"  data-station="hardware" aria-label="Hardware"></button>
+              <button type="button" class="spectrum__tick" style="left: 75%;"  data-station="mobile"   aria-label="Mobile"></button>
+              <button type="button" class="spectrum__tick" style="left: 100%;" data-station="exchange" aria-label="Exchange"></button>
+            </div>
+            <div class="spectrum__labels">
+              <div class="spectrum__label">
+                <div class="display text-[11px] uppercase tracking-[0.15em]">steel</div>
+                <div class="text-[10px] text-[var(--dim)]">airgap</div>
+              </div>
+              <div class="spectrum__label">
+                <div class="display text-[11px] uppercase tracking-[0.15em]">multisig</div>
+                <div class="text-[10px] text-[var(--dim)]">cold</div>
+              </div>
+              <div class="spectrum__label">
+                <div class="display text-[11px] uppercase tracking-[0.15em]">hardware</div>
+                <div class="text-[10px] text-[var(--dim)]">cool</div>
+              </div>
+              <div class="spectrum__label">
+                <div class="display text-[11px] uppercase tracking-[0.15em]">mobile</div>
+                <div class="text-[10px] text-[var(--dim)]">warm</div>
+              </div>
+              <div class="spectrum__label">
+                <div class="display text-[11px] uppercase tracking-[0.15em]">exchange</div>
+                <div class="text-[10px] text-[var(--warn)]">hot</div>
+              </div>
+            </div>
+
+            <div class="spectrum__detail" aria-live="polite">
+              <div class="spectrum__detail-title" id="spectrum-title">— tap a station —</div>
+              <div class="mono-readout text-[11px] text-[var(--dim)]" id="spectrum-attack">attack surface · —</div>
+              <div class="mono-readout text-[11px] text-[var(--dim)]" id="spectrum-time">spend latency · —</div>
+              <p class="spectrum__detail-body" id="spectrum-body">
+                Every station along the spectrum is a trade-off between how
+                fast you can move funds and how many ways the funds can be
+                taken from you. Tap a tick to expand.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           7 · Half-life chart + 8 · Atrophy gauge (two-up)
+           --------------------------------------------------------------- -->
+      <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- Half-life chart -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">07 · Half-life chart</div>
+          <h3 class="display mt-3 text-2xl">Drag the years.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            Six common storage media against the years they're expected to
+            survive. <strong>Drag the cursor</strong> — watch each medium
+            silently fail. Steel wins the long game; cloud accounts almost
+            never reach a decade.
+          </p>
+
+          <div class="halflife mt-8" id="halflife">
+            <div class="halflife__axis">
+              <div class="halflife__cursor" id="halflife-cursor" data-year="0" style="left: 0%;"></div>
+              <div class="halflife__grat" style="left: 0%;"><span class="halflife__grat-label">year 0</span></div>
+              <div class="halflife__grat" style="left: 16.7%;"><span class="halflife__grat-label">50</span></div>
+              <div class="halflife__grat" style="left: 33.3%;"><span class="halflife__grat-label">100</span></div>
+              <div class="halflife__grat" style="left: 50%;"><span class="halflife__grat-label">150</span></div>
+              <div class="halflife__grat" style="left: 66.7%;"><span class="halflife__grat-label">200</span></div>
+              <div class="halflife__grat" style="left: 83.3%;"><span class="halflife__grat-label">250</span></div>
+              <div class="halflife__grat" style="left: 100%;"><span class="halflife__grat-label">300</span></div>
+            </div>
+
+            <div class="halflife__rows">
+              {[
+                { name: "316 stainless", note: "stamped plate",  life: 300 },
+                { name: "Brass plate",   note: "engraved",       life: 250 },
+                { name: "Acid-free paper", note: "boxed, dry",   life: 75  },
+                { name: "Hardware wallet", note: "firmware/battery", life: 8 },
+                { name: "SD card",       note: "consumer flash", life: 7   },
+                { name: "Cloud account", note: "corporate",      life: 15  },
+              ].map((m) => (
+                <div class="halflife__row" data-life={m.life} data-failed="false">
+                  <div class="halflife__name">{m.name}<small>{m.note}</small></div>
+                  <div class="halflife__bar">
+                    <div class="halflife__bar-fill" style={`width: ${(m.life / 300) * 100}%;`}></div>
+                  </div>
+                  <div class="halflife__verdict">survives</div>
+                </div>
+              ))}
+            </div>
+
+            <div class="mt-8">
+              <div class="flex justify-between text-[10px] uppercase tracking-[0.15em] text-[var(--dim)] font-mono mb-1">
+                <span>year</span>
+                <span class="mono-readout text-[var(--ink)] text-[12px]"><span id="halflife-year">0</span> / 300</span>
+              </div>
+              <input
+                type="range"
+                id="halflife-slider"
+                class="cold-slider"
+                min="0"
+                max="300"
+                value="0"
+                step="1"
+                aria-label="Year cursor"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Atrophy gauge -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">08 · Atrophy gauge</div>
+          <h3 class="display mt-3 text-2xl">The forgetting curve.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            The most underrated failure mode: <em>you</em>, in twenty years,
+            wondering where you put the thing. <strong>Drag the slider</strong>
+            — annual rehearsals are the single biggest lever you have.
+          </p>
+
+          <div class="atrophy mt-8" id="atrophy">
+            <div class="atrophy__gauge">
+              <svg viewBox="0 0 280 165" class="w-full h-auto" aria-hidden="true">
+                <defs>
+                  <linearGradient id="atrophy-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#2f9468" />
+                    <stop offset="55%" stop-color="#2f6fe0" />
+                    <stop offset="100%" stop-color="#c45c3a" />
+                  </linearGradient>
+                </defs>
+                <path class="atrophy__arc-track" d="M 30 130 A 110 110 0 0 1 250 130" />
+                <path class="atrophy__arc-fill" id="atrophy-arc" d="M 30 130 A 110 110 0 0 1 250 130"
+                      stroke-dasharray="0 999" />
+                <!-- tick marks at 0/25/50/75/100 % -->
+                {[0, 25, 50, 75, 100].map((p) => {
+                  const angle = Math.PI * (1 - p / 100);
+                  const x1 = 140 + Math.cos(angle) * 96;
+                  const y1 = 130 - Math.sin(angle) * 96;
+                  const x2 = 140 + Math.cos(angle) * 84;
+                  const y2 = 130 - Math.sin(angle) * 84;
+                  return (
+                    <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="var(--dim)" stroke-width="1" />
+                  );
+                })}
+                <text x="22"  y="148" fill="var(--dim)" font-family="var(--font-mono)" font-size="9" letter-spacing="0.1em">0%</text>
+                <text x="245" y="148" fill="var(--dim)" font-family="var(--font-mono)" font-size="9" letter-spacing="0.1em">100%</text>
+                <g class="atrophy__needle" id="atrophy-needle">
+                  <line x1="140" y1="130" x2="140" y2="40" />
+                  <circle cx="140" cy="130" r="6" />
+                </g>
+              </svg>
+              <div class="atrophy__readout">
+                <div class="atrophy__pct stat-grad" id="atrophy-pct">35.5%</div>
+                <div class="atrophy__pct-label">forget over 20y</div>
+              </div>
+            </div>
+
+            <div class="atrophy__control">
+              <div class="atrophy__control-row">
+                <span>rehearsals / year</span>
+                <strong class="mono-readout"><span id="atrophy-val">0</span></strong>
+              </div>
+              <input
+                type="range"
+                id="atrophy-slider"
+                class="cold-slider"
+                min="0"
+                max="12"
+                value="0"
+                step="1"
+                aria-label="Rehearsals per year"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           9 · Inheritance clock + 10 · Coercion ladder (two-up)
+           --------------------------------------------------------------- -->
+      <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- Inheritance routing -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">09 · Inheritance routing</div>
+          <h3 class="display mt-3 text-2xl">Three secrets, three heirs.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            Recovery needs three things: the <em>location</em>, the
+            <em>phrase</em>, the <em>passphrase</em>. Each routes to one heir.
+            <strong>Tap a secret</strong> to send it elsewhere. All-to-one is
+            a single point of failure; any-to-no-one is no recovery.
+          </p>
+
+          <div class="heir-flow mt-8" id="heir-flow" data-state="warn">
+            <div class="heir-flow__secrets">
+              {[
+                { id: "location", name: "location",   sub: "where it's stored", color: "ice" },
+                { id: "phrase",   name: "phrase",     sub: "the 24 words",      color: "accent" },
+                { id: "pass",     name: "passphrase", sub: "the 25th word",     color: "ink" },
+              ].map((s) => (
+                <button type="button" class="heir-flow__secret" data-secret={s.id} data-heir="0" data-color={s.color}>
+                  <span class="heir-flow__secret-stripe" aria-hidden="true"></span>
+                  <span class="heir-flow__secret-name mono-readout">{s.name}</span>
+                  <span class="heir-flow__secret-sub">{s.sub}</span>
+                </button>
+              ))}
+            </div>
+
+            <svg viewBox="0 0 600 80" class="heir-flow__svg" id="heir-flow-svg" aria-hidden="true" preserveAspectRatio="none">
+              <line class="heir-flow__line heir-flow__line--ice"    data-secret="location" x1="100" y1="0" x2="75" y2="80" />
+              <line class="heir-flow__line heir-flow__line--accent" data-secret="phrase"   x1="300" y1="0" x2="75" y2="80" />
+              <line class="heir-flow__line heir-flow__line--ink"    data-secret="pass"     x1="500" y1="0" x2="75" y2="80" />
+            </svg>
+
+            <div class="heir-flow__heirs">
+              {[
+                { id: "0", name: "no one"   },
+                { id: "1", name: "spouse"   },
+                { id: "2", name: "executor" },
+                { id: "3", name: "lawyer"   },
+              ].map((h) => (
+                <div class="heir-flow__heir" data-heir-id={h.id} data-count="0">
+                  <div class="heir-flow__heir-name mono-readout">{h.name}</div>
+                  <div class="heir-flow__heir-stripes" data-heir-stripes={h.id}></div>
+                </div>
+              ))}
+            </div>
+
+            <div class="heir-flow__verdict" id="heir-flow-verdict" aria-live="polite">no recovery · 3 of 3 secrets go nowhere</div>
+          </div>
+        </div>
+
+        <!-- Coercion ladder -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">10 · Coercion ladder</div>
+          <h3 class="display mt-3 text-2xl">From couch cushion to wrench.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            Five threat tiers, ascending. The defense changes at each rung —
+            and the top rung is the one most people forget exists.
+            <strong>Tap a tier</strong> to expand.
+          </p>
+
+          <div class="coerce-ladder mt-6">
+            <div class="coerce-ladder__rail" aria-hidden="true"></div>
+            {[
+              {
+                tier: 1,
+                name: "Lost in the couch",
+                body: "You can't find the device or the backup. Mundane. The most common loss event. There's no attacker.",
+                defense: "two locations · written record",
+              },
+              {
+                tier: 2,
+                name: "Phishing / fake support",
+                body: "A site, email, or pop-up convinces you to enter your seed phrase. By far the most common successful theft.",
+                defense: "never type the seed into anything",
+              },
+              {
+                tier: 3,
+                name: "Social engineering",
+                body: "Someone in your life — or pretending to be — extracts information through conversation. Includes SIM-swap pretexting.",
+                defense: "don't disclose holdings · separate identities",
+              },
+              {
+                tier: 4,
+                name: "Burglary, you absent",
+                body: "Physical search of the home. They take the steel plate, the device, anything obvious. They leave without you.",
+                defense: "geographically split shares · multisig",
+              },
+              {
+                tier: 5,
+                name: "Coerced presence ($5 wrench)",
+                body: "You are present, and pressed, and not bluffing the attacker. The only defense at this tier is that the funds appear to be the funds.",
+                defense: "plausible deniability · decoy wallet",
+              },
+            ].map((t) => (
+              <details class="coerce-tier" data-tier={t.tier}>
+                <summary>
+                  <span class="coerce-tier__dot" aria-hidden="true"></span>
+                  <span class="coerce-tier__num">T{t.tier}</span>
+                  <span class="coerce-tier__name">{t.name}</span>
+                  <span class="coerce-tier__chev" aria-hidden="true">›</span>
+                </summary>
+                <div class="coerce-tier__body">
+                  {t.body}
+                  <div class="coerce-tier__defense">↳ {t.defense}</div>
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           11 · Cold-section (full-width)
+           --------------------------------------------------------------- -->
+      <div class="glass mb-6 rounded-2xl p-8">
+        <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">11 · Cold-section</div>
+        <h3 class="display mt-3 text-2xl">A geological cross-section.</h3>
+        <p class="mt-3 max-w-3xl text-sm text-[var(--ink-2)]">
+          Five layers of a complete custody stack, surveyed top-down. Each
+          band shows its <em>online surface</em> — the percentage of time and
+          area exposed to network attackers. <strong>Tap a layer</strong> to
+          peel it back and see how that layer fails.
+        </p>
+
+        <div class="cold-section mt-8">
+          {[
+            {
+              name: "Custodial / exchange",
+              tag: "0% you own it",
+              temp: "hot",
+              depth: "100%",
+              depthLabel: "online",
+              body: "Your funds are an IOU from a company. The company has the keys; you have an account. Risk: insolvency, account freeze, hack, regulatory action.",
+              failure: "company failure",
+            },
+            {
+              name: "Mobile / browser wallet",
+              tag: "you own keys, device online",
+              temp: "warm",
+              depth: "85%",
+              depthLabel: "online",
+              body: "Keys are on a connected device. Convenient for small spend. Risk: malware, phishing in-app, device theft, OS exploits.",
+              failure: "device compromise",
+            },
+            {
+              name: "Desktop wallet",
+              tag: "online keys, full node",
+              temp: "cool",
+              depth: "60%",
+              depthLabel: "online",
+              body: "Keys are on a desktop. Useful for power users running their own node. Risk profile similar to mobile but the attack surface is the host OS.",
+              failure: "OS compromise",
+            },
+            {
+              name: "Hardware wallet",
+              tag: "keys airgapped from host",
+              temp: "cold",
+              depth: "5%",
+              depthLabel: "tx signing",
+              body: "Keys live on a dedicated chip. Signing happens with no network involvement. Risk: supply-chain tamper, on-device firmware bug, passphrase loss.",
+              failure: "device unavailability",
+            },
+            {
+              name: "Air-gapped steel backup",
+              tag: "the wallet, written",
+              temp: "airgap",
+              depth: "0%",
+              depthLabel: "offline",
+              body: "Twenty-four words on stainless. No screen, no battery, no firmware. Cannot be hacked over a network because there is no network. Risk: physical loss, theft, forgetting where it is.",
+              failure: "physical loss",
+            },
+          ].map((b) => (
+            <details class="cold-section__band" data-temp={b.temp}>
+              <summary>
+                <div class="cold-section__depth">
+                  <div class="cold-section__depth-val">{b.depth}</div>
+                  <div class="cold-section__depth-label">{b.depthLabel}</div>
+                </div>
+                <div class="cold-section__name">
+                  {b.name}
+                  <div class="cold-section__tag">{b.tag}</div>
+                </div>
+                <span class="coerce-tier__chev mr-2" aria-hidden="true">›</span>
+              </summary>
+              <div class="cold-section__body" style="padding-left: 0;">
+                {b.body}
+                <div class="cold-section__failure">↳ fails as · {b.failure}</div>
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           13 · Geolocation pins + 14 · Shamir splitter (two-up)
+           --------------------------------------------------------------- -->
+      <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- Geolocation pins -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">13 · Geolocation</div>
+          <h3 class="display mt-3 text-2xl">Three pins, one event.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            Three backups are not three backups if they share a single
+            disaster radius. <strong>Drag the pins</strong>; sweep the radius
+            from a house fire (1 km) to a regional blackout (500 km). Watch
+            independent failure modes collapse.
+          </p>
+
+          <div class="geoloc mt-6" id="geoloc" data-components="3">
+            <svg viewBox="0 0 400 260" class="geoloc__map" aria-hidden="true">
+              <defs>
+                <pattern id="geoloc-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(31,58,104,0.08)" stroke-width="0.5"/>
+                </pattern>
+              </defs>
+              <rect width="400" height="260" fill="url(#geoloc-grid)" />
+
+              <!-- World map — Natural Earth 110m land outline, equirectangular -->
+              <g class="geoloc__land" transform="translate(0, 30)">
+                <path d={worldLandPath} />
+              </g>
+
+              <!-- Equator line -->
+              <line x1="0" y1="130" x2="400" y2="130" class="geoloc__equator" />
+
+              <!-- blast rings -->
+              <g class="geoloc__rings">
+                <circle class="geoloc__ring" data-pin="A" cx="90"  cy="80"  r="20" />
+                <circle class="geoloc__ring" data-pin="B" cx="335" cy="85"  r="20" />
+                <circle class="geoloc__ring" data-pin="C" cx="165" cy="160" r="20" />
+              </g>
+
+              <!-- pins -->
+              <g class="geoloc__pin" data-pin="A" transform="translate(90, 80)">
+                <circle r="14" class="geoloc__pin-bg" />
+                <text y="4">A</text>
+              </g>
+              <g class="geoloc__pin" data-pin="B" transform="translate(335, 85)">
+                <circle r="14" class="geoloc__pin-bg" />
+                <text y="4">B</text>
+              </g>
+              <g class="geoloc__pin" data-pin="C" transform="translate(165, 160)">
+                <circle r="14" class="geoloc__pin-bg" />
+                <text y="4">C</text>
+              </g>
+            </svg>
+
+            <div class="mt-6">
+              <div class="flex justify-between text-[10px] uppercase tracking-[0.15em] text-[var(--dim)] font-mono mb-1">
+                <span>blast radius</span>
+                <strong class="mono-readout text-[var(--ink)] text-[12px]"><span id="geoloc-r">50</span> km</strong>
+              </div>
+              <input
+                type="range"
+                id="geoloc-slider"
+                class="cold-slider"
+                min="0"
+                max="500"
+                value="50"
+                step="10"
+                aria-label="Blast radius in kilometres"
+              />
+            </div>
+
+            <div class="geoloc__status" id="geoloc-status" aria-live="polite">3 backups · 3 independent failure modes</div>
+          </div>
+        </div>
+
+        <!-- Shamir splitter -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">14 · Shamir / SSKR</div>
+          <h3 class="display mt-3 text-2xl">3-of-5, none alone.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            Different from multisig: the <em>seed itself</em> is split. Each
+            share is mathematical nonsense on its own. <strong>Tap shares</strong>
+            until any three light up — the seed reassembles.
+          </p>
+
+          <div class="shamir mt-6" id="shamir" data-restored="false">
+            <div class="shamir__center">
+              <div class="shamir__seed">
+                <div class="shamir__seed-label">recovered seed</div>
+                <div class="shamir__seed-words mono-readout" id="shamir-words">— — — — — — — — — —</div>
+                <div class="shamir__seed-status mono-readout" id="shamir-substatus">insufficient shares</div>
+              </div>
+            </div>
+            <div class="shamir__shares">
+              {[
+                { i: 1, frag: "1eJaXz…m9N4" },
+                { i: 2, frag: "vQ74yA…0LfP" },
+                { i: 3, frag: "Bp31cZ…8hKy" },
+                { i: 4, frag: "Nf2X7d…r5Tk" },
+                { i: 5, frag: "9LtVZ7…pQ4j" },
+              ].map((s) => (
+                <button type="button" class="shamir__share" data-share={s.i} aria-pressed="false">
+                  <div class="shamir__share-num">{s.i}</div>
+                  <div class="shamir__share-frag mono-readout">{s.frag}</div>
+                </button>
+              ))}
+            </div>
+            <div class="shamir__status" id="shamir-status">0 of 5 · need 3 to reconstruct</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           15 · BIP85 tree + 16 · Passphrase tree (two-up)
+           --------------------------------------------------------------- -->
+      <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- BIP85 derivation tree -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">15 · BIP-85</div>
+          <h3 class="display mt-3 text-2xl">One seed, infinite children.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            BIP-85 derives <em>deterministic</em> child secrets from a single
+            master seed — child wallets, passwords, hex blobs. Back up one;
+            recover everything. <strong>Hover a leaf</strong> for its path.
+          </p>
+
+          <div class="bip85 mt-6" id="bip85">
+            <svg viewBox="0 0 540 300" class="bip85__svg" aria-hidden="true">
+              <!-- edges -->
+              <g class="bip85__edges">
+                <line class="bip85__edge" data-child="c1" x1="270" y1="50" x2="60"  y2="200" />
+                <line class="bip85__edge" data-child="c2" x1="270" y1="50" x2="165" y2="200" />
+                <line class="bip85__edge" data-child="c3" x1="270" y1="50" x2="270" y2="200" />
+                <line class="bip85__edge" data-child="c4" x1="270" y1="50" x2="375" y2="200" />
+                <line class="bip85__edge" data-child="c5" x1="270" y1="50" x2="480" y2="200" />
+              </g>
+
+              <!-- master -->
+              <g class="bip85__node bip85__master" transform="translate(270, 50)">
+                <path class="bip85__hex" d="M 0 -18 L 16 -9 L 16 9 L 0 18 L -16 9 L -16 -9 Z" />
+                <path class="bip85__crystal" d="M 0 -10 L 9 -3 L 0 8 L -9 -3 Z" />
+                <text y="-26" class="bip85__node-label">master</text>
+              </g>
+
+              <!-- children -->
+              {[
+                { id: "c1", x: 60,  label: "12w", type: "BIP-39 · 12 words", path: "m/83696968'/39'/0'/12'/0'" },
+                { id: "c2", x: 165, label: "24w", type: "BIP-39 · 24 words", path: "m/83696968'/39'/0'/24'/0'" },
+                { id: "c3", x: 270, label: "hex", type: "32 random bytes",   path: "m/83696968'/128169'/32'/0'" },
+                { id: "c4", x: 375, label: "wif", type: "WIF private key",   path: "m/83696968'/2'/0'" },
+                { id: "c5", x: 480, label: "pw",  type: "BIP-39 password",   path: "m/83696968'/707764'/20'/0'" },
+              ].map((c) => (
+                <>
+                  <g class="bip85__node bip85__child" data-child={c.id} transform={`translate(${c.x}, 200)`}>
+                    <path class="bip85__hex" d="M 0 -16 L 14 -8 L 14 8 L 0 16 L -14 8 L -14 -8 Z" />
+                    <text y="3" class="bip85__node-label">{c.label}</text>
+                  </g>
+                  <g class="bip85__caption" data-child={c.id} transform={`translate(${c.x}, 240)`}>
+                    <text y="0" class="bip85__type" text-anchor="middle">{c.type}</text>
+                    <text y="14" class="bip85__path" text-anchor="middle">{c.path}</text>
+                  </g>
+                </>
+              ))}
+            </svg>
+
+            <p class="bip85__caption-default text-xs text-[var(--dim)] text-center mt-3" id="bip85-caption">
+              hover a child to highlight its derivation path
+            </p>
+          </div>
+        </div>
+
+        <!-- Passphrase tree (decoy wallet) -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">16 · Passphrase tree</div>
+          <h3 class="display mt-3 text-2xl">The 25th word.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            The same 24 words + a different passphrase = an entirely
+            different wallet. A small decoy at "no passphrase" is the
+            defense against the bottom rung of the coercion ladder.
+          </p>
+
+          <div class="ptree mt-6" id="ptree">
+            <div class="ptree__seed">
+              <div class="ptree__seed-label">24 words · BIP-39</div>
+              <div class="ptree__seed-mock mono-readout">winter saddle harbor compact … abandon</div>
+            </div>
+
+            <svg viewBox="0 0 300 60" class="ptree__connector" aria-hidden="true">
+              <path d="M 150 0 L 150 25 L 50 25 L 50 60" />
+              <path d="M 150 0 L 150 25 L 150 60" />
+              <path d="M 150 0 L 150 25 L 250 25 L 250 60" />
+            </svg>
+
+            <div class="ptree__branches">
+              {[
+                { id: "p1", pass: "(no passphrase)", addr: "bc1q…x4lz", bal: "0.05 BTC", kind: "decoy" },
+                { id: "p2", pass: "\"vacation\"",    addr: "bc1q…t7vk", bal: "0.42 BTC", kind: "mid" },
+                { id: "p3", pass: "(long phrase)",   addr: "bc1q…9q8m", bal: "187 BTC",  kind: "real" },
+              ].map((b) => (
+                <button type="button" class="ptree__branch" data-kind={b.kind} data-branch={b.id}>
+                  <div class="ptree__pass mono-readout">{b.pass}</div>
+                  <div class="ptree__wallet">
+                    <div class="ptree__addr mono-readout">{b.addr}</div>
+                    <div class="ptree__bal">{b.bal}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <p class="text-xs text-[var(--dim)] mt-4">
+              <strong>Three wallets, one seed.</strong> Under coercion, you
+              reveal the seed; without the 25th word, the attacker walks away
+              with the decoy.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           17 · Recovery rehearsal stopwatch (full-width)
+           --------------------------------------------------------------- -->
+      <div class="glass mb-6 rounded-2xl p-8">
+        <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">17 · Rehearsal stopwatch</div>
+        <h3 class="display mt-3 text-2xl">Ten minutes a year.</h3>
+        <p class="mt-3 max-w-3xl text-sm text-[var(--ink-2)]">
+          The whole annual rehearsal — find the plate, type the words, verify
+          the address, send a test sat — fits in under ten minutes.
+          <strong>Press play</strong> to watch the phases pass.
+        </p>
+
+        <div class="rehearsal mt-8 grid grid-cols-1 gap-8 md:grid-cols-[280px_1fr] md:items-center" id="rehearsal">
+          <div class="rehearsal__clock">
+            <svg viewBox="-110 -110 220 220" class="rehearsal__svg" aria-hidden="true">
+              <!-- sectors: phases [1,1,5,1,2]min × 36°/min, cumulative -90° → 270° clockwise -->
+              <path class="rehearsal__sector" data-phase="p1" d="M 0 0 L 0 -100 A 100 100 0 0 1 58.78 -80.90 Z" />
+              <path class="rehearsal__sector" data-phase="p2" d="M 0 0 L 58.78 -80.90 A 100 100 0 0 1 95.11 -30.90 Z" />
+              <path class="rehearsal__sector" data-phase="p3" d="M 0 0 L 95.11 -30.90 A 100 100 0 1 1 -95.11 30.90 Z" />
+              <path class="rehearsal__sector" data-phase="p4" d="M 0 0 L -95.11 30.90 A 100 100 0 0 1 -95.11 -30.90 Z" />
+              <path class="rehearsal__sector" data-phase="p5" d="M 0 0 L -95.11 -30.90 A 100 100 0 0 1 0 -100 Z" />
+
+              <!-- hub -->
+              <circle r="58" class="rehearsal__hub" />
+              <text y="-4" class="rehearsal__hub-time" id="rehearsal-time">10:00</text>
+              <text y="14" class="rehearsal__hub-sub">remaining</text>
+
+              <!-- needle -->
+              <g id="rehearsal-needle" class="rehearsal__needle">
+                <line x1="0" y1="0" x2="0" y2="-92" />
+                <circle r="5" cx="0" cy="0" />
+              </g>
+            </svg>
+          </div>
+
+          <div>
+            <ol class="rehearsal__phases">
+              {[
+                { id: "p1", min: 1, name: "find the plate",        body: "Walk to backup A. Take it out of its container." },
+                { id: "p2", min: 1, name: "read all 24 words",     body: "Eyes-only. Read it twice, out of order, to make sure you can." },
+                { id: "p3", min: 5, name: "type into a fresh wallet", body: "On a clean device, restore the phrase into a brand-new wallet app." },
+                { id: "p4", min: 1, name: "verify address matches",  body: "First receive address should match the one in your records." },
+                { id: "p5", min: 2, name: "send 1 sat to yourself",   body: "Smallest possible transaction. Confirms full custody, not just visibility." },
+              ].map((p) => (
+                <li class="rehearsal__phase" data-phase={p.id}>
+                  <div class="rehearsal__phase-time mono-readout">{p.min}m</div>
+                  <div class="rehearsal__phase-body">
+                    <div class="rehearsal__phase-name">{p.name}</div>
+                    <div class="rehearsal__phase-detail">{p.body}</div>
+                  </div>
+                </li>
+              ))}
+            </ol>
+
+            <div class="mt-6 flex flex-wrap items-center gap-3">
+              <button type="button" class="btn btn-primary btn-sm" id="rehearsal-play">▷ Start rehearsal</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="rehearsal-reset">Reset</button>
+              <span class="text-xs text-[var(--dim)]">animation: 60× speed · ~10 s</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           18 · Location SPOF (full-width)
+           --------------------------------------------------------------- -->
+      <div class="glass mb-6 rounded-2xl p-8">
+        <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">18 · Location SPOF</div>
+        <h3 class="display mt-3 text-2xl">Same drawer, three "backups".</h3>
+        <p class="mt-3 max-w-3xl text-sm text-[var(--ink-2)]">
+          Three backups in the same drawer are <em>one</em> backup. Tap each
+          backup to cycle through five physical locations. Any location with
+          two or more chips is a <strong>single point of failure</strong>.
+        </p>
+
+        <div class="spof mt-6" id="spof" data-spof="single">
+          <div class="spof__locations">
+            {[
+              { id: "home",   name: "home",   icon: "M 4 11 L 12 4 L 20 11 L 18 11 L 18 19 L 14 19 L 14 14 L 10 14 L 10 19 L 6 19 L 6 11 Z" },
+              { id: "family", name: "family", icon: "M 6 10 a 2 2 0 1 1 4 0 a 2 2 0 1 1 -4 0 Z M 14 10 a 2 2 0 1 1 4 0 a 2 2 0 1 1 -4 0 Z M 3 19 c 0 -2 2 -4 5 -4 c 3 0 5 2 5 4 M 11 19 c 0 -2 2 -4 5 -4 c 3 0 5 2 5 4" },
+              { id: "friend", name: "friend", icon: "M 12 4 a 3 3 0 1 1 0 6 a 3 3 0 1 1 0 -6 Z M 5 19 c 0 -3 3 -6 7 -6 c 4 0 7 3 7 6" },
+              { id: "bank",   name: "bank",   icon: "M 3 9 L 12 4 L 21 9 L 21 11 L 3 11 Z M 5 11 L 5 19 M 9 11 L 9 19 M 15 11 L 15 19 M 19 11 L 19 19 M 3 21 L 21 21" },
+              { id: "lawyer", name: "lawyer", icon: "M 12 4 L 12 19 M 4 19 L 20 19 M 4 8 L 12 8 L 20 8 M 4 8 L 2 13 L 6 13 L 4 8 Z M 20 8 L 18 13 L 22 13 L 20 8 Z" },
+            ].map((loc) => (
+              <div class="spof__loc" data-loc-id={loc.id} data-count="0">
+                <svg class="spof__loc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+                  <path d={loc.icon} />
+                </svg>
+                <div class="spof__loc-name mono-readout">{loc.name}</div>
+                <div class="spof__loc-count mono-readout">0</div>
+              </div>
+            ))}
+          </div>
+
+          <div class="spof__backups">
+            {[
+              { id: "A", initial: "home" },
+              { id: "B", initial: "home" },
+              { id: "C", initial: "family" },
+            ].map((b) => (
+              <button type="button" class="spof__backup" data-backup={b.id} data-loc={b.initial}>
+                <span class="spof__backup-id">backup&nbsp;{b.id}</span>
+                <span class="spof__backup-arrow" aria-hidden="true">→</span>
+                <span class="spof__backup-loc mono-readout">{b.initial}</span>
+              </button>
+            ))}
+          </div>
+
+          <div class="spof__status" id="spof-status" aria-live="polite">2 backups at home · single point of failure</div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           19 · Exponential backoff + 20 · Duress PIN (two-up)
+           --------------------------------------------------------------- -->
+      <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- Exponential backoff -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">19 · Exponential backoff</div>
+          <h3 class="display mt-3 text-2xl">Every wrong PIN doubles the wait.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            Hardware wallets double the delay between attempts. <strong>Drag
+            the slider</strong> — by the tenth wrong PIN it's minutes; by the
+            twentieth, days; by the thirtieth, a lifetime.
+          </p>
+
+          <div class="backoff mt-6" id="backoff">
+            <div class="backoff__chart">
+              {(() => {
+                const sample = [1, 4, 7, 10, 13, 16, 19, 22, 25, 28];
+                const maxLog = Math.log(2 ** 28);
+                return sample.map((n) => {
+                  const sec = Math.pow(2, n);
+                  const width = (Math.log(sec) / maxLog) * 100;
+                  const fmt = (s: number) =>
+                    s < 60 ? `${s} s`
+                    : s < 3600 ? `${Math.round(s / 60)} m`
+                    : s < 86400 ? `${(s / 3600).toFixed(1)} h`
+                    : s < 31536000 ? `${Math.round(s / 86400)} d`
+                    : `${(s / 31536000).toFixed(1)} y`;
+                  return (
+                    <div class="backoff__row" data-attempt={n}>
+                      <div class="backoff__attempt mono-readout">#{n}</div>
+                      <div class="backoff__bar">
+                        <div class="backoff__bar-fill" style={`width: ${width.toFixed(1)}%`}></div>
+                      </div>
+                      <div class="backoff__time mono-readout">{fmt(sec)}</div>
+                    </div>
+                  );
+                });
+              })()}
+            </div>
+
+            <div class="mt-6">
+              <div class="flex justify-between text-[10px] uppercase tracking-[0.15em] text-[var(--dim)] font-mono mb-1">
+                <span>after</span>
+                <strong class="mono-readout text-[var(--ink)] text-[12px]"><span id="backoff-n">0</span> wrong PINs · <span id="backoff-time">0 s</span></strong>
+              </div>
+              <input
+                type="range"
+                id="backoff-slider"
+                class="cold-slider"
+                min="0"
+                max="32"
+                value="0"
+                step="1"
+                aria-label="Wrong PIN attempts"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Duress PIN -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">20 · Duress PIN</div>
+          <h3 class="display mt-3 text-2xl">One device, two wallets.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            A second PIN unlocks a decoy wallet. Under coercion you enter the
+            duress PIN — attacker gets pocket change; the real funds stay
+            invisible. <strong>Tap a PIN</strong> to see which wallet opens.
+          </p>
+
+          <div class="duress mt-6" id="duress">
+            <div class="duress__device">
+              <div class="duress__screen">
+                <div class="duress__screen-label" id="duress-label">enter PIN</div>
+                <div class="duress__screen-balance mono-readout" id="duress-balance">— locked —</div>
+                <div class="duress__screen-addr mono-readout" id="duress-addr">&nbsp;</div>
+              </div>
+              <div class="duress__keypad">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, "*", 0, "✓"].map((k) => (
+                  <div class="duress__key">{k}</div>
+                ))}
+              </div>
+            </div>
+
+            <div class="duress__pins">
+              <button type="button" class="duress__pin duress__pin--real" data-pin="real">
+                <span class="mono-readout duress__pin-digits">7 · 3 · 9 · 2</span>
+                <span class="duress__pin-label">real PIN</span>
+              </button>
+              <button type="button" class="duress__pin duress__pin--decoy" data-pin="decoy">
+                <span class="mono-readout duress__pin-digits">1 · 2 · 3 · 4</span>
+                <span class="duress__pin-label">duress PIN</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           21 · PIN entropy + 22 · Hardware wallet anatomy (two-up)
+           --------------------------------------------------------------- -->
+      <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- PIN entropy -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">21 · PIN entropy</div>
+          <h3 class="display mt-3 text-2xl">Four digits ≠ eight chars.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            Three PIN strategies on a log-scale keyspace. Hardware-wallet
+            backoff makes even short PINs survive, but the math still favors
+            length.
+          </p>
+
+          <div class="pinent mt-6">
+            {[
+              { name: "4-digit",   keys: "10⁴ = 10,000",                 width: 6,  t: "≈ 5 min @ 30/s" },
+              { name: "6-digit",   keys: "10⁶ = 1,000,000",              width: 18, t: "≈ 9 h @ 30/s" },
+              { name: "8 alphanum", keys: "62⁸ ≈ 2 × 10¹⁴",              width: 60, t: "≈ 6,000 y @ 1k/s" },
+              { name: "12 word BIP-39", keys: "2¹²⁸ ≈ 3 × 10³⁸",         width: 100, t: "heat death" },
+            ].map((p) => (
+              <div class="pinent__row">
+                <div class="pinent__name">{p.name}</div>
+                <div class="pinent__bar"><div class="pinent__fill" style={`width: ${p.width}%`}></div></div>
+                <div class="pinent__keys mono-readout">{p.keys}</div>
+                <div class="pinent__time mono-readout">{p.t}</div>
+              </div>
+            ))}
+            <p class="text-[11px] text-[var(--dim)] mt-4">
+              Brute-force rates assume no backoff. With exponential backoff,
+              even a 4-digit PIN never gets fully searched.
+            </p>
+          </div>
+        </div>
+
+        <!-- Hardware wallet anatomy -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">22 · HW anatomy</div>
+          <h3 class="display mt-3 text-2xl">What's actually in there.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            The minimum viable hardware wallet. <strong>Tap a component</strong>
+            to learn its role.
+          </p>
+
+          <div class="anatomy mt-6" id="anatomy">
+            <svg viewBox="0 0 320 220" class="anatomy__svg" aria-hidden="true">
+              <!-- body outline -->
+              <rect x="60" y="20" width="200" height="170" rx="14" ry="14" class="anatomy__body" />
+              <!-- screen -->
+              <g class="anatomy__part" data-part="screen">
+                <rect x="80" y="40" width="160" height="60" rx="3" ry="3" />
+              </g>
+              <!-- secure element -->
+              <g class="anatomy__part" data-part="se">
+                <rect x="90" y="120" width="50" height="40" rx="2" ry="2" />
+                <text x="115" y="145" class="anatomy__chip-label">SE</text>
+              </g>
+              <!-- MCU -->
+              <g class="anatomy__part" data-part="mcu">
+                <rect x="180" y="120" width="50" height="40" rx="2" ry="2" />
+                <text x="205" y="145" class="anatomy__chip-label">MCU</text>
+              </g>
+              <!-- buttons -->
+              <g class="anatomy__part" data-part="buttons">
+                <circle cx="90" cy="175" r="6" />
+                <circle cx="230" cy="175" r="6" />
+              </g>
+              <!-- USB-C -->
+              <g class="anatomy__part" data-part="usb">
+                <rect x="150" y="186" width="20" height="14" rx="2" ry="2" />
+              </g>
+            </svg>
+
+            <div class="anatomy__detail">
+              <div class="anatomy__detail-title mono-readout" id="anatomy-title">— tap a component —</div>
+              <p class="anatomy__detail-body" id="anatomy-body">
+                Each part has one job. Combined, they let you sign without
+                ever revealing the seed.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           23 · Address verification + 24 · Tamper-evident seal (two-up)
+           --------------------------------------------------------------- -->
+      <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- Address verification -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">23 · Address verification</div>
+          <h3 class="display mt-3 text-2xl">Trust the screen you can hold.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            Host-screen addresses can be swapped by malware. The hardware
+            wallet's screen cannot. <strong>Click compromise</strong> and
+            watch the host lie.
+          </p>
+
+          <div class="verify mt-6" id="verify" data-compromised="false">
+            <div class="verify__screens">
+              <div class="verify__screen verify__screen--host">
+                <div class="verify__screen-label">host computer</div>
+                <div class="verify__screen-addr mono-readout" id="verify-host-addr">bc1q9k8z3r4f7m2nlWpq6b3vYu5h0jE2t4kQx4lz</div>
+                <div class="verify__screen-foot mono-readout">browser shows</div>
+              </div>
+              <div class="verify__screen verify__screen--hw">
+                <div class="verify__screen-label">hardware wallet</div>
+                <div class="verify__screen-addr mono-readout" id="verify-hw-addr">bc1q9k8z3r4f7m2nlWpq6b3vYu5h0jE2t4kQx4lz</div>
+                <div class="verify__screen-foot mono-readout">device shows</div>
+              </div>
+            </div>
+
+            <div class="mt-5 flex flex-wrap gap-3 items-center">
+              <button type="button" class="btn btn-secondary btn-sm" id="verify-compromise">Compromise host</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="verify-reset">Reset</button>
+            </div>
+
+            <div class="verify__status" id="verify-status" aria-live="polite">
+              addresses match · safe to send
+            </div>
+          </div>
+        </div>
+
+        <!-- Tamper-evident seal -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">24 · Tamper-evident</div>
+          <h3 class="display mt-3 text-2xl">Supply chain integrity.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            A new device ships sealed. If the seal arrives broken, return it —
+            don't use it. <strong>Tap to break</strong> the seal.
+          </p>
+
+          <div class="tamper mt-6" id="tamper" data-broken="false">
+            <div class="tamper__box">
+              <div class="tamper__lid">
+                <div class="tamper__seal" id="tamper-seal">
+                  <div class="tamper__seal-track">
+                    <span>·</span><span>TAMPER</span><span>·</span><span>EVIDENT</span><span>·</span><span>VOID IF REMOVED</span><span>·</span>
+                  </div>
+                </div>
+              </div>
+              <div class="tamper__body">
+                <div class="tamper__contents mono-readout">— hardware wallet —</div>
+              </div>
+            </div>
+
+            <div class="mt-5 flex flex-wrap gap-3 items-center">
+              <button type="button" class="btn btn-secondary btn-sm" id="tamper-break">Break seal</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="tamper-reset">Reseal</button>
+            </div>
+
+            <div class="tamper__status" id="tamper-status" aria-live="polite">seal intact · device genuine</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           25 · Dead man's switch + 26 · Time-lock (two-up)
+           --------------------------------------------------------------- -->
+      <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- Dead man's switch -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">25 · Dead man's switch</div>
+          <h3 class="display mt-3 text-2xl">Ping or the heirs get the key.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            A keep-alive timer with a known endpoint. Every ping resets it;
+            silence triggers the inheritance ceremony. Animated at 1 day per
+            tick — <strong>press ping</strong> to keep it alive.
+          </p>
+
+          <div class="dms mt-6" id="dms">
+            <svg viewBox="-110 -110 220 220" class="dms__svg" aria-hidden="true">
+              <circle r="85" class="dms__ring-bg" />
+              <circle r="85" class="dms__ring" id="dms-ring" stroke-dasharray="0 999" />
+              <text y="-6" class="dms__time mono-readout" id="dms-time">180</text>
+              <text y="14" class="dms__sub">days remaining</text>
+            </svg>
+
+            <div class="dms__events" id="dms-events">
+              <div class="dms__event mono-readout">day 0 · system armed</div>
+            </div>
+
+            <div class="mt-3 flex flex-wrap gap-3 items-center">
+              <button type="button" class="btn btn-primary btn-sm" id="dms-ping">Ping</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="dms-reset">Reset clock</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Time-lock -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">26 · Time-lock</div>
+          <h3 class="display mt-3 text-2xl">Locked until 2030.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            BIP-65 CLTV — funds cannot move until a target block height.
+            Useful for commitment, inheritance, or just disciplined HODL.
+            <strong>Drag</strong> to change the lock duration.
+          </p>
+
+          <div class="timelock mt-6" id="timelock">
+            <svg viewBox="-110 -110 220 220" class="timelock__svg" aria-hidden="true">
+              <!-- decorative degree marks -->
+              {Array.from({ length: 48 }).map((_, i) => {
+                const a = (i * 360 / 48 - 90) * Math.PI / 180;
+                const x1 = 92 * Math.cos(a), y1 = 92 * Math.sin(a);
+                const x2 = (i % 4 === 0 ? 80 : 86) * Math.cos(a);
+                const y2 = (i % 4 === 0 ? 80 : 86) * Math.sin(a);
+                return <line x1={x1} y1={y1} x2={x2} y2={y2} class="timelock__tick" />;
+              })}
+              <circle r="78" class="timelock__face" />
+              <circle r="78" class="timelock__progress" id="timelock-progress" stroke-dasharray="0 999" />
+              <text y="-22" class="timelock__date mono-readout" id="timelock-date">2030-01-01</text>
+              <text y="-2" class="timelock__sub">unlock date</text>
+              <text y="18" class="timelock__remaining mono-readout" id="timelock-remaining">≈ 4.0 y</text>
+              <text y="32" class="timelock__sub">remaining</text>
+            </svg>
+
+            <div class="mt-3">
+              <div class="flex justify-between text-[10px] uppercase tracking-[0.15em] text-[var(--dim)] font-mono mb-1">
+                <span>lock duration</span>
+                <strong class="mono-readout text-[var(--ink)] text-[12px]"><span id="timelock-years">4</span> years</strong>
+              </div>
+              <input
+                type="range"
+                id="timelock-slider"
+                class="cold-slider"
+                min="0"
+                max="20"
+                value="4"
+                step="1"
+                aria-label="Lock duration in years"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           27 · Address poisoning (full-width)
+           --------------------------------------------------------------- -->
+      <div class="glass mb-6 rounded-2xl p-8">
+        <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">27 · Address poisoning</div>
+        <h3 class="display mt-3 text-2xl">Spot the swap.</h3>
+        <p class="mt-3 max-w-3xl text-sm text-[var(--ink-2)]">
+          An attacker grinds a vanity address sharing the first 6–8 chars of
+          your address, then injects it into your wallet's address book via a
+          dust transaction. Both addresses below are <em>real, valid</em>
+          mainnet bech32 — and 42 chars each. <strong>Tap "highlight diff"</strong>
+          to see where they diverge.
+        </p>
+
+        <div class="poison mt-6" id="poison" data-highlighted="false">
+          <div class="poison__row">
+            <div class="poison__label mono-readout">your intent</div>
+            <div class="poison__addr mono-readout">
+              <span class="poison__same">bc1qw5</span><span class="poison__real">08d6qejxtdg4y5r3zarvary0c5xw7kv8</span><span class="poison__same">f3t4</span>
+            </div>
+          </div>
+          <div class="poison__row poison__row--bad">
+            <div class="poison__label mono-readout">poisoned</div>
+            <div class="poison__addr mono-readout">
+              <span class="poison__same">bc1qw5</span><span class="poison__fake">maapx6x5kaqklkqgkw9jrvu4msts4u8h</span><span class="poison__same">f3t4</span>
+            </div>
+          </div>
+
+          <div class="mt-5 flex flex-wrap gap-3 items-center">
+            <button type="button" class="btn btn-secondary btn-sm" id="poison-toggle">Highlight diff</button>
+            <span class="text-xs text-[var(--dim)]">
+              wallet UIs show <code class="kbd">bc1qw5…f3t4</code> · first 6 + last 4 match · always verify the <strong>full</strong> address on a hardware screen
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           28 · Watch-only wallet + 29 · Air-gap PSBT (two-up)
+           --------------------------------------------------------------- -->
+      <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- Watch-only wallet -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">28 · Watch-only wallet</div>
+          <h3 class="display mt-3 text-2xl">See, don't sign.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            An extended <em>public</em> key (xpub) lets a host machine watch
+            balances and derive receive addresses — but never sign. The
+            private side stays airgapped.
+          </p>
+
+          <div class="watchonly mt-6">
+            <div class="watchonly__pane watchonly__pane--view">
+              <div class="watchonly__head">
+                <span class="watchonly__kind mono-readout">watch-only · online</span>
+                <span class="watchonly__priv mono-readout">read</span>
+              </div>
+              <div class="watchonly__body">
+                <div class="watchonly__row"><span>xpub</span><span class="mono-readout">xpub6CUGRUo…f3Eq</span></div>
+                <div class="watchonly__row"><span>balance</span><span class="mono-readout">187.0419 BTC</span></div>
+                <div class="watchonly__row"><span>next addr</span><span class="mono-readout">bc1q…2t4k</span></div>
+                <div class="watchonly__row"><span>sign tx</span><span class="watchonly__no">✕ not possible</span></div>
+              </div>
+            </div>
+            <div class="watchonly__pane watchonly__pane--sign">
+              <div class="watchonly__head">
+                <span class="watchonly__kind mono-readout">signer · airgapped</span>
+                <span class="watchonly__priv mono-readout">read · write</span>
+              </div>
+              <div class="watchonly__body">
+                <div class="watchonly__row"><span>xprv</span><span class="mono-readout">xprv9yJh3p…s9Vt</span></div>
+                <div class="watchonly__row"><span>balance</span><span class="mono-readout">187.0419 BTC</span></div>
+                <div class="watchonly__row"><span>next addr</span><span class="mono-readout">bc1q…2t4k</span></div>
+                <div class="watchonly__row"><span>sign tx</span><span class="watchonly__yes">✓ with confirm</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Air-gap PSBT -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">29 · Air-gap PSBT</div>
+          <h3 class="display mt-3 text-2xl">Three boxes, one transaction.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            A partially-signed Bitcoin transaction travels from online wallet
+            to offline signer to broadcaster — usually via SD card or QR.
+            Keys never leave the airgap. <strong>Press play</strong>.
+          </p>
+
+          <div class="psbt mt-6" id="psbt">
+            <div class="psbt__steps">
+              <div class="psbt__step" data-step="1">
+                <div class="psbt__step-icon">①</div>
+                <div class="psbt__step-name mono-readout">online</div>
+                <div class="psbt__step-sub">build unsigned PSBT</div>
+              </div>
+              <div class="psbt__arrow" data-arrow="1">
+                <div class="psbt__arrow-line"></div>
+                <div class="psbt__arrow-label mono-readout">SD / QR</div>
+              </div>
+              <div class="psbt__step" data-step="2">
+                <div class="psbt__step-icon">②</div>
+                <div class="psbt__step-name mono-readout">airgapped</div>
+                <div class="psbt__step-sub">sign with private key</div>
+              </div>
+              <div class="psbt__arrow" data-arrow="2">
+                <div class="psbt__arrow-line"></div>
+                <div class="psbt__arrow-label mono-readout">SD / QR</div>
+              </div>
+              <div class="psbt__step" data-step="3">
+                <div class="psbt__step-icon">③</div>
+                <div class="psbt__step-name mono-readout">broadcast</div>
+                <div class="psbt__step-sub">push signed tx</div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm mt-4" id="psbt-play">▷ Play flow</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           30 · Coin control + 31 · Address reuse clustering (two-up)
+           --------------------------------------------------------------- -->
+      <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- Coin control -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">30 · Coin control</div>
+          <h3 class="display mt-3 text-2xl">Pick your UTXOs.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            Default wallet behaviour merges your UTXOs to fund a spend —
+            linking your history together on-chain. <strong>Tap to select</strong>
+            which UTXOs to spend; the rest stay separate.
+          </p>
+
+          <div class="utxo mt-6" id="utxo">
+            <div class="utxo__grid">
+              {[
+                { id: "u1", amt: "0.0105", lbl: "exchange withdraw" },
+                { id: "u2", amt: "0.5240", lbl: "payroll · oct" },
+                { id: "u3", amt: "1.2100", lbl: "savings deposit" },
+                { id: "u4", amt: "0.0021", lbl: "dust · poison?" },
+                { id: "u5", amt: "0.3400", lbl: "payroll · nov" },
+                { id: "u6", amt: "2.0000", lbl: "savings deposit" },
+              ].map((u) => (
+                <button type="button" class="utxo__box" data-utxo={u.id} data-amt={u.amt} aria-pressed="false">
+                  <div class="utxo__amt mono-readout">{u.amt}</div>
+                  <div class="utxo__lbl">{u.lbl}</div>
+                </button>
+              ))}
+            </div>
+            <div class="utxo__summary" id="utxo-summary">
+              <span class="mono-readout">selected · <strong id="utxo-count">0</strong> of 6</span>
+              <span class="mono-readout">total · <strong id="utxo-total">0.0000</strong> BTC</span>
+              <span class="mono-readout">linkage · <strong id="utxo-link">none</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Address reuse clustering -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">31 · Address reuse</div>
+          <h3 class="display mt-3 text-2xl">Reuse clusters you.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            Five payments. When each lands on a <em>fresh</em> address,
+            chain-analysis sees five disconnected events. When they all hit
+            the <em>same</em> address, they cluster into one identity.
+          </p>
+
+          <div class="reuse mt-6" id="reuse" data-mode="fresh">
+            <svg viewBox="0 0 320 200" class="reuse__svg" aria-hidden="true">
+              <g class="reuse__group reuse__group--fresh">
+                {[35, 90, 145, 200, 255].map((x, i) => (
+                  <>
+                    <line x1={30 + i * 18} y1="30" x2={x} y2="170" class="reuse__edge" />
+                    <circle cx={30 + i * 18} cy="30" r="9" class="reuse__sender" />
+                    <circle cx={x} cy="170" r="9" class="reuse__receiver" />
+                  </>
+                ))}
+              </g>
+              <g class="reuse__group reuse__group--reuse">
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <line x1={30 + i * 18} y1="30" x2="160" y2="170" class="reuse__edge reuse__edge--linked" />
+                ))}
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <circle cx={30 + i * 18} cy="30" r="9" class="reuse__sender" />
+                ))}
+                <circle cx="160" cy="170" r="14" class="reuse__receiver reuse__receiver--cluster" />
+                <text x="160" y="195" text-anchor="middle" class="reuse__cluster-label">CLUSTER</text>
+              </g>
+            </svg>
+            <div class="reuse__controls">
+              <button type="button" class="btn btn-secondary btn-sm" id="reuse-fresh">Fresh address each time</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="reuse-reuse">Reuse same address</button>
+            </div>
+            <div class="reuse__status mono-readout" id="reuse-status">5 payments · 5 unlinked receivers</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           32 · Schnorr vs ECDSA + 33 · Taproot addresses (two-up)
+           --------------------------------------------------------------- -->
+      <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- Schnorr vs ECDSA -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">32 · Schnorr vs ECDSA</div>
+          <h3 class="display mt-3 text-2xl">Same security, fewer bytes.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            Schnorr signatures (BIP-340) are fixed 64 bytes; ECDSA varies
+            71–72. Smaller, deterministic, and linearly aggregable — the
+            cryptographic foundation for Taproot.
+          </p>
+
+          <div class="sigsize mt-6">
+            {[
+              { name: "ECDSA",   bytes: 72, max: 72, color: "warn"   },
+              { name: "Schnorr", bytes: 64, max: 72, color: "accent" },
+            ].map((s) => (
+              <div class="sigsize__row">
+                <div class="sigsize__name">{s.name}</div>
+                <div class="sigsize__bar">
+                  <div class={`sigsize__fill sigsize__fill--${s.color}`} style={`width: ${(s.bytes / s.max) * 100}%`}>
+                    <span class="sigsize__bytes mono-readout">{s.bytes} bytes</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+            <ul class="sigsize__notes mono-readout">
+              <li>· fixed size · easier to budget block space</li>
+              <li>· linearly aggregable · enables MuSig and FROST</li>
+              <li>· batch verification · faster full-node sync</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Taproot addresses -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">33 · Taproot · P2TR</div>
+          <h3 class="display mt-3 text-2xl">bc1p, not bc1q.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            Taproot outputs use the <code class="kbd">bc1p…</code> prefix
+            (BIP-350 bech32m). Same length, different witness version, much
+            richer script capabilities — and externally indistinguishable
+            from a single-sig spend.
+          </p>
+
+          <div class="taproot mt-6">
+            <div class="taproot__row">
+              <div class="taproot__label mono-readout">P2WPKH · v0</div>
+              <div class="taproot__addr mono-readout">
+                <span class="taproot__hl-q">bc1q</span>w508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4
+              </div>
+              <div class="taproot__note">42 chars · bech32 · single-sig</div>
+            </div>
+            <div class="taproot__row">
+              <div class="taproot__label mono-readout">P2TR · v1</div>
+              <div class="taproot__addr mono-readout">
+                <span class="taproot__hl-p">bc1p</span>5cyxnuxmeuwuvkwfem96lq9wj4q1d2vqvgrglrzv2eq6cl3vqjwsuxsg9w
+              </div>
+              <div class="taproot__note">62 chars · bech32m · key-path OR script-path</div>
+            </div>
+            <div class="taproot__divergence mono-readout">
+              <strong>encoding diverged at BIP-350</strong> · bech32 had a checksum bug for length 41/42
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           34 · CSV vs CLTV + 35 · RBF fee bump (two-up)
+           --------------------------------------------------------------- -->
+      <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- CSV vs CLTV -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">34 · CSV vs CLTV</div>
+          <h3 class="display mt-3 text-2xl">Two kinds of patience.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            CLTV locks until a specific block height (or wall-clock).
+            CSV locks for a relative number of blocks after the output is
+            mined. Same primitive, different reference frame.
+          </p>
+
+          <div class="locks mt-6">
+            <div class="lock-card">
+              <div class="lock-card__head">
+                <div class="mono-readout text-[var(--dim)]">CLTV · BIP-65</div>
+                <div class="display text-lg">absolute</div>
+              </div>
+              <div class="lock-card__body">
+                <div class="lock-card__expr mono-readout">block ≥ 850000</div>
+                <p class="lock-card__note">unlock when chain tip reaches that exact block — calendar use case.</p>
+              </div>
+            </div>
+            <div class="lock-card">
+              <div class="lock-card__head">
+                <div class="mono-readout text-[var(--dim)]">CSV · BIP-112</div>
+                <div class="display text-lg">relative</div>
+              </div>
+              <div class="lock-card__body">
+                <div class="lock-card__expr mono-readout">+144 blocks since mined</div>
+                <p class="lock-card__note">unlock 144 confirmations <em>after</em> this UTXO is mined — vault &amp; recovery use case.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RBF fee bump -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">35 · Replace-by-fee</div>
+          <h3 class="display mt-3 text-2xl">Bump it.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            An unconfirmed BIP-125 tx can be replaced with a higher-fee
+            version (same inputs, higher fee). Miners take the more profitable.
+            <strong>Tap "bump"</strong> to watch a stuck tx jump the queue.
+          </p>
+
+          <div class="rbf mt-6" id="rbf" data-bumped="false">
+            <div class="rbf__queue">
+              {[12, 18, 22, 28, 35, 42, 50].map((f, i) => (
+                <div class="rbf__slot" style={`height: ${f * 1.6}px`}>
+                  <span class="mono-readout">{f}</span>
+                </div>
+              ))}
+              <div class="rbf__slot rbf__slot--mine" id="rbf-mine" style="height: 10px;">
+                <span class="mono-readout" id="rbf-fee">6</span>
+              </div>
+            </div>
+            <div class="rbf__label mono-readout">sat/vB · mempool slice</div>
+            <div class="mt-3 flex flex-wrap gap-3 items-center">
+              <button type="button" class="btn btn-secondary btn-sm" id="rbf-bump">Bump to 55 sat/vB</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="rbf-reset">Reset</button>
+            </div>
+            <div class="rbf__status mono-readout" id="rbf-status">stuck · 6 sat/vB · ~4 hours to mine</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           36 · Mempool fees + 37 · Proof of reserves (two-up)
+           --------------------------------------------------------------- -->
+      <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- Mempool fee market -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">36 · Mempool fees</div>
+          <h3 class="display mt-3 text-2xl">An auction, every block.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            ~3,500 transactions wait in the mempool for the next block.
+            Miners pick the most profitable. <strong>Drag the line</strong> to
+            see what fee rate gets included.
+          </p>
+
+          <div class="memp mt-6" id="memp">
+            <svg viewBox="0 0 320 140" class="memp__svg" aria-hidden="true">
+              <g class="memp__bars" id="memp-bars">
+                {Array.from({ length: 60 }).map((_, i) => {
+                  const fee = Math.max(2, 80 - i * 1.2 + (i % 5 === 0 ? 8 : 0));
+                  const h = fee * 1.3;
+                  return <rect x={i * 5} y={140 - h} width="4" height={h} data-fee={fee.toFixed(0)} class="memp__bar" />;
+                })}
+              </g>
+              <line x1="0" y1="80" x2="320" y2="80" class="memp__threshold" id="memp-threshold" />
+            </svg>
+            <div class="mt-3">
+              <div class="flex justify-between text-[10px] uppercase tracking-[0.15em] text-[var(--dim)] font-mono mb-1">
+                <span>fee target</span>
+                <strong class="mono-readout text-[var(--ink)] text-[12px]"><span id="memp-rate">45</span> sat/vB · <span id="memp-count">28</span> tx in block</strong>
+              </div>
+              <input type="range" id="memp-slider" class="cold-slider" min="2" max="80" value="45" step="1" aria-label="Fee target" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Proof of reserves Merkle -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">37 · Proof of reserves</div>
+          <h3 class="display mt-3 text-2xl">Verify your slice.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            A Merkle tree commits to every customer's balance under a single
+            root. Each user verifies their leaf with a small audit path — the
+            exchange can't lie to one user without lying to all.
+          </p>
+
+          <div class="por mt-6" id="por">
+            <svg viewBox="0 0 320 180" class="por__svg" aria-hidden="true">
+              <g class="por__edges" id="por-edges">
+                <line x1="160" y1="40" x2="80"  y2="90"  data-pair="ab" />
+                <line x1="160" y1="40" x2="240" y2="90"  data-pair="cd" />
+                <line x1="80"  y1="90" x2="40"  y2="140" data-pair="a" />
+                <line x1="80"  y1="90" x2="120" y2="140" data-pair="b" />
+                <line x1="240" y1="90" x2="200" y2="140" data-pair="c" />
+                <line x1="240" y1="90" x2="280" y2="140" data-pair="d" />
+              </g>
+              <g class="por__nodes">
+                <g class="por__node por__node--root" data-node="root" transform="translate(160, 40)">
+                  <rect x="-40" y="-12" width="80" height="24" rx="4" />
+                  <text y="4" text-anchor="middle">root</text>
+                </g>
+                <g class="por__node" data-node="ab" transform="translate(80, 90)">
+                  <rect x="-26" y="-12" width="52" height="24" rx="4" />
+                  <text y="4" text-anchor="middle">h(a,b)</text>
+                </g>
+                <g class="por__node" data-node="cd" transform="translate(240, 90)">
+                  <rect x="-26" y="-12" width="52" height="24" rx="4" />
+                  <text y="4" text-anchor="middle">h(c,d)</text>
+                </g>
+                {[
+                  { id: "a", x: 40,  bal: "0.42" },
+                  { id: "b", x: 120, bal: "1.85" },
+                  { id: "c", x: 200, bal: "0.07" },
+                  { id: "d", x: 280, bal: "3.10" },
+                ].map((leaf) => (
+                  <g class="por__node por__node--leaf" data-node={leaf.id} transform={`translate(${leaf.x}, 140)`}>
+                    <rect x="-24" y="-12" width="48" height="24" rx="4" />
+                    <text y="4" text-anchor="middle">{leaf.bal}</text>
+                  </g>
+                ))}
+              </g>
+            </svg>
+            <div class="por__caption mono-readout" id="por-caption">tap a leaf to highlight its audit path to the root</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           38 · Custodian failures + 39 · Lost coin estimate (two-up)
+           --------------------------------------------------------------- -->
+      <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- Custodian failure timeline -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">38 · Custodian failures</div>
+          <h3 class="display mt-3 text-2xl">Not your keys.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            A non-exhaustive history. Each marker is a custodial entity that
+            insolvency, hack, fraud, or fiat took with it.
+          </p>
+
+          <div class="custodian mt-6">
+            <div class="custodian__axis">
+              {[2014, 2016, 2018, 2020, 2022, 2024].map((y) => (
+                <div class="custodian__tick mono-readout">{y}</div>
+              ))}
+            </div>
+            <div class="custodian__events">
+              {[
+                { year: 2014, name: "Mt. Gox",       loss: "850k BTC",  kind: "hack",     pos: 0   },
+                { year: 2016, name: "Bitfinex",      loss: "120k BTC",  kind: "hack",     pos: 20  },
+                { year: 2019, name: "QuadrigaCX",    loss: "$190M",     kind: "fraud",    pos: 50  },
+                { year: 2022, name: "Celsius / Voyager", loss: "$5B+",  kind: "insolvent", pos: 75 },
+                { year: 2022, name: "FTX",           loss: "$8B+",      kind: "fraud",    pos: 80  },
+                { year: 2023, name: "Genesis",       loss: "$1.7B",     kind: "insolvent", pos: 90 },
+              ].map((e) => (
+                <div class="custodian__event" style={`left: ${e.pos}%`} data-kind={e.kind}>
+                  <div class="custodian__dot"></div>
+                  <div class="custodian__card">
+                    <div class="custodian__year mono-readout">{e.year}</div>
+                    <div class="custodian__name">{e.name}</div>
+                    <div class="custodian__loss mono-readout">{e.loss} · {e.kind}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <!-- Lost coin estimate -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">39 · Lost coins</div>
+          <h3 class="display mt-3 text-2xl">≈ 1 in 5, gone.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            Independent chain-analysis estimates put 3–4 million BTC as
+            permanently inaccessible — lost keys, dead hard drives, Satoshi's
+            untouched coins, and exchange casualties.
+          </p>
+
+          <div class="lostcoin mt-6">
+            <svg viewBox="-100 -100 200 200" class="lostcoin__svg" aria-hidden="true">
+              <!-- accessible portion (76%) -->
+              <circle r="80" class="lostcoin__ring lostcoin__ring--accessible" stroke-dasharray="382 503" />
+              <!-- lost portion (24%) -->
+              <circle r="80" class="lostcoin__ring lostcoin__ring--lost"       stroke-dasharray="121 503" stroke-dashoffset="-382" />
+              <text y="-6" class="lostcoin__pct mono-readout">~ 24%</text>
+              <text y="14" class="lostcoin__sub">estimated lost</text>
+            </svg>
+            <ul class="lostcoin__legend">
+              <li><span class="lostcoin__sw lostcoin__sw--lost"></span>1.1M · Satoshi · never moved</li>
+              <li><span class="lostcoin__sw lostcoin__sw--lost"></span>1.5M · early-era lost keys</li>
+              <li><span class="lostcoin__sw lostcoin__sw--lost"></span>0.5M · exchange failures &amp; theft</li>
+              <li><span class="lostcoin__sw lostcoin__sw--accessible"></span>16M · in active circulation</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           40 · Reproducible builds + 41 · Border crossing (two-up)
+           --------------------------------------------------------------- -->
+      <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- Reproducible builds -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">40 · Reproducible builds</div>
+          <h3 class="display mt-3 text-2xl">Five builders, one hash.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            Wallet software that compiles deterministically lets independent
+            builders produce byte-identical binaries from source. Disagreement
+            is the signal — and one bad actor can't hide.
+          </p>
+
+          <div class="repbuild mt-6" id="repbuild" data-compromised="false">
+            <div class="repbuild__builders">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div class="repbuild__builder" data-builder={i}>
+                  <div class="repbuild__name mono-readout">builder #{i}</div>
+                  <div class="repbuild__hash mono-readout">9c4f…b817</div>
+                  <div class="repbuild__ok">✓</div>
+                </div>
+              ))}
+            </div>
+            <div class="mt-4 flex flex-wrap gap-3 items-center">
+              <button type="button" class="btn btn-secondary btn-sm" id="repbuild-compromise">Compromise builder #3</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="repbuild-reset">Reset</button>
+            </div>
+            <div class="repbuild__status mono-readout" id="repbuild-status">5 of 5 agree · ✓ release verified</div>
+          </div>
+        </div>
+
+        <!-- Border crossing -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">41 · Border crossing</div>
+          <h3 class="display mt-3 text-2xl">Declarable, seizable.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            Customs treats crypto as a monetary instrument in some
+            jurisdictions and as nothing at all in others. A seed on a
+            sticker doesn't beep — but disclosure regimes still apply.
+          </p>
+
+          <div class="border-x mt-6">
+            <ul class="border-x__list">
+              {[
+                { region: "US (FinCEN)",  rule: "no specific reporting for crypto on devices · cash > $10k must be declared", tone: "ok"   },
+                { region: "EU (general)", rule: "€10,000 cash declaration · crypto on devices: unclear · evolving",            tone: "warn" },
+                { region: "Switzerland", rule: "CHF 10,000 cash declaration · personal crypto not separately covered",         tone: "ok"   },
+                { region: "Russia",      rule: "non-citizen crypto-out limited · personal carry risky",                          tone: "warn" },
+                { region: "China",       rule: "crypto trading banned for residents · enforcement varies",                       tone: "risk" },
+                { region: "Singapore",   rule: "no specific crypto-on-device declaration · regulator-friendly to wallets",       tone: "ok"   },
+              ].map((j) => (
+                <li class="border-x__row" data-tone={j.tone}>
+                  <div class="border-x__region mono-readout">{j.region}</div>
+                  <div class="border-x__rule">{j.rule}</div>
+                </li>
+              ))}
+            </ul>
+            <p class="text-[11px] text-[var(--dim)] mt-3">
+              Verify before you travel. Rules change; this list does not constitute legal advice.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           42 · Halving cadence + 43 · CoinJoin (two-up)
+           --------------------------------------------------------------- -->
+      <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- Halving cadence -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">42 · Halving cadence</div>
+          <h3 class="display mt-3 text-2xl">Every 210,000 blocks.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            Block reward halves on a fixed schedule. Each halving is a
+            programmed supply shock — and a recalibration of the security
+            budget. ~33 halvings remain before the last sat is mined.
+          </p>
+
+          <div class="halv mt-6">
+            <div class="halv__line"></div>
+            {[
+              { y: 2009, r: "50 BTC",      blk: 0,       sub: "genesis" },
+              { y: 2012, r: "25 BTC",      blk: 210000,  sub: "1st halving" },
+              { y: 2016, r: "12.5 BTC",    blk: 420000,  sub: "2nd halving" },
+              { y: 2020, r: "6.25 BTC",    blk: 630000,  sub: "3rd halving" },
+              { y: 2024, r: "3.125 BTC",   blk: 840000,  sub: "4th halving" },
+              { y: 2028, r: "1.5625 BTC",  blk: 1050000, sub: "5th (projected)" },
+              { y: 2140, r: "≈ 0 BTC",     blk: "6.93M", sub: "last sat" },
+            ].map((h) => (
+              <div class="halv__row">
+                <div class="halv__year mono-readout">{h.y}</div>
+                <div class="halv__node"></div>
+                <div class="halv__detail">
+                  <div class="halv__reward mono-readout">{h.r}</div>
+                  <div class="halv__sub">block <span class="mono-readout">{h.blk}</span> · {h.sub}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- CoinJoin -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">43 · CoinJoin</div>
+          <h3 class="display mt-3 text-2xl">N inputs, N equal outputs.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            A collaborative transaction with many inputs and equal-valued
+            outputs. An observer cannot tell which input funded which output —
+            the anonymity set is the number of participants.
+          </p>
+
+          <div class="coinjoin mt-6" id="coinjoin">
+            <svg viewBox="0 0 320 200" class="coinjoin__svg" aria-hidden="true" id="coinjoin-svg">
+              <!-- inputs on left, mixer in middle, outputs on right -->
+              <rect x="130" y="80" width="60" height="40" rx="6" class="coinjoin__mixer" />
+              <text x="160" y="105" text-anchor="middle" class="coinjoin__mixer-label">mix</text>
+            </svg>
+            <div class="mt-4">
+              <div class="flex justify-between text-[10px] uppercase tracking-[0.15em] text-[var(--dim)] font-mono mb-1">
+                <span>participants</span>
+                <strong class="mono-readout text-[var(--ink)] text-[12px]"><span id="coinjoin-n">5</span> · anonymity set <span id="coinjoin-set">5</span></strong>
+              </div>
+              <input type="range" id="coinjoin-slider" class="cold-slider" min="2" max="12" value="5" step="1" aria-label="Number of participants" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           44 · Privacy layers + 45 · Block reorg (two-up)
+           --------------------------------------------------------------- -->
+      <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- Privacy layers -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">44 · Privacy layers</div>
+          <h3 class="display mt-3 text-2xl">Who sees you.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            The connection between your wallet and the network passes through
+            many observers. Each layer trades convenience for blindness.
+            <strong>Tap a layer</strong> to toggle it.
+          </p>
+
+          <div class="privlayer mt-6" id="privlayer">
+            {[
+              { id: "isp",   name: "ISP",          can: "sees you connected to wallet servers · timing leaks",        on: true },
+              { id: "vpn",   name: "VPN",          can: "ISP sees nothing · VPN sees everything",                      on: false },
+              { id: "tor",   name: "Tor",          can: "circuit hops · no single node knows both ends",                on: false },
+              { id: "node",  name: "your own node", can: "queries never leave your home · no third party at all",       on: false },
+            ].map((l) => (
+              <button type="button" class="privlayer__row" data-layer={l.id} data-on={String(l.on)}>
+                <div class="privlayer__name mono-readout">{l.name}</div>
+                <div class="privlayer__can">{l.can}</div>
+                <div class="privlayer__toggle">{l.on ? "ON" : "off"}</div>
+              </button>
+            ))}
+            <div class="privlayer__verdict mono-readout" id="privlayer-verdict">ISP knows you use a wallet</div>
+          </div>
+        </div>
+
+        <!-- Block reorg -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">45 · Block reorg</div>
+          <h3 class="display mt-3 text-2xl">Two chains diverge.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            For a brief moment after a block is mined, two competing chains
+            can exist. The longer chain wins; the orphaned blocks' transactions
+            return to the mempool. Wait for confirmations before considering
+            funds settled.
+          </p>
+
+          <div class="reorg mt-6" id="reorg">
+            <svg viewBox="0 0 320 160" class="reorg__svg" aria-hidden="true">
+              <g class="reorg__chain reorg__chain--canonical" id="reorg-canon">
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <>
+                    <rect x={20 + i * 55} y="40" width="38" height="28" rx="4" class="reorg__block" />
+                    <text x={39 + i * 55} y="58" text-anchor="middle" class="reorg__height">{850000 + i}</text>
+                    {i > 0 && (
+                      <line x1={14 + i * 55} y1="54" x2={20 + i * 55} y2="54" class="reorg__edge" />
+                    )}
+                  </>
+                ))}
+              </g>
+              <g class="reorg__chain reorg__chain--fork" id="reorg-fork">
+                {[2, 3].map((i, ix) => (
+                  <>
+                    <rect x={20 + i * 55} y="100" width="38" height="28" rx="4" class="reorg__block reorg__block--orphan" />
+                    <text x={39 + i * 55} y="118" text-anchor="middle" class="reorg__height">{850000 + i}'</text>
+                    {ix > 0 && (
+                      <line x1={14 + i * 55} y1="114" x2={20 + i * 55} y2="114" class="reorg__edge reorg__edge--orphan" />
+                    )}
+                  </>
+                ))}
+                <line x1="68" y1="68" x2="130" y2="100" class="reorg__edge reorg__edge--orphan" />
+              </g>
+            </svg>
+            <div class="reorg__legend mono-readout">
+              <span class="reorg__sw reorg__sw--canon"></span>longest chain · accepted
+              <span class="reorg__sw reorg__sw--orphan"></span>orphaned · returns to mempool
+            </div>
+            <p class="text-[11px] text-[var(--dim)] mt-2">
+              6 confirmations ≈ 10⁻⁵ probability of orphan. For large amounts: wait more.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           46 · Anti-fee-sniping + 47 · Wallet attestation (two-up)
+           --------------------------------------------------------------- -->
+      <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- Anti-fee-sniping -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">46 · Anti-fee-sniping</div>
+          <h3 class="display mt-3 text-2xl">Locktime as a quiet sentry.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            Modern wallets set <code class="kbd">nLocktime</code> to the
+            current block height on every spend. This makes high-fee
+            transactions equally minable for both the current tip and any
+            chain reorgs — removing the incentive for miners to "re-mine" the
+            recent past to steal fees.
+          </p>
+
+          <div class="afs mt-6">
+            <div class="afs__row">
+              <div class="afs__step mono-readout">①</div>
+              <div class="afs__body">
+                <div class="afs__title">your tx</div>
+                <div class="afs__sub mono-readout">nLocktime = current block height (e.g. 850123)</div>
+              </div>
+            </div>
+            <div class="afs__row">
+              <div class="afs__step mono-readout">②</div>
+              <div class="afs__body">
+                <div class="afs__title">miner considers reorg</div>
+                <div class="afs__sub">re-mining block 850122 would <em>not</em> include your tx (locked to ≥850123)</div>
+              </div>
+            </div>
+            <div class="afs__row">
+              <div class="afs__step mono-readout">③</div>
+              <div class="afs__body">
+                <div class="afs__title">incentive removed</div>
+                <div class="afs__sub mono-readout">→ honest mining of the tip is more profitable</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wallet attestation -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">47 · Wallet attestation</div>
+          <h3 class="display mt-3 text-2xl">Prove what you're holding.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            A genuine device can sign a manufacturer-issued challenge. The
+            user verifies the signature against the manufacturer's public
+            key. Without a stolen factory key, supply-chain clones can't lie.
+          </p>
+
+          <div class="attest mt-6" id="attest" data-state="idle">
+            <div class="attest__flow">
+              <div class="attest__step">
+                <div class="attest__step-icon">①</div>
+                <div class="attest__step-name mono-readout">challenge</div>
+                <div class="attest__step-sub">host sends nonce</div>
+              </div>
+              <div class="attest__step">
+                <div class="attest__step-icon">②</div>
+                <div class="attest__step-name mono-readout">device signs</div>
+                <div class="attest__step-sub">with factory key</div>
+              </div>
+              <div class="attest__step">
+                <div class="attest__step-icon">③</div>
+                <div class="attest__step-name mono-readout">verify</div>
+                <div class="attest__step-sub">against vendor pubkey</div>
+              </div>
+            </div>
+            <div class="mt-4 flex flex-wrap gap-3 items-center">
+              <button type="button" class="btn btn-secondary btn-sm" id="attest-run">Run attestation</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="attest-fake">Try with clone</button>
+            </div>
+            <div class="attest__status mono-readout" id="attest-status">idle · press run</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           48 · Self-spending limit + 49 · Receive privacy (two-up)
+           --------------------------------------------------------------- -->
+      <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <!-- Self-spending limit (Sparrow-style) -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">48 · Spending velocity</div>
+          <h3 class="display mt-3 text-2xl">Friction by design.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            A self-imposed daily limit on signed amounts. Phishing or
+            compromised host can't sweep more than the limit without manual
+            override. Slow money beats fast loss.
+          </p>
+
+          <div class="velocity mt-6" id="velocity">
+            <div class="velocity__readout">
+              <div>
+                <div class="velocity__amt mono-readout"><span id="velocity-used">0.18</span> / <span id="velocity-cap">0.50</span></div>
+                <div class="velocity__lbl mono-readout">BTC today</div>
+              </div>
+              <div class="velocity__pct">
+                <div class="velocity__bar"><div class="velocity__fill" id="velocity-fill" style="width: 36%"></div></div>
+              </div>
+            </div>
+            <div class="mt-4">
+              <div class="flex justify-between text-[10px] uppercase tracking-[0.15em] text-[var(--dim)] font-mono mb-1">
+                <span>daily cap</span>
+                <strong class="mono-readout text-[var(--ink)] text-[12px]"><span id="velocity-cap-out">0.50</span> BTC</strong>
+              </div>
+              <input type="range" id="velocity-slider" class="cold-slider" min="1" max="100" value="50" step="1" aria-label="Daily cap" />
+            </div>
+            <p class="text-[11px] text-[var(--dim)] mt-3">
+              Override requires hardware-wallet PIN + 24-hour cool-down.
+            </p>
+          </div>
+        </div>
+
+        <!-- Receive privacy -->
+        <div class="glass rounded-2xl p-8">
+          <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">49 · Receive privacy</div>
+          <h3 class="display mt-3 text-2xl">A fresh address, each time.</h3>
+          <p class="mt-3 text-sm text-[var(--ink-2)]">
+            Every BIP-32 derivation path yields a fresh receive address. Use
+            one address per invoice; never reuse. The on-chain history of
+            each address stays minimal — and unlinkable to your other
+            addresses, absent coin-control mistakes.
+          </p>
+
+          <div class="receive mt-6">
+            <ol class="receive__list mono-readout">
+              <li><span>m/84'/0'/0'/0/0</span><span class="receive__addr">bc1q…f3t4</span><span class="receive__lbl">invoice #1</span></li>
+              <li><span>m/84'/0'/0'/0/1</span><span class="receive__addr">bc1q…h9k2</span><span class="receive__lbl">invoice #2</span></li>
+              <li><span>m/84'/0'/0'/0/2</span><span class="receive__addr">bc1q…p7m4</span><span class="receive__lbl">invoice #3</span></li>
+              <li><span>m/84'/0'/0'/0/3</span><span class="receive__addr">bc1q…z2x1</span><span class="receive__lbl">invoice #4</span></li>
+              <li class="receive__more"><span>… 2³¹ - 4 addresses remaining ·</span><span>same wallet</span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------------------
+           50 · BIP-39 word carousel (full-width)
+           --------------------------------------------------------------- -->
+      <div class="glass overflow-hidden rounded-2xl p-8">
+        <div class="text-[11px] uppercase tracking-[0.15em] text-[var(--dim)]">50 · BIP-39 carousel</div>
+        <h3 class="display mt-3 text-2xl">The wordlist, drifting past.</h3>
+        <p class="mt-3 max-w-3xl text-sm text-[var(--ink-2)]">
+          A slow horizontal scroll through a sampled subsequence of the BIP-39
+          English wordlist. Set in monospace, fading at both edges. Used at the
+          foot of long-form pages as a quiet reminder of <em>what</em> the
+          phrase actually is.
+        </p>
+
+        <div class="bip39-carousel mt-8" aria-hidden="true">
+          <div class="bip39-carousel__track">
+            {[
+              "abandon", "ability", "able", "absorb", "abstract", "absurd", "academic", "acid", "across", "act",
+              "address", "adjust", "advance", "afford", "agent", "alarm", "album", "alert", "alien", "alley",
+              "alpha", "amateur", "amazing", "amount", "anchor", "animal", "annual", "answer", "apart", "appear",
+              "arch", "arctic", "armor", "artist", "aspect", "atom", "attack", "audit", "august", "author",
+              "avoid", "awake", "aware", "axis", "baby", "balance", "bamboo", "banner", "barrel", "battle",
+              "beach", "behave", "below", "best", "beyond", "bicycle", "biology", "bitter", "blade", "blanket",
+              "blossom", "blue", "boat", "bone", "book", "border", "bracket", "brand", "brave", "bread",
+              "breeze", "brick", "bridge", "bright", "broken", "brother", "brown", "bubble", "buffalo", "build",
+            ].map((w) => (
+              <span class="bip39-carousel__word">{w}</span>
+            ))}
+            <!-- duplicate for seamless loop -->
+            {[
+              "abandon", "ability", "able", "absorb", "abstract", "absurd", "academic", "acid", "across", "act",
+              "address", "adjust", "advance", "afford", "agent", "alarm", "album", "alert", "alien", "alley",
+              "alpha", "amateur", "amazing", "amount", "anchor", "animal", "annual", "answer", "apart", "appear",
+              "arch", "arctic", "armor", "artist", "aspect", "atom", "attack", "audit", "august", "author",
+              "avoid", "awake", "aware", "axis", "baby", "balance", "bamboo", "banner", "barrel", "battle",
+              "beach", "behave", "below", "best", "beyond", "bicycle", "biology", "bitter", "blade", "blanket",
+              "blossom", "blue", "boat", "bone", "book", "border", "bracket", "brand", "brave", "bread",
+              "breeze", "brick", "bridge", "bright", "broken", "brother", "brown", "bubble", "buffalo", "build",
+            ].map((w) => (
+              <span class="bip39-carousel__word" aria-hidden="true">{w}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- ============================================================
          Logo
@@ -784,4 +2964,1278 @@ const voice = [
       </div>
     </section>
   </main>
+
+  <script>
+    // ============================================================
+    //  Multisig constellation — auto-cycling signing-quorum + interactive lose-key
+    // ============================================================
+    {
+      const root = document.getElementById("multisig");
+      const status = document.getElementById("multisig-status");
+      const detail = document.getElementById("multisig-detail");
+      const resetBtn = document.getElementById("multisig-reset");
+
+      if (root && status && detail && resetBtn) {
+        const total = 3;
+        const threshold = 2;
+        const allKeys = ["1", "2", "3"];
+        let lost = new Set<string>();
+        let signing = new Set<string>();
+        let autoMode = true;
+        let autoTimer: number | null = null;
+
+        const keys = root.querySelectorAll<HTMLButtonElement>(".multisig-key");
+        const outerEdges = root.querySelectorAll<SVGElement>(".multisig-edge[data-endpoints]");
+        const vaultEdges = root.querySelectorAll<SVGElement>(".multisig-edge-vault[data-key]");
+
+        const shuffle = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
+
+        const render = () => {
+          const present = total - lost.size;
+          const quorum = present >= threshold;
+
+          keys.forEach((k) => {
+            const id = k.dataset.key ?? "";
+            k.classList.toggle("multisig-key--lost", lost.has(id));
+            k.classList.toggle("multisig-key--signing", signing.has(id) && !lost.has(id));
+          });
+          outerEdges.forEach((e) => {
+            const eps = (e.getAttribute("data-endpoints") ?? "").split("-");
+            const anyLost = eps.some((x) => lost.has(x));
+            const bothSigning = eps.every((x) => signing.has(x));
+            e.classList.toggle("multisig-edge--lost", anyLost);
+            e.classList.toggle("multisig-edge--signing", bothSigning && !anyLost);
+          });
+          vaultEdges.forEach((e) => {
+            const id = e.getAttribute("data-key") ?? "";
+            e.classList.toggle("multisig-edge--lost", lost.has(id));
+            e.classList.toggle("multisig-edge--signing", signing.has(id) && !lost.has(id));
+          });
+
+          root.dataset.lost = String(lost.size);
+          root.dataset.quorum = quorum ? "true" : "false";
+
+          if (quorum) {
+            status.textContent = `${present} of ${total} · funds safe`;
+            status.className = "display text-lg text-[var(--ok)]";
+            if (autoMode && present === total) {
+              detail.textContent = "Quorum met — any two of three sign. Highlighted pair is the rehearsal.";
+            } else if (present === total) {
+              detail.textContent = "All keys present. Threshold is 2.";
+            } else {
+              detail.textContent = `${total - present} key lost. Still above threshold — spend with any two.`;
+            }
+          } else {
+            status.textContent = `${present} of ${total} · funds lost`;
+            status.className = "display text-lg text-[var(--warn)]";
+            detail.textContent = "Below threshold. Multisig has done its job — and now exposed yours.";
+          }
+        };
+
+        const autoTick = () => {
+          const r = Math.random();
+          const numLost = r < 0.55 ? 0 : r < 0.88 ? 1 : 2;
+          const pool = [...allKeys];
+          const lostNew = new Set<string>();
+          for (let i = 0; i < numLost; i++) {
+            const idx = Math.floor(Math.random() * pool.length);
+            lostNew.add(pool.splice(idx, 1)[0]);
+          }
+          lost = lostNew;
+          const remaining = allKeys.filter((k) => !lost.has(k));
+          signing = remaining.length >= threshold
+            ? new Set(shuffle(remaining).slice(0, threshold))
+            : new Set();
+          render();
+        };
+
+        const startAuto = () => {
+          autoMode = true;
+          if (autoTimer !== null) window.clearInterval(autoTimer);
+          autoTick();
+          autoTimer = window.setInterval(autoTick, 3500);
+        };
+
+        const stopAuto = () => {
+          autoMode = false;
+          if (autoTimer !== null) {
+            window.clearInterval(autoTimer);
+            autoTimer = null;
+          }
+        };
+
+        keys.forEach((key) => {
+          key.addEventListener("click", () => {
+            stopAuto();
+            const id = key.dataset.key ?? "";
+            if (lost.has(id)) lost.delete(id);
+            else lost.add(id);
+            signing = new Set();
+            render();
+          });
+        });
+
+        resetBtn.addEventListener("click", () => {
+          lost = new Set();
+          signing = new Set();
+          startAuto();
+        });
+
+        startAuto();
+      }
+    }
+
+    // ============================================================
+    //  Entropy lattice — locked counter
+    // ============================================================
+    {
+      const lat = document.getElementById("entropy-lattice");
+      const lockedOut = document.getElementById("entropy-locked");
+      if (lat && lockedOut) {
+        lat.querySelectorAll<HTMLButtonElement>(".entropy-cell").forEach((c) => {
+          c.addEventListener("click", () => {
+            c.classList.toggle("entropy-cell--locked");
+            const n = lat.querySelectorAll(".entropy-cell--locked").length;
+            lockedOut.textContent = String(n);
+          });
+        });
+      }
+    }
+
+    // ============================================================
+    //  Custody spectrum — click a tick to expand details
+    // ============================================================
+    {
+      const sp = document.getElementById("custody-spectrum");
+      if (sp) {
+        const ticks = sp.querySelectorAll<HTMLButtonElement>(".spectrum__tick");
+        const title = document.getElementById("spectrum-title");
+        const attack = document.getElementById("spectrum-attack");
+        const time = document.getElementById("spectrum-time");
+        const body = document.getElementById("spectrum-body");
+
+        const data: Record<string, { title: string; attack: string; time: string; body: string }> = {
+          steel: {
+            title: "316 stainless · airgap",
+            attack: "attack surface · none (offline)",
+            time: "spend latency · hours · recovery only",
+            body: "The wallet is written on metal. No connectivity, no firmware, no battery. To spend, the phrase is restored onto a hardware wallet first. Most resilient; least convenient.",
+          },
+          multisig: {
+            title: "Multisig · 2-of-3",
+            attack: "attack surface · ≥2 of 3 keys",
+            time: "spend latency · minutes · multi-device",
+            body: "Funds require a threshold across separately-stored keys. A single compromised device or location is not enough to lose funds — or to recover them.",
+          },
+          hardware: {
+            title: "Hardware wallet · airgapped signing",
+            attack: "attack surface · firmware + supply chain",
+            time: "spend latency · seconds",
+            body: "Keys live on a dedicated chip; signing never touches a network. Day-to-day cold storage for individuals; the sensible default for held-for-years coins.",
+          },
+          mobile: {
+            title: "Mobile / hot wallet",
+            attack: "attack surface · OS + clipboard + apps",
+            time: "spend latency · instant",
+            body: "Keys on a connected device. Convenient for small spend; never the long-term storage tier. Treat it like cash in a pocket — useful, limited, not where the savings go.",
+          },
+          exchange: {
+            title: "Custodial exchange",
+            attack: "attack surface · the company itself",
+            time: "spend latency · instant · when allowed",
+            body: "You don't have keys; you have an account with a company. Risk: insolvency, freeze, hack, regulation. A transit lounge — not a destination.",
+          },
+        };
+
+        ticks.forEach((t) => {
+          t.addEventListener("click", () => {
+            ticks.forEach((x) => x.classList.remove("is-active"));
+            t.classList.add("is-active");
+            const k = t.dataset.station ?? "";
+            const d = data[k];
+            if (!d || !title || !attack || !time || !body) return;
+            title.textContent = d.title;
+            attack.textContent = d.attack;
+            time.textContent = d.time;
+            body.textContent = d.body;
+          });
+        });
+      }
+    }
+
+    // ============================================================
+    //  Half-life chart — drag year, mark media failed past lifespan
+    // ============================================================
+    {
+      const slider = document.getElementById("halflife-slider") as HTMLInputElement | null;
+      const yearOut = document.getElementById("halflife-year");
+      const cursor = document.getElementById("halflife-cursor");
+      const root = document.getElementById("halflife");
+      if (slider && yearOut && cursor && root) {
+        const rows = root.querySelectorAll<HTMLElement>(".halflife__row");
+        const update = () => {
+          const y = parseInt(slider.value, 10);
+          yearOut.textContent = String(y);
+          cursor.style.left = `${(y / 300) * 100}%`;
+          cursor.setAttribute("data-year", String(y));
+          rows.forEach((r) => {
+            const life = parseInt(r.dataset.life ?? "0", 10);
+            const failed = y > life;
+            r.dataset.failed = failed ? "true" : "false";
+            const v = r.querySelector<HTMLElement>(".halflife__verdict");
+            if (v) {
+              v.textContent = failed
+                ? `failed · ${y - life}y over`
+                : life === 300
+                ? `surviving · ${300 - y}y left`
+                : `surviving · ${life - y}y left`;
+            }
+          });
+        };
+        slider.addEventListener("input", update);
+        update();
+      }
+    }
+
+    // ============================================================
+    //  Atrophy gauge — exp-decay model on rehearsals
+    // ============================================================
+    {
+      const slider = document.getElementById("atrophy-slider") as HTMLInputElement | null;
+      const valOut = document.getElementById("atrophy-val");
+      const pctOut = document.getElementById("atrophy-pct");
+      const needle = document.getElementById("atrophy-needle");
+      const arc = document.getElementById("atrophy-arc");
+      if (slider && valOut && pctOut && needle && arc) {
+        const arcLen = Math.PI * 110; // semicircle of radius 110
+        const update = () => {
+          const r = parseInt(slider.value, 10);
+          const p = Math.max(0.005, 0.355 * Math.exp(-0.4 * r));
+          const pct = p * 100;
+          valOut.textContent = String(r);
+          pctOut.textContent = `${pct.toFixed(1)}%`;
+          const angle = -90 + p * 180;
+          needle.style.transform = `rotate(${angle}deg)`;
+          arc.setAttribute("stroke-dasharray", `${(p * arcLen).toFixed(1)} 999`);
+        };
+        slider.addEventListener("input", update);
+        update();
+      }
+    }
+
+    // ============================================================
+    //  Inheritance routing — three secrets, four heirs, flow lines
+    // ============================================================
+    {
+      const root = document.getElementById("heir-flow");
+      const verdict = document.getElementById("heir-flow-verdict");
+      if (root && verdict) {
+        // Heir x-coords in viewBox (0..600). 4 heirs centred at 1/8, 3/8, 5/8, 7/8.
+        const HEIR_X = [75, 225, 375, 525];
+        const HEIR_NAMES = ["no one", "spouse", "executor", "lawyer"];
+        const secrets = root.querySelectorAll<HTMLButtonElement>(".heir-flow__secret");
+        const lines = root.querySelectorAll<SVGLineElement>(".heir-flow__line");
+        const heirTiles = root.querySelectorAll<HTMLElement>(".heir-flow__heir");
+
+        const update = () => {
+          const assigns: Record<string, number> = {};
+          secrets.forEach((s) => {
+            assigns[s.dataset.secret ?? ""] = parseInt(s.dataset.heir ?? "0", 10);
+          });
+
+          lines.forEach((l) => {
+            const sid = l.getAttribute("data-secret") ?? "";
+            const hid = assigns[sid] ?? 0;
+            l.setAttribute("x2", String(HEIR_X[hid]));
+          });
+
+          heirTiles.forEach((t) => {
+            const hid = parseInt(t.dataset.heirId ?? "0", 10);
+            const held = Object.entries(assigns).filter(([_, v]) => v === hid).map(([k]) => k);
+            t.dataset.count = String(held.length);
+            const stripes = t.querySelector<HTMLElement>("[data-heir-stripes]");
+            if (stripes) {
+              stripes.innerHTML = held
+                .map((sid) => `<span class="heir-flow__heir-chip" data-secret="${sid}"></span>`)
+                .join("");
+            }
+          });
+
+          const values = Object.values(assigns);
+          const allZero = values.every((v) => v === 0);
+          const anyZero = values.some((v) => v === 0);
+          const allSame = !anyZero && values.every((v) => v === values[0]);
+
+          let state: string, text: string;
+          if (allZero) {
+            state = "warn";
+            text = "no recovery · 3 of 3 secrets go nowhere";
+          } else if (anyZero) {
+            const lost = values.filter((v) => v === 0).length;
+            state = "warn";
+            text = `partial · ${lost} of 3 secrets go nowhere`;
+          } else if (allSame) {
+            state = "risk";
+            text = `single point of failure · ${HEIR_NAMES[values[0]]} holds all 3`;
+          } else {
+            state = "ok";
+            text = "distributed · inheritable";
+          }
+          root.dataset.state = state;
+          verdict.textContent = text;
+        };
+
+        secrets.forEach((s) => {
+          s.addEventListener("click", () => {
+            const cur = parseInt(s.dataset.heir ?? "0", 10);
+            s.dataset.heir = String((cur + 1) % 4);
+            update();
+          });
+        });
+
+        update();
+      }
+    }
+
+    // ============================================================
+    //  Geolocation pins — drag pins, sweep blast radius, count components
+    // ============================================================
+    {
+      const root = document.getElementById("geoloc");
+      const slider = document.getElementById("geoloc-slider") as HTMLInputElement | null;
+      const rOut = document.getElementById("geoloc-r");
+      const status = document.getElementById("geoloc-status");
+      if (root && slider && rOut && status) {
+        const svg = root.querySelector<SVGSVGElement>("svg.geoloc__map");
+        if (svg) {
+          const pins = Array.from(root.querySelectorAll<SVGGElement>(".geoloc__pin"));
+          const rings = Array.from(root.querySelectorAll<SVGCircleElement>(".geoloc__ring"));
+          // 1 SVG unit = 2.5 km on this map (400 SVG-units ≈ 1000 km)
+          const kmToSvg = (km: number) => km / 2.5;
+
+          const getPinPos = (g: SVGGElement) => {
+            const m = /translate\(\s*([-\d.]+)\s*,\s*([-\d.]+)\s*\)/.exec(
+              g.getAttribute("transform") ?? "translate(0,0)"
+            );
+            return m ? { x: parseFloat(m[1]), y: parseFloat(m[2]) } : { x: 0, y: 0 };
+          };
+
+          const setPinPos = (id: string, x: number, y: number) => {
+            const pin = pins.find((p) => p.dataset.pin === id);
+            const ring = rings.find((r) => r.getAttribute("data-pin") === id);
+            if (pin) pin.setAttribute("transform", `translate(${x}, ${y})`);
+            if (ring) {
+              ring.setAttribute("cx", String(x));
+              ring.setAttribute("cy", String(y));
+            }
+          };
+
+          const clientToSvg = (e: PointerEvent) => {
+            const rect = svg.getBoundingClientRect();
+            return {
+              x: ((e.clientX - rect.left) / rect.width) * 400,
+              y: ((e.clientY - rect.top) / rect.height) * 260,
+            };
+          };
+
+          const recompute = () => {
+            const km = parseInt(slider.value, 10);
+            rOut.textContent = String(km);
+            const r = kmToSvg(km);
+            rings.forEach((ring) => ring.setAttribute("r", String(r)));
+            const positions = pins.map(getPinPos);
+            const parent = positions.map((_, i) => i);
+            const find = (i: number): number => (parent[i] === i ? i : (parent[i] = find(parent[i])));
+            const union = (a: number, b: number) => { parent[find(a)] = find(b); };
+            for (let i = 0; i < positions.length; i++) {
+              for (let j = i + 1; j < positions.length; j++) {
+                const d = Math.hypot(positions[i].x - positions[j].x, positions[i].y - positions[j].y);
+                if (d < 2 * r) union(i, j);
+              }
+            }
+            const groups = new Set(positions.map((_, i) => find(i)));
+            const c = groups.size;
+            root.dataset.components = String(c);
+            status.textContent = c === 3
+              ? "3 backups · 3 independent failure modes"
+              : c === 2
+              ? "3 backups · 2 independent failure modes · one pair shares risk"
+              : "3 backups · 1 shared failure event — all could vanish together";
+          };
+
+          pins.forEach((pin) => {
+            let dragId: number | null = null;
+            let offsetX = 0, offsetY = 0;
+            pin.addEventListener("pointerdown", (e: PointerEvent) => {
+              e.preventDefault();
+              pin.setPointerCapture(e.pointerId);
+              dragId = e.pointerId;
+              const pos = getPinPos(pin);
+              const { x, y } = clientToSvg(e);
+              offsetX = pos.x - x;
+              offsetY = pos.y - y;
+            });
+            pin.addEventListener("pointermove", (e: PointerEvent) => {
+              if (dragId !== e.pointerId) return;
+              const { x, y } = clientToSvg(e);
+              const nx = Math.max(20, Math.min(380, x + offsetX));
+              const ny = Math.max(20, Math.min(240, y + offsetY));
+              setPinPos(pin.dataset.pin ?? "", nx, ny);
+              recompute();
+            });
+            const release = (e: PointerEvent) => {
+              if (dragId === e.pointerId) {
+                pin.releasePointerCapture(e.pointerId);
+                dragId = null;
+              }
+            };
+            pin.addEventListener("pointerup", release);
+            pin.addEventListener("pointercancel", release);
+          });
+
+          slider.addEventListener("input", recompute);
+          recompute();
+        }
+      }
+    }
+
+    // ============================================================
+    //  Shamir / SSKR splitter — toggle shares, reconstruct at threshold
+    // ============================================================
+    {
+      const root = document.getElementById("shamir");
+      const wordsOut = document.getElementById("shamir-words");
+      const statusOut = document.getElementById("shamir-status");
+      const subStatus = document.getElementById("shamir-substatus");
+      if (root && wordsOut && statusOut && subStatus) {
+        const threshold = 3;
+        const total = 5;
+        const seedMock = "winter saddle harbor compact reform forge spider violet … abandon";
+        const blank = "— — — — — — — — — —";
+        const shares = root.querySelectorAll<HTMLButtonElement>(".shamir__share");
+        const update = () => {
+          const selected = root.querySelectorAll(".shamir__share--selected").length;
+          const restored = selected >= threshold;
+          root.dataset.restored = restored ? "true" : "false";
+          if (restored) {
+            wordsOut.textContent = seedMock;
+            subStatus.textContent = "seed reconstructed";
+            statusOut.textContent = `${selected} of ${total} · spend any threshold subset`;
+          } else {
+            wordsOut.textContent = blank;
+            subStatus.textContent = "insufficient shares";
+            const need = threshold - selected;
+            statusOut.textContent = `${selected} of ${total} · need ${need} more`;
+          }
+        };
+        shares.forEach((s) => {
+          s.addEventListener("click", () => {
+            const next = !s.classList.contains("shamir__share--selected");
+            s.classList.toggle("shamir__share--selected", next);
+            s.setAttribute("aria-pressed", String(next));
+            update();
+          });
+        });
+        update();
+      }
+    }
+
+    // ============================================================
+    //  BIP-85 derivation tree — hover/click to highlight path
+    // ============================================================
+    {
+      const root = document.getElementById("bip85");
+      const caption = document.getElementById("bip85-caption");
+      if (root && caption) {
+        const captions: Record<string, string> = {
+          c1: "BIP-39 · 12-word child seed",
+          c2: "BIP-39 · 24-word child seed",
+          c3: "32-byte hex secret (e.g. age key)",
+          c4: "WIF private key",
+          c5: "BIP-39 password (20 chars)",
+        };
+        const children = root.querySelectorAll<SVGGElement>(".bip85__child");
+        const clear = () => {
+          root.removeAttribute("data-active");
+          root.querySelectorAll(".is-active").forEach((el) => el.classList.remove("is-active"));
+          caption.textContent = "hover a child to highlight its derivation path";
+        };
+        const activate = (id: string) => {
+          root.setAttribute("data-active", id);
+          root.querySelectorAll(".is-active").forEach((el) => el.classList.remove("is-active"));
+          root.querySelector(`.bip85__child[data-child="${id}"]`)?.classList.add("is-active");
+          root.querySelector(`.bip85__edge[data-child="${id}"]`)?.classList.add("is-active");
+          root.querySelector(`.bip85__caption[data-child="${id}"]`)?.classList.add("is-active");
+          caption.textContent = captions[id] ?? "";
+        };
+        children.forEach((c) => {
+          const id = c.dataset.child ?? "";
+          c.addEventListener("mouseenter", () => activate(id));
+          c.addEventListener("focus", () => activate(id));
+          c.addEventListener("click", () => activate(id));
+        });
+        root.addEventListener("mouseleave", clear);
+      }
+    }
+
+    // ============================================================
+    //  Passphrase tree — click a branch to swap into that wallet view
+    // ============================================================
+    {
+      const root = document.getElementById("ptree");
+      if (root) {
+        const branches = root.querySelectorAll<HTMLButtonElement>(".ptree__branch");
+        branches.forEach((b) => {
+          b.addEventListener("click", () => {
+            const wasActive = b.classList.contains("is-active");
+            branches.forEach((x) => x.classList.remove("is-active"));
+            if (!wasActive) {
+              b.classList.add("is-active");
+              root.setAttribute("data-active", b.dataset.branch ?? "");
+            } else {
+              root.removeAttribute("data-active");
+            }
+          });
+        });
+      }
+    }
+
+    // ============================================================
+    //  Recovery rehearsal — animate needle through 5 phases
+    // ============================================================
+    {
+      const root = document.getElementById("rehearsal");
+      const playBtn = document.getElementById("rehearsal-play");
+      const resetBtn = document.getElementById("rehearsal-reset");
+      const needle = document.getElementById("rehearsal-needle");
+      const timeOut = document.getElementById("rehearsal-time");
+      if (root && playBtn && resetBtn && needle && timeOut) {
+        const phaseMin = [1, 1, 5, 1, 2]; // 10 min total
+        const totalMin = phaseMin.reduce((a, b) => a + b, 0);
+        const fractions = phaseMin.map((m) => m / totalMin);
+        // Cumulative fractions
+        const cum: number[] = [];
+        let acc = 0;
+        for (const f of fractions) { acc += f; cum.push(acc); }
+
+        const phaseIds = ["p1", "p2", "p3", "p4", "p5"];
+        const phases = root.querySelectorAll<HTMLElement>(".rehearsal__phase");
+        const sectors = root.querySelectorAll<SVGPathElement>(".rehearsal__sector");
+
+        const DURATION_MS = 9500;
+        let raf: number | null = null;
+        let startedAt = 0;
+
+        const setActivePhase = (pid: string | null) => {
+          phases.forEach((p) => p.classList.toggle("is-current", p.dataset.phase === pid));
+          sectors.forEach((s) => s.classList.toggle("is-current", s.dataset.phase === pid));
+        };
+
+        const fmtTime = (remainingMin: number) => {
+          const totalSec = Math.max(0, Math.round(remainingMin * 60));
+          const mm = Math.floor(totalSec / 60);
+          const ss = totalSec % 60;
+          return `${mm}:${String(ss).padStart(2, "0")}`;
+        };
+
+        const reset = () => {
+          if (raf !== null) { cancelAnimationFrame(raf); raf = null; }
+          root.classList.remove("is-playing");
+          needle.setAttribute("transform", "rotate(0)");
+          timeOut.textContent = "10:00";
+          setActivePhase(null);
+          if (playBtn) (playBtn as HTMLButtonElement).textContent = "▷ Start rehearsal";
+        };
+
+        const tick = (now: number) => {
+          const t = Math.min(1, (now - startedAt) / DURATION_MS);
+          needle.setAttribute("transform", `rotate(${t * 360})`);
+          const remaining = totalMin * (1 - t);
+          timeOut.textContent = fmtTime(remaining);
+          let currentPhase: string | null = null;
+          for (let i = 0; i < cum.length; i++) {
+            if (t <= cum[i]) { currentPhase = phaseIds[i]; break; }
+          }
+          if (t >= 1) currentPhase = phaseIds[phaseIds.length - 1];
+          setActivePhase(currentPhase);
+          if (t < 1) {
+            raf = requestAnimationFrame(tick);
+          } else {
+            raf = null;
+            root.classList.remove("is-playing");
+            if (playBtn) (playBtn as HTMLButtonElement).textContent = "▷ Start rehearsal";
+          }
+        };
+
+        const play = () => {
+          if (raf !== null) return;
+          root.classList.add("is-playing");
+          startedAt = performance.now();
+          if (playBtn) (playBtn as HTMLButtonElement).textContent = "▷ Running…";
+          raf = requestAnimationFrame(tick);
+        };
+
+        playBtn.addEventListener("click", play);
+        resetBtn.addEventListener("click", reset);
+        reset();
+      }
+    }
+
+    // ============================================================
+    //  18 · Location SPOF — cycle backups through five locations
+    // ============================================================
+    {
+      const root = document.getElementById("spof");
+      const statusEl = document.getElementById("spof-status");
+      if (root && statusEl) {
+        const LOCATIONS = ["home", "family", "friend", "bank", "lawyer"];
+        const backups = root.querySelectorAll<HTMLButtonElement>(".spof__backup");
+        const locTiles = root.querySelectorAll<HTMLElement>(".spof__loc");
+        const update = () => {
+          const counts: Record<string, number> = Object.fromEntries(LOCATIONS.map((l) => [l, 0]));
+          backups.forEach((b) => { counts[b.dataset.loc ?? ""]++; });
+          locTiles.forEach((t) => {
+            const id = t.dataset.locId ?? "";
+            const n = counts[id] ?? 0;
+            t.dataset.count = String(n);
+            const c = t.querySelector<HTMLElement>(".spof__loc-count");
+            if (c) c.textContent = String(n);
+          });
+          const overFull = Object.entries(counts).filter(([_, n]) => n >= 2);
+          const max = Math.max(...Object.values(counts));
+          if (overFull.length === 0) {
+            root.dataset.spof = "none";
+            statusEl.textContent = "3 backups at 3 unique locations · resilient";
+          } else if (max === 3) {
+            const [loc] = overFull.find(([_, n]) => n === 3) ?? ["?", 0];
+            root.dataset.spof = "catastrophic";
+            statusEl.textContent = `all 3 backups at ${loc} · catastrophic single point of failure`;
+          } else {
+            const [loc] = overFull[0];
+            root.dataset.spof = "single";
+            statusEl.textContent = `2 backups at ${loc} · single point of failure`;
+          }
+        };
+        backups.forEach((b) => {
+          b.addEventListener("click", () => {
+            const cur = LOCATIONS.indexOf(b.dataset.loc ?? "home");
+            const next = LOCATIONS[(cur + 1) % LOCATIONS.length];
+            b.dataset.loc = next;
+            const lab = b.querySelector<HTMLElement>(".spof__backup-loc");
+            if (lab) lab.textContent = next;
+            update();
+          });
+        });
+        update();
+      }
+    }
+
+    // ============================================================
+    //  19 · Exponential backoff PIN — slider highlights bars
+    // ============================================================
+    {
+      const slider = document.getElementById("backoff-slider") as HTMLInputElement | null;
+      const nOut = document.getElementById("backoff-n");
+      const tOut = document.getElementById("backoff-time");
+      const chart = document.querySelector<HTMLElement>("#backoff .backoff__chart");
+      if (slider && nOut && tOut && chart) {
+        const rows = Array.from(chart.querySelectorAll<HTMLElement>(".backoff__row"));
+        const fmt = (s: number): string =>
+          s < 60 ? `${s} s`
+          : s < 3600 ? `${Math.round(s / 60)} m`
+          : s < 86400 ? `${(s / 3600).toFixed(1)} h`
+          : s < 31536000 ? `${Math.round(s / 86400)} d`
+          : `${(s / 31536000).toFixed(1)} y`;
+        const update = () => {
+          const n = parseInt(slider.value, 10);
+          const sec = n === 0 ? 0 : Math.pow(2, n);
+          nOut.textContent = String(n);
+          tOut.textContent = fmt(sec);
+          rows.forEach((r) => {
+            const attempt = parseInt(r.dataset.attempt ?? "0", 10);
+            r.classList.toggle("is-current", attempt === n);
+            r.classList.toggle("is-dim", attempt > n && n > 0);
+          });
+        };
+        slider.addEventListener("input", update);
+        update();
+      }
+    }
+
+    // ============================================================
+    //  20 · Duress PIN — tap a PIN to reveal real/decoy wallet
+    // ============================================================
+    {
+      const root = document.getElementById("duress");
+      const label = document.getElementById("duress-label");
+      const bal = document.getElementById("duress-balance");
+      const addr = document.getElementById("duress-addr");
+      if (root && label && bal && addr) {
+        const states: Record<string, { label: string; bal: string; addr: string }> = {
+          real:  { label: "real wallet · unlocked",  bal: "187.0419 BTC", addr: "bc1q9k8z3r4f7m2n…x4lz" },
+          decoy: { label: "decoy wallet · unlocked", bal: "0.0521 BTC",   addr: "bc1qXa3kP7r2cQ8u…q8m" },
+        };
+        const apply = (kind: string | null) => {
+          if (!kind) {
+            root.removeAttribute("data-state");
+            label.textContent = "enter PIN";
+            bal.textContent = "— locked —";
+            addr.textContent = " ";
+            return;
+          }
+          const s = states[kind];
+          root.dataset.state = kind;
+          label.textContent = s.label;
+          bal.textContent = s.bal;
+          addr.textContent = s.addr;
+        };
+        root.querySelectorAll<HTMLButtonElement>(".duress__pin").forEach((b) => {
+          b.addEventListener("click", () => {
+            const cur = root.dataset.state ?? null;
+            const next = b.dataset.pin ?? "";
+            apply(cur === next ? null : next);
+          });
+        });
+      }
+    }
+
+    // ============================================================
+    //  22 · Hardware wallet anatomy — tap a part for its role
+    // ============================================================
+    {
+      const root = document.getElementById("anatomy");
+      const titleEl = document.getElementById("anatomy-title");
+      const bodyEl = document.getElementById("anatomy-body");
+      if (root && titleEl && bodyEl) {
+        const data: Record<string, { title: string; body: string }> = {
+          se: {
+            title: "secure element",
+            body: "A tamper-resistant chip that holds the seed and signs transactions internally. The seed never leaves it. Reading it out should be physically impractical even with the device in hand.",
+          },
+          mcu: {
+            title: "MCU",
+            body: "The general-purpose microcontroller. Runs the UI, handles USB, talks to the SE. Compromise of the MCU does not, by itself, expose the seed.",
+          },
+          screen: {
+            title: "trusted screen",
+            body: "The only screen that cannot be lied to by host malware. Always read receive addresses, amounts, and PIN status here — not on your computer.",
+          },
+          buttons: {
+            title: "physical buttons",
+            body: "Physical confirmation that a human approved the transaction. No software can press these. Required for every signature.",
+          },
+          usb: {
+            title: "USB-C",
+            body: "The only data path to the outside world. Data in, signed transactions out — the seed itself never flows through.",
+          },
+        };
+        const parts = root.querySelectorAll<SVGGElement>(".anatomy__part");
+        parts.forEach((p) => {
+          p.addEventListener("click", () => {
+            const id = p.dataset.part ?? "";
+            const wasActive = p.classList.contains("is-active");
+            parts.forEach((x) => x.classList.remove("is-active"));
+            if (!wasActive) {
+              p.classList.add("is-active");
+              root.dataset.part = id;
+              const d = data[id];
+              if (d) {
+                titleEl.textContent = d.title;
+                bodyEl.textContent = d.body;
+              }
+            } else {
+              root.removeAttribute("data-part");
+              titleEl.textContent = "— tap a component —";
+              bodyEl.textContent = "Each part has one job. Combined, they let you sign without ever revealing the seed.";
+            }
+          });
+        });
+      }
+    }
+
+    // ============================================================
+    //  23 · Address verification — compromise host, see hw stays right
+    // ============================================================
+    {
+      const root = document.getElementById("verify");
+      const hostAddr = document.getElementById("verify-host-addr");
+      const hwAddr = document.getElementById("verify-hw-addr");
+      const statusEl = document.getElementById("verify-status");
+      const compromiseBtn = document.getElementById("verify-compromise");
+      const resetBtn = document.getElementById("verify-reset");
+      if (root && hostAddr && hwAddr && statusEl && compromiseBtn && resetBtn) {
+        const real = "bc1q9k8z3r4f7m2nlWpq6b3vYu5h0jE2t4kQx4lz";
+        const fake = "bc1q9k8z3r4f7m2nXa3kP7r2cQ8u5h0jE2t4kQx4lz";
+        const apply = (compromised: boolean) => {
+          root.dataset.compromised = compromised ? "true" : "false";
+          hostAddr.textContent = compromised ? fake : real;
+          hwAddr.textContent = real;
+          statusEl.textContent = compromised
+            ? "addresses differ · DO NOT SEND — trust the device, not the host"
+            : "addresses match · safe to send";
+        };
+        compromiseBtn.addEventListener("click", () => apply(true));
+        resetBtn.addEventListener("click", () => apply(false));
+        apply(false);
+      }
+    }
+
+    // ============================================================
+    //  24 · Tamper-evident seal — break / reseal
+    // ============================================================
+    {
+      const root = document.getElementById("tamper");
+      const breakBtn = document.getElementById("tamper-break");
+      const resetBtn = document.getElementById("tamper-reset");
+      const statusEl = document.getElementById("tamper-status");
+      if (root && breakBtn && resetBtn && statusEl) {
+        const apply = (broken: boolean) => {
+          root.dataset.broken = broken ? "true" : "false";
+          statusEl.textContent = broken
+            ? "seal broken · return to sender, do not use"
+            : "seal intact · device genuine";
+        };
+        breakBtn.addEventListener("click", () => apply(true));
+        resetBtn.addEventListener("click", () => apply(false));
+      }
+    }
+
+    // ============================================================
+    //  25 · Dead man's switch — countdown with ping reset
+    // ============================================================
+    {
+      const root = document.getElementById("dms");
+      const ring = document.getElementById("dms-ring");
+      const timeEl = document.getElementById("dms-time");
+      const eventsEl = document.getElementById("dms-events");
+      const pingBtn = document.getElementById("dms-ping");
+      const resetBtn = document.getElementById("dms-reset");
+      if (root && ring && timeEl && eventsEl && pingBtn && resetBtn) {
+        const TOTAL_DAYS = 180;
+        const CIRCUMFERENCE = 2 * Math.PI * 85;
+        let days = TOTAL_DAYS;
+        let timer: number | null = null;
+        const setRing = () => {
+          const frac = Math.max(0, days / TOTAL_DAYS);
+          ring.setAttribute("stroke-dasharray", `${(frac * CIRCUMFERENCE).toFixed(1)} ${CIRCUMFERENCE.toFixed(1)}`);
+          timeEl.textContent = String(Math.max(0, days));
+          root.dataset.state = days > 60 ? "ok" : days > 30 ? "warn" : "critical";
+        };
+        const addEvent = (text: string, kind?: string) => {
+          const el = document.createElement("div");
+          el.className = `dms__event mono-readout${kind ? ` dms__event--${kind}` : ""}`;
+          el.textContent = text;
+          eventsEl.insertBefore(el, eventsEl.firstChild);
+          while (eventsEl.children.length > 6) {
+            eventsEl.removeChild(eventsEl.lastChild!);
+          }
+        };
+        const tick = () => {
+          days -= 1;
+          setRing();
+          if (days === 90) addEvent("day 90 · 90 days silent — warning sent", "alert");
+          if (days === 30) addEvent("day 150 · 30 days remaining — heirs notified", "alert");
+          if (days <= 0) {
+            addEvent("day 180 · timer expired — inheritance triggered", "final");
+            if (timer !== null) { clearInterval(timer); timer = null; }
+          }
+        };
+        const start = () => {
+          if (timer !== null) clearInterval(timer);
+          timer = window.setInterval(tick, 90);
+        };
+        pingBtn.addEventListener("click", () => {
+          const elapsed = TOTAL_DAYS - days;
+          days = TOTAL_DAYS;
+          setRing();
+          addEvent(`day ${elapsed} · ping received — clock reset`);
+          start();
+        });
+        resetBtn.addEventListener("click", () => {
+          days = TOTAL_DAYS;
+          setRing();
+          eventsEl.innerHTML = "";
+          addEvent("day 0 · system armed");
+          start();
+        });
+        setRing();
+        start();
+      }
+    }
+
+    // ============================================================
+    //  26 · Time-lock — slider sets duration, ring fills
+    // ============================================================
+    {
+      const slider = document.getElementById("timelock-slider") as HTMLInputElement | null;
+      const yearsOut = document.getElementById("timelock-years");
+      const dateOut = document.getElementById("timelock-date");
+      const remOut = document.getElementById("timelock-remaining");
+      const ring = document.getElementById("timelock-progress");
+      if (slider && yearsOut && dateOut && remOut && ring) {
+        const NOW_YEAR = 2026;
+        const CIRCUMFERENCE = 2 * Math.PI * 78;
+        const MAX_YEARS = 20;
+        const update = () => {
+          const y = parseInt(slider.value, 10);
+          yearsOut.textContent = String(y);
+          dateOut.textContent = `${NOW_YEAR + y}-01-01`;
+          remOut.textContent = y === 0 ? "unlocked" : `≈ ${y.toFixed(1)} y`;
+          const frac = y / MAX_YEARS;
+          ring.setAttribute("stroke-dasharray", `${(frac * CIRCUMFERENCE).toFixed(1)} ${CIRCUMFERENCE.toFixed(1)}`);
+        };
+        slider.addEventListener("input", update);
+        update();
+      }
+    }
+
+    // ============================================================
+    //  27 · Address poisoning — toggle diff highlight
+    // ============================================================
+    {
+      const root = document.getElementById("poison");
+      const btn = document.getElementById("poison-toggle");
+      if (root && btn) {
+        btn.addEventListener("click", () => {
+          const on = root.dataset.highlighted === "true";
+          root.dataset.highlighted = on ? "false" : "true";
+          (btn as HTMLButtonElement).textContent = on ? "Highlight diff" : "Hide diff";
+        });
+      }
+    }
+
+    // ============================================================
+    //  29 · Air-gap PSBT — play through three steps
+    // ============================================================
+    {
+      const root = document.getElementById("psbt");
+      const playBtn = document.getElementById("psbt-play");
+      if (root && playBtn) {
+        const steps = Array.from(root.querySelectorAll<HTMLElement>(".psbt__step"));
+        const arrows = Array.from(root.querySelectorAll<HTMLElement>(".psbt__arrow"));
+        const reset = () => {
+          steps.forEach((s) => s.classList.remove("is-active"));
+          arrows.forEach((a) => a.classList.remove("is-active"));
+        };
+        playBtn.addEventListener("click", () => {
+          reset();
+          (playBtn as HTMLButtonElement).disabled = true;
+          steps[0]?.classList.add("is-active");
+          let i = 0;
+          const advance = () => {
+            if (i < arrows.length) {
+              arrows[i].classList.add("is-active");
+              window.setTimeout(() => {
+                steps[i]?.classList.remove("is-active");
+                steps[i + 1]?.classList.add("is-active");
+                i++;
+                window.setTimeout(advance, 600);
+              }, 800);
+            } else {
+              (playBtn as HTMLButtonElement).disabled = false;
+            }
+          };
+          window.setTimeout(advance, 400);
+        });
+      }
+    }
+
+    // ============================================================
+    //  30 · Coin control — UTXO selection + linkage status
+    // ============================================================
+    {
+      const root = document.getElementById("utxo");
+      const countOut = document.getElementById("utxo-count");
+      const totalOut = document.getElementById("utxo-total");
+      const linkOut = document.getElementById("utxo-link");
+      if (root && countOut && totalOut && linkOut) {
+        const boxes = root.querySelectorAll<HTMLButtonElement>(".utxo__box");
+        const update = () => {
+          const selected = Array.from(boxes).filter((b) => b.getAttribute("aria-pressed") === "true");
+          countOut.textContent = String(selected.length);
+          const total = selected.reduce((acc, b) => acc + parseFloat(b.dataset.amt ?? "0"), 0);
+          totalOut.textContent = total.toFixed(4);
+          linkOut.textContent = selected.length <= 1
+            ? "none"
+            : selected.length === 2
+            ? "weak · 2 utxos joined"
+            : `strong · ${selected.length} histories merged`;
+          (linkOut as HTMLElement).style.color =
+            selected.length <= 1 ? "var(--ok)" : selected.length === 2 ? "var(--warn)" : "var(--coerce)";
+        };
+        boxes.forEach((b) => {
+          b.addEventListener("click", () => {
+            const next = b.getAttribute("aria-pressed") !== "true";
+            b.setAttribute("aria-pressed", String(next));
+            update();
+          });
+        });
+        update();
+      }
+    }
+
+    // ============================================================
+    //  31 · Address reuse clustering — mode toggle
+    // ============================================================
+    {
+      const root = document.getElementById("reuse");
+      const status = document.getElementById("reuse-status");
+      const freshBtn = document.getElementById("reuse-fresh");
+      const reuseBtn = document.getElementById("reuse-reuse");
+      if (root && status && freshBtn && reuseBtn) {
+        const apply = (mode: "fresh" | "reuse") => {
+          root.dataset.mode = mode;
+          status.textContent = mode === "fresh"
+            ? "5 payments · 5 unlinked receivers"
+            : "5 payments · 1 cluster · sender identities merge";
+        };
+        freshBtn.addEventListener("click", () => apply("fresh"));
+        reuseBtn.addEventListener("click", () => apply("reuse"));
+      }
+    }
+
+    // ============================================================
+    //  35 · RBF fee bump
+    // ============================================================
+    {
+      const root = document.getElementById("rbf");
+      const mine = document.getElementById("rbf-mine");
+      const feeOut = document.getElementById("rbf-fee");
+      const status = document.getElementById("rbf-status");
+      const bumpBtn = document.getElementById("rbf-bump");
+      const resetBtn = document.getElementById("rbf-reset");
+      if (root && mine && feeOut && status && bumpBtn && resetBtn) {
+        const apply = (bumped: boolean) => {
+          root.dataset.bumped = String(bumped);
+          const f = bumped ? 55 : 6;
+          mine.style.height = `${f * 1.6}px`;
+          feeOut.textContent = String(f);
+          status.textContent = bumped
+            ? "replaced · 55 sat/vB · included in next block"
+            : "stuck · 6 sat/vB · ~4 hours to mine";
+        };
+        bumpBtn.addEventListener("click", () => apply(true));
+        resetBtn.addEventListener("click", () => apply(false));
+        apply(false);
+      }
+    }
+
+    // ============================================================
+    //  36 · Mempool fee market — slider sets cutoff
+    // ============================================================
+    {
+      const root = document.getElementById("memp");
+      const slider = document.getElementById("memp-slider") as HTMLInputElement | null;
+      const rate = document.getElementById("memp-rate");
+      const count = document.getElementById("memp-count");
+      const threshold = document.getElementById("memp-threshold");
+      if (root && slider && rate && count && threshold) {
+        const bars = root.querySelectorAll<SVGRectElement>(".memp__bar");
+        const update = () => {
+          const r = parseInt(slider.value, 10);
+          rate.textContent = String(r);
+          // threshold line y = 140 - r * 1.3 (clamp to 0..140)
+          const y = Math.max(0, Math.min(140, 140 - r * 1.3));
+          threshold.setAttribute("y1", String(y));
+          threshold.setAttribute("y2", String(y));
+          let included = 0;
+          bars.forEach((b) => {
+            const f = parseInt(b.getAttribute("data-fee") ?? "0", 10);
+            const ok = f >= r;
+            b.classList.toggle("is-included", ok);
+            b.classList.toggle("is-excluded", !ok);
+            if (ok) included++;
+          });
+          count.textContent = String(included);
+        };
+        slider.addEventListener("input", update);
+        update();
+      }
+    }
+
+    // ============================================================
+    //  37 · Proof of reserves Merkle — leaf click highlights path
+    // ============================================================
+    {
+      const root = document.getElementById("por");
+      const caption = document.getElementById("por-caption");
+      if (root && caption) {
+        const PATHS: Record<string, { nodes: string[]; edges: string[] }> = {
+          a: { nodes: ["a", "ab", "root"], edges: ["a", "ab"] },
+          b: { nodes: ["b", "ab", "root"], edges: ["b", "ab"] },
+          c: { nodes: ["c", "cd", "root"], edges: ["c", "cd"] },
+          d: { nodes: ["d", "cd", "root"], edges: ["d", "cd"] },
+        };
+        const leaves = root.querySelectorAll<SVGGElement>(".por__node--leaf");
+        leaves.forEach((l) => {
+          l.addEventListener("click", () => {
+            const id = l.dataset.node ?? "";
+            root.querySelectorAll(".is-active").forEach((el) => el.classList.remove("is-active"));
+            const p = PATHS[id];
+            if (!p) return;
+            p.nodes.forEach((n) => root.querySelector(`.por__node[data-node="${n}"]`)?.classList.add("is-active"));
+            p.edges.forEach((e) => root.querySelector(`line[data-pair="${e}"]`)?.classList.add("is-active"));
+            caption.textContent = `leaf ${id} verified · ${p.edges.length} sibling hashes + ${p.nodes.length} computed → root match`;
+          });
+        });
+      }
+    }
+
+    // ============================================================
+    //  40 · Reproducible builds — toggle a compromised builder
+    // ============================================================
+    {
+      const root = document.getElementById("repbuild");
+      const status = document.getElementById("repbuild-status");
+      const compBtn = document.getElementById("repbuild-compromise");
+      const resetBtn = document.getElementById("repbuild-reset");
+      if (root && status && compBtn && resetBtn) {
+        const builder3 = root.querySelector<HTMLElement>('.repbuild__builder[data-builder="3"]');
+        const apply = (compromised: boolean) => {
+          root.dataset.compromised = String(compromised);
+          if (compromised) {
+            if (builder3) {
+              const hash = builder3.querySelector<HTMLElement>(".repbuild__hash");
+              const ok = builder3.querySelector<HTMLElement>(".repbuild__ok");
+              if (hash) hash.textContent = "2a8e…c041";
+              if (ok) ok.textContent = "✕";
+            }
+            status.textContent = "4 of 5 agree · ✕ release withheld — builder 3 differs";
+          } else {
+            if (builder3) {
+              const hash = builder3.querySelector<HTMLElement>(".repbuild__hash");
+              const ok = builder3.querySelector<HTMLElement>(".repbuild__ok");
+              if (hash) hash.textContent = "9c4f…b817";
+              if (ok) ok.textContent = "✓";
+            }
+            status.textContent = "5 of 5 agree · ✓ release verified";
+          }
+        };
+        compBtn.addEventListener("click", () => apply(true));
+        resetBtn.addEventListener("click", () => apply(false));
+      }
+    }
+
+    // ============================================================
+    //  43 · CoinJoin — slider sets participants, SVG redraws
+    // ============================================================
+    {
+      const root = document.getElementById("coinjoin");
+      const svg = document.getElementById("coinjoin-svg");
+      const slider = document.getElementById("coinjoin-slider") as HTMLInputElement | null;
+      const nOut = document.getElementById("coinjoin-n");
+      const setOut = document.getElementById("coinjoin-set");
+      if (root && svg && slider && nOut && setOut) {
+        const NS = "http://www.w3.org/2000/svg";
+        const draw = () => {
+          // Clear all dynamic content (keep .coinjoin__mixer and label)
+          Array.from(svg.querySelectorAll(".coinjoin__io-node, .coinjoin__io-line, .coinjoin__io-out")).forEach((el) => el.remove());
+          const n = parseInt(slider.value, 10);
+          nOut.textContent = String(n);
+          setOut.textContent = String(n);
+          for (let i = 0; i < n; i++) {
+            const y = 20 + (i * (160 / Math.max(1, n - 1)));
+            // input line + node
+            const inLine = document.createElementNS(NS, "line");
+            inLine.setAttribute("class", "coinjoin__io-line");
+            inLine.setAttribute("x1", "30"); inLine.setAttribute("y1", String(y));
+            inLine.setAttribute("x2", "130"); inLine.setAttribute("y2", "100");
+            svg.appendChild(inLine);
+            const inNode = document.createElementNS(NS, "circle");
+            inNode.setAttribute("class", "coinjoin__io-node");
+            inNode.setAttribute("cx", "30"); inNode.setAttribute("cy", String(y));
+            inNode.setAttribute("r", "5");
+            svg.appendChild(inNode);
+            // output line + node
+            const outLine = document.createElementNS(NS, "line");
+            outLine.setAttribute("class", "coinjoin__io-line");
+            outLine.setAttribute("x1", "190"); outLine.setAttribute("y1", "100");
+            outLine.setAttribute("x2", "290"); outLine.setAttribute("y2", String(y));
+            svg.appendChild(outLine);
+            const outNode = document.createElementNS(NS, "circle");
+            outNode.setAttribute("class", "coinjoin__io-out");
+            outNode.setAttribute("cx", "290"); outNode.setAttribute("cy", String(y));
+            outNode.setAttribute("r", "5");
+            svg.appendChild(outNode);
+          }
+        };
+        slider.addEventListener("input", draw);
+        draw();
+      }
+    }
+
+    // ============================================================
+    //  44 · Privacy layers — toggle each, compute verdict
+    // ============================================================
+    {
+      const root = document.getElementById("privlayer");
+      const verdict = document.getElementById("privlayer-verdict");
+      if (root && verdict) {
+        const rows = root.querySelectorAll<HTMLButtonElement>(".privlayer__row");
+        const update = () => {
+          const on = new Set<string>();
+          rows.forEach((r) => { if (r.dataset.on === "true") on.add(r.dataset.layer ?? ""); });
+          let text: string; let priv: boolean;
+          if (on.has("node")) { text = "your own node · nobody upstream sees your queries"; priv = true; }
+          else if (on.has("tor")) { text = "Tor · circuit blinds origin · still trust exit node"; priv = true; }
+          else if (on.has("vpn")) { text = "VPN · ISP blind · VPN provider sees everything"; priv = false; }
+          else if (on.has("isp")) { text = "ISP knows you use a wallet"; priv = false; }
+          else { text = "no privacy layer enabled"; priv = false; }
+          verdict.textContent = text;
+          verdict.classList.toggle("is-private", priv);
+        };
+        rows.forEach((r) => {
+          r.addEventListener("click", () => {
+            r.dataset.on = r.dataset.on === "true" ? "false" : "true";
+            r.querySelector<HTMLElement>(".privlayer__toggle")!.textContent = r.dataset.on === "true" ? "ON" : "off";
+            update();
+          });
+        });
+        update();
+      }
+    }
+
+    // ============================================================
+    //  47 · Wallet attestation
+    // ============================================================
+    {
+      const root = document.getElementById("attest");
+      const status = document.getElementById("attest-status");
+      const runBtn = document.getElementById("attest-run");
+      const fakeBtn = document.getElementById("attest-fake");
+      if (root && status && runBtn && fakeBtn) {
+        runBtn.addEventListener("click", () => {
+          root.dataset.state = "ok";
+          status.textContent = "✓ signature verified · genuine device";
+        });
+        fakeBtn.addEventListener("click", () => {
+          root.dataset.state = "fake";
+          status.textContent = "✕ signature invalid · supply-chain clone detected";
+        });
+      }
+    }
+
+    // ============================================================
+    //  48 · Spending velocity — slider sets daily cap
+    // ============================================================
+    {
+      const slider = document.getElementById("velocity-slider") as HTMLInputElement | null;
+      const capOut = document.getElementById("velocity-cap");
+      const capOut2 = document.getElementById("velocity-cap-out");
+      const usedOut = document.getElementById("velocity-used");
+      const fill = document.getElementById("velocity-fill");
+      if (slider && capOut && capOut2 && usedOut && fill) {
+        const USED = 0.18;
+        const update = () => {
+          const cap = parseInt(slider.value, 10) / 100;
+          capOut.textContent = cap.toFixed(2);
+          capOut2.textContent = cap.toFixed(2);
+          const pct = Math.min(100, (USED / Math.max(0.0001, cap)) * 100);
+          fill.style.width = `${pct.toFixed(0)}%`;
+        };
+        slider.addEventListener("input", update);
+        update();
+      }
+    }
+  </script>
 </Layout>

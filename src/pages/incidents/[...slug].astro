@@ -1,0 +1,464 @@
+---
+import { type CollectionEntry, getCollection, render } from "astro:content";
+import Layout from "~/layouts/Layout.astro";
+import { url } from "~/lib/url";
+import { METHOD_META, STATUS_META } from "~/lib/incidents-taxonomy";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("incidents", ({ data }) => !data.draft);
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+type Props = { entry: CollectionEntry<"incidents"> };
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const statusMeta = STATUS_META[d.status];
+
+const siteUrl = "https://howtostorecrypto.com";
+const pageUrl = `${siteUrl}/incidents/${entry.id}`;
+
+// --- Display helpers ------------------------------------------------------
+
+function formatAmount(amount?: number): string | null {
+  if (amount === undefined || amount === 0) return null;
+  if (amount >= 1_000_000_000) return `$${(amount / 1_000_000_000).toFixed(2)}B`;
+  if (amount >= 1_000_000) return `$${(amount / 1_000_000).toFixed(0)}M`;
+  if (amount >= 1_000) return `$${(amount / 1_000).toFixed(0)}K`;
+  return `$${amount}`;
+}
+
+function formatDate(input?: string): string | null {
+  if (!input) return null;
+  // Accept "2014", "2014-02", "2014-02-28".
+  if (/^\d{4}$/.test(input)) return input;
+  if (/^\d{4}-\d{2}$/.test(input)) {
+    const [y, m] = input.split("-");
+    const monthName = new Date(`${input}-01`).toLocaleString("en-US", { month: "long" });
+    return `${monthName} ${y}`;
+  }
+  try {
+    return new Date(input).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  } catch {
+    return input;
+  }
+}
+
+const amountDisplay = formatAmount(d.amountUsd);
+const recoveredDisplay = formatAmount(d.recoveredUsd);
+const occurredDisplay = formatDate(d.occurredOn);
+const reportedDisplay = formatDate(d.reportedOn);
+
+const statusToneClass: Record<typeof statusMeta.tone, string> = {
+  ok: "bg-[rgba(47,148,104,0.14)] text-[var(--ok)]",
+  warn: "bg-[rgba(196,92,58,0.14)] text-[var(--warn)]",
+  neutral: "bg-[rgba(12,26,46,0.08)] text-[var(--ink-2)]",
+  accent: "bg-[rgba(47,111,224,0.14)] text-[var(--accent-deep)]",
+};
+
+// --- Structured data ------------------------------------------------------
+
+const articleJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: d.title,
+  description: d.summary,
+  inLanguage: "en",
+  isAccessibleForFree: true,
+  datePublished: d.reportedOn ?? d.occurredOn,
+  dateModified: d.reportedOn ?? d.occurredOn,
+  url: pageUrl,
+  mainEntityOfPage: pageUrl,
+  image: `${siteUrl}/og.svg`,
+  author: { "@type": "Organization", name: "How to Store Crypto" },
+  publisher: {
+    "@type": "Organization",
+    name: "How to Store Crypto",
+    logo: { "@type": "ImageObject", url: `${siteUrl}/og.svg` },
+  },
+  about: {
+    "@type": "Event",
+    name: d.title,
+    description: d.summary,
+    ...(d.occurredOn ? { startDate: d.occurredOn } : {}),
+  },
+  citation: d.sources.map((s) => ({
+    "@type": "CreativeWork",
+    name: s.title ?? s.publisher,
+    publisher: s.publisher,
+    ...(s.url ? { url: s.url } : {}),
+    ...(s.publishedOn ? { datePublished: s.publishedOn } : {}),
+  })),
+};
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: `${siteUrl}/` },
+    { "@type": "ListItem", position: 2, name: "Incidents", item: `${siteUrl}/incidents` },
+    { "@type": "ListItem", position: 3, name: d.title, item: pageUrl },
+  ],
+};
+
+const description = d.summary;
+const keywords = [
+  d.attackVector,
+  ...d.rootCause,
+  d.victimType,
+  d.status,
+  "crypto loss",
+  "self-custody",
+].join(", ");
+---
+
+<Layout
+  title={`${d.title} — How to Store Crypto`}
+  description={description}
+  ogType="article"
+  publishedTime={d.occurredOn}
+  modifiedTime={d.reportedOn}
+  keywords={keywords}
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(articleJsonLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
+  </Fragment>
+
+  <main class="mx-auto max-w-4xl px-6 pt-32 md:px-10">
+    {/* ============================================================ */}
+    {/* Breadcrumb */}
+    {/* ============================================================ */}
+    <nav class="mb-8 flex items-center gap-2 text-xs text-[var(--dim)]" aria-label="Breadcrumb">
+      <a href={url("/")} class="hover:text-[var(--ice-deep)]">Home</a>
+      <span>·</span>
+      <a href={url("/incidents")} class="hover:text-[var(--ice-deep)]">Incidents</a>
+      <span>·</span>
+      <span class="text-[var(--ink-2)]">{d.title}</span>
+    </nav>
+
+    {/* ============================================================ */}
+    {/* Header */}
+    {/* ============================================================ */}
+    <header class="pb-12">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class:list={["tag", statusToneClass[statusMeta.tone]]}>
+          {statusMeta.label}
+        </span>
+        <span class="tag tag-neutral">{d.attackVector.replace(/-/g, " ")}</span>
+        <span class="tag tag-neutral">{d.victimType}</span>
+        {d.cluster && (
+          <span class="tag tag-accent">
+            cluster · {typeof d.cluster.count === "number" ? `${d.cluster.count} incidents` : "many incidents"}
+          </span>
+        )}
+      </div>
+
+      <h1 class="display mt-6 text-4xl leading-[1.05] md:text-6xl">{d.title}</h1>
+
+      <p class="mt-6 max-w-2xl text-lg leading-relaxed text-[var(--ink-2)]">{d.summary}</p>
+
+      {/* Facts strip */}
+      <dl class="mt-10 grid grid-cols-2 gap-4 md:grid-cols-4">
+        {occurredDisplay && (
+          <div class="glass rounded-2xl p-5">
+            <dt class="text-[10px] uppercase tracking-[0.15em] text-[var(--dim)]">Occurred</dt>
+            <dd class="display mt-1 text-xl">{occurredDisplay}</dd>
+          </div>
+        )}
+        {amountDisplay && (
+          <div class="glass rounded-2xl p-5">
+            <dt class="text-[10px] uppercase tracking-[0.15em] text-[var(--dim)]">Estimated loss</dt>
+            <dd class="display stat-grad mt-1 text-xl">{amountDisplay}</dd>
+            {d.amountUsdNote && (
+              <div class="mt-1 text-[10px] text-[var(--dim)]">{d.amountUsdNote}</div>
+            )}
+          </div>
+        )}
+        {recoveredDisplay && (
+          <div class="glass rounded-2xl p-5">
+            <dt class="text-[10px] uppercase tracking-[0.15em] text-[var(--dim)]">Recovered</dt>
+            <dd class="display mt-1 text-xl">{recoveredDisplay}</dd>
+          </div>
+        )}
+        {d.asset && d.asset.length > 0 && (
+          <div class="glass rounded-2xl p-5">
+            <dt class="text-[10px] uppercase tracking-[0.15em] text-[var(--dim)]">Assets</dt>
+            <dd class="mt-1 text-sm text-[var(--ink-2)]">{d.asset.join(" · ")}</dd>
+          </div>
+        )}
+      </dl>
+
+      {/* Status note — the editorial caveat. Always rendered when present. */}
+      {d.statusNote && (
+        <aside class="mt-8 rounded-2xl border hairline-strong bg-white/40 p-5">
+          <div class="text-[10px] uppercase tracking-[0.15em] text-[var(--dim)]">
+            On the status: {statusMeta.label}
+          </div>
+          <p class="mt-2 text-sm leading-relaxed text-[var(--ink-2)]">{d.statusNote}</p>
+        </aside>
+      )}
+    </header>
+
+    {/* ============================================================ */}
+    {/* Body (MDX) */}
+    {/* ============================================================ */}
+    <article class="prose-incident">
+      <Content />
+    </article>
+
+    {/* ============================================================ */}
+    {/* Prevented by — the most important section */}
+    {/* ============================================================ */}
+    <section class="mt-16 pt-12 border-t hairline-strong" aria-labelledby="prevented-by-heading">
+      <div class="pill"><span>What would have prevented this</span></div>
+      <h2 id="prevented-by-heading" class="display mt-6 text-3xl leading-tight md:text-4xl">
+        The fixes,
+        <span class="stat-grad italic">specifically for this case.</span>
+      </h2>
+      <p class="mt-4 max-w-2xl text-sm text-[var(--ink-2)] md:text-base">
+        General prevention advice lives on the methods pages. Below is what
+        would have stopped this incident in particular, and why.
+      </p>
+
+      <div class="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2">
+        {d.preventedBy.map((p) => {
+          const meta = METHOD_META[p.method];
+          return (
+            <a href={url(`/${p.method}`)} class="glass group block rounded-2xl p-6 transition hover:bg-white/75">
+              <div class="text-[10px] uppercase tracking-[0.15em] text-[var(--ice-deep)]">
+                Method
+              </div>
+              <h3 class="display mt-2 text-xl">{meta.label}</h3>
+              <p class="mt-1 text-xs text-[var(--dim)]">{meta.blurb}</p>
+              <div class="mt-5 border-t hairline pt-4">
+                <div class="text-[10px] uppercase tracking-[0.15em] text-[var(--ok)]">
+                  Why it would have helped here
+                </div>
+                <p class="mt-2 text-sm leading-relaxed text-[var(--ink)]">{p.explanation}</p>
+              </div>
+              <div class="mt-5 text-xs text-[var(--accent)] group-hover:text-[var(--accent-deep)]">
+                Read about {meta.label.toLowerCase()} →
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+
+    {/* ============================================================ */}
+    {/* Sources */}
+    {/* ============================================================ */}
+    <section class="mt-16 pt-12 border-t hairline-strong" aria-labelledby="sources-heading">
+      <div class="pill"><span>Sources</span></div>
+      <h2 id="sources-heading" class="display mt-6 text-3xl leading-tight md:text-4xl">
+        Where this <span class="stat-grad italic">comes from.</span>
+      </h2>
+      <p class="mt-4 max-w-2xl text-sm text-[var(--ink-2)]">
+        Tier 1 = primary (court records, official statements, on-chain proof).
+        Tier 2 = established journalism. Tier 3 = community report
+        (included only when the pattern is instructive).
+        See the <a href={url("/incidents/methodology")} class="text-[var(--accent)] hover:text-[var(--accent-deep)]">methodology</a> page.
+      </p>
+
+      <ol class="mt-8 space-y-3">
+        {d.sources.map((s, i) => (
+          <li class="glass flex flex-wrap items-baseline justify-between gap-3 rounded-2xl p-5">
+            <div class="min-w-0 flex-1">
+              <div class="flex items-baseline gap-2">
+                <span class="display text-sm text-[var(--dim)]">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span class="font-medium text-[var(--ink)]">{s.publisher}</span>
+                <span class:list={[
+                  "tag",
+                  s.tier === 1 ? "tag-accent" : s.tier === 2 ? "tag-neutral" : "tag-warn",
+                ]}>
+                  Tier {s.tier}
+                </span>
+              </div>
+              {s.title && (
+                <div class="mt-1 text-sm text-[var(--ink-2)]">
+                  {s.url ? (
+                    <a href={s.url} class="hover:text-[var(--ice-deep)] hover:underline" rel="noopener nofollow">{s.title}</a>
+                  ) : (
+                    s.title
+                  )}
+                </div>
+              )}
+              {s.publishedOn && (
+                <div class="mt-1 text-[11px] text-[var(--dim)]">
+                  Published <time datetime={s.publishedOn}>{formatDate(s.publishedOn)}</time>
+                </div>
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    {/* ============================================================ */}
+    {/* Perpetrators (optional, only when convicted/charged) */}
+    {/* ============================================================ */}
+    {d.perpetrators && d.perpetrators.length > 0 && (
+      <section class="mt-16 pt-12 border-t hairline-strong">
+        <div class="pill"><span>Perpetrators</span></div>
+        <h2 class="display mt-6 text-2xl">Named individuals</h2>
+        <p class="mt-2 max-w-2xl text-sm text-[var(--ink-2)]">
+          We name individuals only when they have been charged or
+          convicted in a court of law. "Alleged" entries reflect
+          ongoing proceedings.
+        </p>
+        <ul class="mt-6 space-y-2 text-sm">
+          {d.perpetrators.map((p) => (
+            <li class="flex items-baseline gap-3">
+              <span class="font-medium text-[var(--ink)]">{p.name}</span>
+              <span class:list={[
+                "tag",
+                p.status === "convicted" ? "tag-ok" : p.status === "charged" ? "tag-accent" : "tag-warn",
+              ]}>
+                {p.status}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {/* ============================================================ */}
+    {/* Sub-incidents (cluster entries) */}
+    {/* ============================================================ */}
+    {d.cluster?.subIncidents && d.cluster.subIncidents.length > 0 && (
+      <section class="mt-16 pt-12 border-t hairline-strong">
+        <div class="pill"><span>Documented sub-incidents</span></div>
+        <h2 class="display mt-6 text-2xl">Individual cases in this cluster</h2>
+        <ul class="mt-6 space-y-3">
+          {d.cluster.subIncidents.map((s, i) => (
+            <li class="glass rounded-2xl p-5 text-sm">
+              <div class="flex flex-wrap items-baseline gap-3">
+                <span class="display text-[var(--dim)]">{String(i + 1).padStart(2, "0")}</span>
+                {s.occurredOn && (
+                  <time datetime={s.occurredOn} class="text-[var(--ink-2)]">{formatDate(s.occurredOn)}</time>
+                )}
+                {s.amountUsd !== undefined && (
+                  <span class="display stat-grad">{formatAmount(s.amountUsd)}</span>
+                )}
+              </div>
+              <p class="mt-2 leading-relaxed text-[var(--ink-2)]">{s.summary}</p>
+              {s.sourceUrl && (
+                <a href={s.sourceUrl} class="mt-2 inline-block text-xs text-[var(--accent)] hover:text-[var(--accent-deep)]" rel="noopener nofollow">
+                  Source →
+                </a>
+              )}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {/* ============================================================ */}
+    {/* Related */}
+    {/* ============================================================ */}
+    {d.relatedIncidents && d.relatedIncidents.length > 0 && (
+      <section class="mt-16 pt-12 border-t hairline-strong">
+        <div class="pill"><span>Related incidents</span></div>
+        <h2 class="display mt-6 text-2xl">See also</h2>
+        <ul class="mt-6 flex flex-wrap gap-3">
+          {d.relatedIncidents.map((slug) => (
+            <li>
+              <a href={url(`/incidents/${slug}`)} class="btn btn-secondary btn-sm">
+                {slug.replace(/-/g, " ")} →
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {/* ============================================================ */}
+    {/* CTA back to site */}
+    {/* ============================================================ */}
+    <section class="mt-20">
+      <div class="glass rounded-3xl p-8 md:p-10">
+        <div class="pill"><span>Apply this</span></div>
+        <h2 class="display mt-4 text-2xl md:text-3xl">
+          The mistakes here are common. The fixes aren't expensive.
+        </h2>
+        <p class="mt-3 max-w-2xl text-sm text-[var(--ink-2)] md:text-base">
+          The setup wizard turns a category-by-category review into a
+          concrete plan — typically a weekend of work and under $100 of hardware.
+        </p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href={url("/app/setup")} class="btn btn-primary">Plan your setup →</a>
+          <a href={url("/app/quiz/audit")} class="btn btn-secondary">Audit your current setup</a>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style is:global>
+  /* Lightweight prose styles scoped to incident body MDX. */
+  .prose-incident { color: var(--ink); }
+  .prose-incident h2 {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    font-size: 1.875rem;
+    line-height: 1.2;
+    margin-top: 3rem;
+    margin-bottom: 1.25rem;
+    color: var(--ink);
+  }
+  .prose-incident h3 {
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    font-size: 1.25rem;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    color: var(--ink);
+  }
+  .prose-incident p {
+    color: var(--ink-2);
+    line-height: 1.7;
+    margin: 0 0 1.25rem 0;
+  }
+  .prose-incident ul, .prose-incident ol {
+    color: var(--ink-2);
+    line-height: 1.7;
+    margin: 0 0 1.25rem 1.5rem;
+  }
+  .prose-incident ul { list-style: disc; }
+  .prose-incident ol { list-style: decimal; }
+  .prose-incident li { margin-bottom: 0.5rem; }
+  .prose-incident a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  .prose-incident a:hover { color: var(--accent-deep); }
+  .prose-incident strong { color: var(--ink); font-weight: 500; }
+  .prose-incident em { font-style: italic; }
+  .prose-incident code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.875em;
+    padding: 0.125rem 0.375rem;
+    background: rgba(12, 26, 46, 0.06);
+    border-radius: 4px;
+  }
+  .prose-incident blockquote {
+    border-left: 2px solid var(--accent);
+    padding-left: 1.25rem;
+    color: var(--ink-2);
+    font-style: italic;
+    margin: 1.5rem 0;
+  }
+</style>

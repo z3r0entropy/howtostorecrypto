@@ -13,6 +13,9 @@ export default defineConfig({
   site,
   base,
   trailingSlash: "ignore",
+  // Inline small stylesheets directly into the HTML. Saves a round-trip
+  // for the first paint; large stylesheets stay external & cacheable.
+  build: { inlineStylesheets: "auto" },
   integrations: [
     preact({ compat: false }),
     mdx(),
@@ -20,6 +23,9 @@ export default defineConfig({
       changefreq: ChangeFreqEnum.MONTHLY,
       priority: 0.7,
       lastmod: new Date(),
+      // Keep noindex pages out of the sitemap so crawlers don't waste
+      // budget on URLs we've explicitly told them not to index.
+      filter: (page) => !page.startsWith(`${site}/brand`),
       serialize(item) {
         // Boost the landing page; it's the canonical entry point and the
         // page we actually want ranking for "how to store crypto".

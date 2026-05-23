@@ -1,0 +1,117 @@
+---
+title: "Bitfinex 2016 — the hack the DOJ ended"
+status: "partially-recovered"
+statusNote: >-
+  The hack itself is court-documented. In February 2022 the US DOJ
+  seized approximately 94,000 of the stolen 119,756 BTC during the
+  arrest of Ilya Lichtenstein and Heather Morgan; both later pleaded
+  guilty. A formal return of remaining funds to Bitfinex / its
+  customers is ongoing through the US Marshals Service.
+occurredOn: "2016-08-02"
+reportedOn: "2016-08-02"
+amountUsd: 72000000
+amountUsdNote: >-
+  ~$72M at time of the hack. The seized portion alone was valued at
+  ~$3.6B in 2022, and the full 119,756 BTC has been worth multiples
+  of that at various peaks.
+asset: ["BTC"]
+victimType: "exchange"
+attackVector: "exchange-hack"
+rootCause: ["exchange-custody"]
+summary: >-
+  Hong Kong-based exchange Bitfinex lost 119,756 BTC in August 2016
+  after attackers bypassed the multisig setup that was supposed to
+  make a hack of this scale impossible. The case is unusual because
+  most of the coins were recovered six years later, after one of the
+  largest law-enforcement crypto-tracing operations on record.
+preventedBy:
+  - method: "methods/self-custody"
+    explanation: >-
+      The hack drained the exchange's hot wallets and pooled customer
+      funds. Users who had withdrawn their bitcoin to wallets they
+      controlled the keys to were not affected — the loss is a
+      property of leaving coins on an exchange, not of using Bitcoin.
+  - method: "methods/multisig"
+    explanation: >-
+      Bitfinex did use multisig — and was hacked anyway, because the
+      practical implementation routed signing through a single
+      compromised account at a third-party custodian (BitGo). The
+      lesson is not that multisig fails: it's that a multisig is only
+      as strong as the *operational separation* of its keys. A
+      self-managed multisig with geographically distributed signers
+      removes the centralisation that this attack exploited.
+sources:
+  - publisher: "Bitfinex"
+    title: "Security breach announcement"
+    publishedOn: "2016-08-02"
+    tier: 1
+  - publisher: "US Department of Justice"
+    title: >-
+      Two Arrested for Alleged Conspiracy to Launder $4.5 Billion in
+      Stolen Cryptocurrency
+    publishedOn: "2022-02-08"
+    tier: 1
+  - publisher: "US Department of Justice"
+    title: "Individual Pleads Guilty to Massive Hack of Virtual Currency Exchange"
+    publishedOn: "2023-08-03"
+    tier: 1
+perpetrators:
+  - name: "Ilya Lichtenstein"
+    status: "convicted"
+  - name: "Heather Morgan"
+    status: "convicted"
+relatedIncidents:
+  - "mt-gox-2014"
+---
+
+## What happened
+
+On 2 August 2016, attackers drained 119,756 BTC from Bitfinex's hot
+wallets. The exchange's published security architecture was a 2-of-3
+multisignature setup with BitGo as the second signer — a configuration
+that was meant to make a hack of this magnitude impossible without
+compromising both Bitfinex and BitGo simultaneously.
+
+It didn't work that way. Bitfinex had asked BitGo to relax the
+withdrawal rate-limiting that would otherwise have flagged large or
+unusual transfers. Once the attacker controlled the relevant Bitfinex
+infrastructure, BitGo's co-signing was effectively automated against
+them: the multisig signed every fraudulent withdrawal as if it were
+legitimate.
+
+Bitfinex socialised the loss across all customer accounts as a 36%
+"haircut" and issued *BFX tokens* representing the debt. Over the
+following months, those tokens were either redeemed for USD, swapped
+for equity in the parent company iFinex, or paid down. By April 2017
+Bitfinex announced that all BFX tokens had been redeemed — meaning the
+exchange's customers were made whole in dollar terms, though not in
+the BTC they had originally held.
+
+## The unusual ending
+
+In February 2022, US federal agents arrested Ilya Lichtenstein and his
+spouse Heather Morgan in Manhattan and announced the seizure of
+approximately 94,000 BTC, then valued at ~$3.6 billion — at the time
+the largest financial seizure in DOJ history. The case relied on
+years of blockchain analysis tracing the stolen coins through mixers,
+exchanges, and a long series of laundering attempts.
+
+Lichtenstein pleaded guilty to conspiracy to commit money laundering
+in 2023 and was sentenced in 2024. Morgan, separately, pleaded guilty
+and received a shorter sentence. The recovered BTC is being processed
+for return through Bitfinex's recovery program.
+
+## Why it matters here
+
+Bitfinex 2016 is the case that complicates the simple "use multisig"
+advice. The exchange *did* use multisig. The problem was the operational
+shape of that multisig — both signers were in effectively the same
+trust domain. A geographically distributed multisig, with keys held by
+independent parties on different infrastructure, is what the marketing
+implied. What was actually deployed was a multi-signature lock with
+both keys in the same building.
+
+For an individual setting up self-custody multisig, the lesson is
+sharper than "more signers good." It's: *make sure your signers can't
+all be compromised by one breach.* If two of three keys live on
+different devices in the same room, the redundancy is theatrical.

@@ -1,0 +1,95 @@
+---
+title: "Mt. Gox — the original exchange catastrophe"
+status: "partially-recovered"
+statusNote: >-
+  The bankruptcy and the missing coins are court-documented fact.
+  Approximately 200,000 BTC were later found in an old wallet, and
+  civil rehabilitation distributions to creditors began in 2024 —
+  meaning a fraction of the loss is being repaid, but most of the
+  ~850,000 BTC remained unrecovered.
+occurredOn: "2014-02"
+reportedOn: "2014-02-28"
+amountUsd: 460000000
+amountUsdNote: >-
+  ~$460M at the time of the bankruptcy filing; the same coins would
+  be worth tens of billions at later prices.
+asset: ["BTC"]
+victimType: "exchange"
+attackVector: "exchange-hack"
+rootCause: ["exchange-custody"]
+summary: >-
+  In February 2014 the world's largest Bitcoin exchange filed for
+  bankruptcy after losing approximately 850,000 BTC belonging to
+  customers and to itself. The case became the canonical argument
+  against leaving meaningful holdings on an exchange.
+preventedBy:
+  - method: "methods/self-custody"
+    explanation: >-
+      Any user who had withdrawn their bitcoin to a wallet they
+      controlled the keys to — even a basic paper backup — would
+      have been entirely unaffected by the Mt. Gox bankruptcy. The
+      losses here are a property of custody, not of Bitcoin.
+  - method: "methods/stamped-steel"
+    explanation: >-
+      Stamped-steel backup makes self-custody practical at any size.
+      Mt. Gox was many users' answer to "where do I keep this safely?"
+      precisely because the self-custody options of 2013 looked fragile.
+      A durable, redundant cold backup answers that objection.
+sources:
+  - publisher: "Tokyo District Court"
+    title: "MtGox Co., Ltd. civil rehabilitation proceedings"
+    tier: 1
+  - publisher: "Reuters"
+    title: "Bitcoin exchange Mt. Gox files for bankruptcy, hit by hacking"
+    publishedOn: "2014-02-28"
+    tier: 2
+  - publisher: "WIRED"
+    title: "The Inside Story of Mt. Gox, Bitcoin's $460 Million Disaster"
+    publishedOn: "2014-03-03"
+    tier: 2
+perpetrators:
+  - name: "Mark Karpelès"
+    status: "convicted"
+relatedIncidents:
+  - "bitfinex-hack-2016"
+---
+
+## What happened
+
+By 2013, Mt. Gox — a Tokyo-based exchange originally built by Jed McCaleb
+to trade *Magic: The Gathering* cards — handled the majority of global
+Bitcoin trading volume. Internally, the company was a mess: a single
+developer codebase, no version control for long stretches, a "wallet"
+implemented as one large hot wallet, and an accounting system that did
+not reliably distinguish company funds from customer funds.
+
+In February 2014 the exchange suspended withdrawals, then stopped trading,
+then filed for bankruptcy protection in Japan, declaring a loss of
+approximately 850,000 BTC — around 750,000 belonging to customers and
+100,000 belonging to the exchange itself.
+
+The publicly stated cause was a long-running exploitation of *transaction
+malleability* — a property of pre-SegWit Bitcoin that allowed transaction
+IDs to be altered after signing. Subsequent investigations (including
+the WizSec analysis) suggested that transaction malleability accounted
+for a small share of the losses and that most of the missing coins had
+already been gone, drained from hot wallets over a period of years
+before the bankruptcy filing made the absence visible.
+
+About 200,000 BTC were later discovered in an old wallet format and
+became the basis of the civil rehabilitation process. Distributions to
+creditors began in 2024 — a partial return more than a decade after
+the fact, paid out at a small fraction of the coins' eventual market
+value.
+
+## Why it's the canonical case
+
+Mt. Gox is the original argument for self-custody. It established —
+viscerally, in front of a global audience — that "the exchange holds
+it for you" means "the exchange's solvency and competence are your
+solvency and competence." Every subsequent exchange failure (QuadrigaCX,
+Cryptopia, FTX, Celsius) is a variation on the same theme.
+
+The lesson is not *which* exchange to trust. It is that exchange
+custody is a category of risk that disappears entirely the moment you
+withdraw to keys you control.

@@ -1,0 +1,131 @@
+---
+title: "Atomic Wallet 2023 — the mass drain with no public post-mortem"
+status: "disputed"
+statusNote: >-
+  Atomic Wallet confirmed an incident affecting users but disputes
+  the higher loss estimates published by independent blockchain
+  analysts (Elliptic, ZachXBT, others). No detailed technical
+  post-mortem has been published. The figure used here is the
+  community/analyst estimate, not the company's.
+occurredOn: "2023-06-03"
+reportedOn: "2023-06-03"
+amountUsd: 100000000
+amountUsdNote: >-
+  Independent blockchain analysts estimated total losses upward of
+  $100M across thousands of users; Atomic Wallet's own statements
+  have implied a smaller figure without publishing one. Loss
+  estimates remain contested.
+asset: ["BTC", "ETH", "XRP", "USDT", "USDC", "ADA"]
+victimType: "mixed"
+attackVector: "supply-chain"
+rootCause: ["installed-unverified-software", "single-location"]
+summary: >-
+  On 3 June 2023, thousands of users of the Atomic Wallet software
+  reported simultaneous draining of their balances across multiple
+  chains. The team confirmed the incident but never published a
+  technical root-cause analysis.
+preventedBy:
+  - method: "methods/self-custody"
+    explanation: >-
+      The lesson here is *not* "stop using self-custody." Atomic
+      Wallet *was* a self-custody wallet; the failure was in trusting
+      a closed-source software stack with the seed material directly.
+      A hardware wallet, holding the keys offline and signing
+      transactions through Atomic only as an interface, would have
+      isolated the seed from whatever went wrong on 3 June.
+  - method: "methods/air-gapped-signer"
+    explanation: >-
+      An air-gapped signing device — hardware wallet or otherwise —
+      means that even a fully-compromised desktop wallet cannot
+      extract the seed, because the seed is never on that machine.
+      Compromised software can at worst show you the wrong
+      transaction to confirm; it cannot sign on its own.
+  - method: "methods/verified-software"
+    explanation: >-
+      Closed-source consumer wallets cannot be independently audited
+      and cannot have their builds reproduced. Preferring open-source
+      wallets with reproducible builds and an audit history meaningfully
+      reduces the class of failure that may have produced this
+      incident.
+  - method: "methods/multisig"
+    explanation: >-
+      A 2-of-3 multisig where signers are different brands of hardware
+      wallet from different vendors removes single-vendor failure as
+      a category. Whatever went wrong inside Atomic could not, by
+      itself, sign a multisig spend.
+sources:
+  - publisher: "Atomic Wallet (official)"
+    title: "Status updates and customer communications, June 2023"
+    publishedOn: "2023-06"
+    tier: 1
+  - publisher: "Elliptic"
+    title: "On the Atomic Wallet exploit and attribution analysis"
+    publishedOn: "2023-06"
+    tier: 2
+  - publisher: "ZachXBT (independent investigator)"
+    title: "Aggregated reports of Atomic Wallet losses"
+    publishedOn: "2023-06"
+    tier: 2
+relatedIncidents: []
+---
+
+## What happened
+
+On 3 June 2023, holders of Atomic Wallet — a closed-source, multi-chain
+self-custody wallet for desktop and mobile — began reporting that their
+balances had been completely drained, simultaneously, across multiple
+chains. The reports were not isolated. Within hours hundreds of users
+had posted matching stories on Reddit, Telegram, and X.
+
+Atomic Wallet's initial statement acknowledged an exploit affecting
+"less than 1% of the active app's monthly users" and committed to
+ongoing investigation. A detailed public root-cause analysis was never
+published. Independent analysts, working from on-chain data, attributed
+the laundering pattern to the Lazarus Group — a North Korean
+state-affiliated actor with a well-documented history of crypto theft.
+
+The technical root cause remains formally unresolved in public. The
+plausible candidates discussed in the security community include:
+
+- a weakness in how seed phrases were generated in early versions of
+  the wallet (insufficient entropy / predictable RNG state),
+- a compromise of the binary distribution channel (a malicious build
+  served to a subset of users),
+- credential theft from a centralised user-data system at Atomic that
+  effectively held the keys to many wallets.
+
+Atomic Wallet has implied that the higher analyst estimates
+overcounted; analysts have published transaction-cluster evidence
+behind their figures. No reconciliation has been published.
+
+## Why this entry's status is "disputed"
+
+The incident itself is not in question — too many independent victims
+reported coincident draining for the event to be denied. What is in
+question is:
+
+1. the total amount lost,
+2. the technical cause,
+3. whether the affected population was as small as the vendor
+   suggested or as large as the analyst estimates imply.
+
+The user-facing lesson does not depend on resolving any of these. A
+self-custody software wallet that holds your seed in plaintext (or
+recoverable form) on a general-purpose computer is, on a long enough
+timeline, a guaranteed attack surface. Whether it's Atomic or the next
+one of its category, the architectural problem is the architecture.
+
+## Why it matters here
+
+Atomic Wallet is the case that distinguishes "self-custody" as an
+*intention* from "self-custody" as an *architecture*. Holding your
+keys yourself doesn't mean much if the software you ask to hold them
+for you is a black box that can be compromised once and drain everyone
+at the same time.
+
+The defence is not "stop using software wallets." It's: never let the
+software *have* the keys. A hardware wallet — or any air-gapped signer
+— keeps the key material outside the wallet UI's reach. The UI shows
+you the transaction; the signer alone produces the signature; a
+compromised UI can mislead you about what you're signing, but cannot
+sign without you.

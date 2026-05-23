@@ -1,10 +1,20 @@
 /**
- * Strategy recommendations as a function of technical level × stakes.
- * Each recommendation describes the *whole* setup, not just one backup medium.
+ * Strategy recommendations as a function of:
+ *   tier      — your technical comfort
+ *   usage     — how you actually use the coins
+ *   stakes    — what losing them would feel like
+ *   adversary — who's likely to come after you
+ *
+ * The 2D `recommendation` table below is the *baseline* for (tier × stakes).
+ * `recommend()` layers usage + adversary modifiers on top. Keeping the
+ * baseline as data and the modifiers as code is a deliberate choice — a
+ * 3×3×3×2 matrix would be 54 cells and miserable to keep coherent.
  */
 
 export type Tier = "beginner" | "advanced" | "expert";
 export type Stakes = "modest" | "significant" | "life-defining";
+export type Usage = "active" | "balanced" | "hodl";
+export type Adversary = "typical" | "targeted";
 
 export const tierMeta: Record<Tier, { label: string; sub: string; hint: string }> = {
   beginner: {
@@ -21,6 +31,37 @@ export const tierMeta: Record<Tier, { label: string; sub: string; hint: string }
     label: "Expert",
     sub: "Practiced, want best practice.",
     hint: "You know what a passphrase is, you've heard of multisig, you'd consider Shamir. You want the principled setup.",
+  },
+};
+
+export const usageMeta: Record<Usage, { label: string; sub: string; hint: string }> = {
+  active: {
+    label: "Active",
+    sub: "Trading or moving funds weekly or more.",
+    hint: "You buy and sell often, watch markets, treat this partly as money you're working with — not money you're putting away.",
+  },
+  balanced: {
+    label: "DCA / balanced",
+    sub: "Small regular buys, otherwise leave it alone.",
+    hint: "You add to a position over time, maybe rebalance occasionally, but you're not in and out daily.",
+  },
+  hodl: {
+    label: "Long-term hold",
+    sub: "Bought once (or rarely); planning years.",
+    hint: "Set and forget. The point is that you *don't* touch it; the right setup optimises for inactivity, not convenience.",
+  },
+};
+
+export const adversaryMeta: Record<Adversary, { label: string; sub: string; hint: string }> = {
+  typical: {
+    label: "Typical",
+    sub: "No one's specifically targeting you.",
+    hint: "You're a private individual; the realistic threats are mass phishing, an opportunistic burglary, a fire, a moving day. Most people are here.",
+  },
+  targeted: {
+    label: "Targeted",
+    sub: "You're a visible or specific target.",
+    hint: "Work in crypto, post about holdings publicly, hold a profession that draws attention (executive, journalist, dissident), or just hold enough that someone might come looking. Setup tightens accordingly.",
   },
 };
 
@@ -49,6 +90,8 @@ export const stakesMeta: Record<
 };
 
 export type StrategyKey =
+  | "keep-on-exchange"
+  | "hot-cold-split"
   | "single-hw"
   | "hw-steel"
   | "hw-steel-2loc"
@@ -79,6 +122,74 @@ export type Strategy = {
 };
 
 export const strategies: Record<StrategyKey, Strategy> = {
+  "keep-on-exchange": {
+    key: "keep-on-exchange",
+    name: "Keep it on a regulated exchange",
+    oneLiner:
+      "The honest answer when you trade often, hold little, and aren't ready for self-custody yet.",
+    components: [
+      "A reputable, regulated exchange in your jurisdiction",
+      "Long, unique password stored in a password manager",
+      "Hardware-key 2FA (YubiKey or similar) — not SMS",
+      "The same hardware-key 2FA on the email used for recovery",
+      "Withdrawal address whitelisting where supported",
+      "Only the balance you'd actually be okay losing — anything more, self-custody it",
+    ],
+    pros: [
+      "Zero key management — nothing for you to forget or lose",
+      "Instant access, suited to active trading",
+      "Account recovery and 2FA reset paths exist",
+      "Right tool for small balances and frequent buy/sell",
+    ],
+    cons: [
+      "Counterparty risk — Mt. Gox, FTX, QuadrigaCX all began as 'reputable exchanges'",
+      "Subject to exchange terms, withdrawal limits, account freezes",
+      "Few jurisdictions protect crypto holders from exchange insolvency",
+      "KYC / regulatory changes can lock you out without notice",
+    ],
+    approxCost: "Trading fees only (≈ 0.1–1% per trade)",
+    approxSetup: "≈ 30 min including KYC and 2FA",
+    survivability: "6 / 10",
+    locationsNeeded: 0,
+    lossDefense: 2,
+    theftDefense: 2,
+    lossNote:
+      "Account recovery exists, but the exchange itself can fail, fold, or freeze you out. That's a category of loss self-custody removes.",
+    theftNote:
+      "Hardware 2FA + strong unique password is a real defense. The remaining risk is the exchange itself being compromised — out of your hands.",
+  },
+  "hot-cold-split": {
+    key: "hot-cold-split",
+    name: "Trading float on exchange + cold reserve",
+    oneLiner: "The honest answer when you trade often but the bulk is too serious for an exchange.",
+    components: [
+      "A reputable exchange account for the trading float only",
+      "Hardware 2FA on the exchange and its recovery email",
+      "A clear maximum-float rule — anything over it gets moved to cold",
+      "Stamped 316 stainless plates in two geographically separated locations for the cold reserve",
+      "Sealed inheritance letter that covers the cold side (the exchange side dies with the account)",
+    ],
+    pros: [
+      "You can actually trade without putting everything at risk",
+      "Cold reserve survives an exchange failure",
+      "Forces you to be deliberate about how much sits hot",
+    ],
+    cons: [
+      "Two systems to maintain, two threat models to think about",
+      "The float on the exchange has the same risks as full exchange custody — just for a smaller amount",
+      "Easy to let the float creep up if you don't enforce the cap",
+    ],
+    approxCost: "$140 – $400 + exchange fees",
+    approxSetup: "≈ 5 hours over a weekend",
+    survivability: "8 / 10",
+    locationsNeeded: 2,
+    lossDefense: 3,
+    theftDefense: 2,
+    lossNote:
+      "The cold reserve is two plates, two places — survives a house-loss event. The float on the exchange has exchange-failure risk for that portion only.",
+    theftNote:
+      "Bulk is single-sig steel — a thief who finds a plate has the cold side. Strong 2FA protects the float. Upgrade path is multisig if either side grows.",
+  },
   "single-hw": {
     key: "single-hw",
     name: "Hardware wallet + paper backup",
@@ -264,18 +375,23 @@ export const strategies: Record<StrategyKey, Strategy> = {
   },
 };
 
-// Recommendation matrix: tier × stakes → strategy key, with a fallback secondary.
-export const recommendation: Record<
-  Tier,
-  Record<Stakes, { primary: StrategyKey; alt?: StrategyKey }>
-> = {
+export type Recommendation = {
+  primary: StrategyKey;
+  alt?: StrategyKey;
+  /** Plain-language notes on *why* — surfaced in the wizard alongside the cards. */
+  notes?: string[];
+};
+
+// 2D baseline for (tier × stakes). Assumes usage=balanced, adversary=typical.
+// `recommend()` below layers usage + adversary modifiers on top of this.
+export const recommendation: Record<Tier, Record<Stakes, Recommendation>> = {
   beginner: {
-    modest: { primary: "hw-steel", alt: "single-hw" },
+    modest: { primary: "keep-on-exchange", alt: "hw-steel" },
     significant: { primary: "hw-steel-2loc", alt: "hw-steel" },
     "life-defining": { primary: "multisig-trustee", alt: "hw-steel-2loc" },
   },
   advanced: {
-    modest: { primary: "hw-steel", alt: "single-hw" },
+    modest: { primary: "hw-steel", alt: "keep-on-exchange" },
     significant: { primary: "hw-steel-2loc", alt: "hw-steel-passphrase" },
     "life-defining": { primary: "multisig-2of3", alt: "multisig-trustee" },
   },
@@ -285,6 +401,88 @@ export const recommendation: Record<
     "life-defining": { primary: "multisig-shamir", alt: "multisig-2of3" },
   },
 };
+
+// One-step escalation for a targeted threat model. Each strategy points at
+// "the next-stronger one" — multisig and Shamir variants are the ceiling.
+const escalation: Partial<Record<StrategyKey, StrategyKey>> = {
+  "keep-on-exchange": "hw-steel",
+  "hot-cold-split": "multisig-2of3",
+  "single-hw": "hw-steel",
+  "hw-steel": "hw-steel-2loc",
+  "hw-steel-2loc": "hw-steel-passphrase",
+  "hw-steel-passphrase": "multisig-2of3",
+  "multisig-2of3": "multisig-trustee",
+  "multisig-trustee": "multisig-shamir",
+  "multisig-shamir": "multisig-shamir", // ceiling
+};
+
+/**
+ * Layered recommendation:
+ *
+ *   1. Start from the (tier × stakes) baseline.
+ *   2. Apply the usage modifier — active trading needs liquidity; long hold
+ *      doesn't need an exchange.
+ *   3. Apply the adversary modifier — a targeted threat model bumps the
+ *      whole thing one step up the escalation chain.
+ */
+export function recommend(
+  tier: Tier,
+  stakes: Stakes,
+  usage: Usage,
+  adversary: Adversary,
+): Recommendation {
+  let { primary, alt } = recommendation[tier][stakes];
+  const notes: string[] = [];
+
+  // ---- Usage modifier ------------------------------------------------------
+  if (usage === "active") {
+    if (stakes === "modest") {
+      // Modest + active: exchange is the honest answer. Keep baseline if
+      // it's already exchange; otherwise demote cold to alt.
+      if (primary !== "keep-on-exchange") {
+        alt = primary;
+        primary = "keep-on-exchange";
+      }
+      notes.push(
+        "You trade often and the stakes are modest — exchange custody with hardware 2FA is the honest answer here.",
+      );
+    } else {
+      // Significant / life-defining + active: hot/cold split. Trade with a
+      // float, keep the bulk cold.
+      if (primary !== "hot-cold-split") {
+        alt = primary;
+        primary = "hot-cold-split";
+      }
+      notes.push(
+        "Active trading at this scale calls for a hot/cold split: a small float on the exchange for liquidity, the bulk in cold storage.",
+      );
+    }
+  } else if (usage === "hodl") {
+    // Long hold removes the case for exchange custody.
+    if (primary === "keep-on-exchange") {
+      primary = alt && alt !== "keep-on-exchange" ? alt : "hw-steel";
+      alt = "keep-on-exchange";
+      notes.push(
+        "Long-term hold removes the trading-convenience argument for an exchange — cold storage becomes the right default.",
+      );
+    }
+  }
+  // usage === "balanced" → use the baseline as-is
+
+  // ---- Adversary modifier --------------------------------------------------
+  if (adversary === "targeted") {
+    const escalated = escalation[primary];
+    if (escalated && escalated !== primary) {
+      alt = primary;
+      primary = escalated;
+      notes.push(
+        "A targeted threat model means a single key compromise can't be the end of the story — escalated one step toward distributed signing.",
+      );
+    }
+  }
+
+  return { primary, alt, notes };
+}
 
 export const reminderCadence = {
   modest: { test: "annually", review: "every 2 years" },

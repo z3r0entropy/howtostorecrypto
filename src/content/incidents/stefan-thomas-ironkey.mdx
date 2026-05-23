@@ -1,0 +1,109 @@
+---
+title: "Stefan Thomas — 7,002 BTC behind a forgotten password"
+status: "confirmed"
+statusNote: >-
+  Thomas has spoken publicly about the situation, including in a
+  January 2021 New York Times feature. Whether the IronKey has since
+  been recovered or unlocked is not publicly confirmed at time of
+  writing.
+occurredOn: "2011"
+reportedOn: "2021-01-12"
+amountUsd: 240000000
+amountUsdNote: >-
+  ~$240M at Bitcoin's late-2021 peak; the actual realised value
+  depends on whether the keys are ever recovered.
+asset: ["BTC"]
+victimType: "individual"
+attackVector: "lost-key"
+rootCause: ["single-location", "memorized-only"]
+summary: >-
+  A San Francisco programmer was paid 7,002 BTC in 2011 for producing
+  a popular Bitcoin tutorial video. He stored the keys on an
+  encrypted IronKey USB drive and forgot the password. The IronKey
+  permanently wipes itself after ten incorrect attempts.
+preventedBy:
+  - method: "methods/stamped-steel"
+    explanation: >-
+      The underlying private key (or, in modern wallets, the BIP-39
+      seed) on a stamped steel plate held separately from the
+      encrypted device would have made the IronKey password
+      irrelevant. The IronKey is a convenience; the seed is the wallet.
+  - method: "methods/sealed-paper"
+    explanation: >-
+      Even a single sealed paper copy of the seed phrase in a
+      fire-rated safe at home is enough to defeat the
+      forgotten-password scenario entirely — and would have cost
+      under $50 to set up in 2011.
+  - method: "methods/multisig"
+    explanation: >-
+      A 2-of-3 multisig spreads the recovery surface across multiple
+      backups. Forgetting the password (or losing the physical
+      device) on one key would not be a total loss, because two of
+      three are enough to spend.
+sources:
+  - publisher: "The New York Times"
+    title: "Lost Passwords Lock Millionaires Out of Their Bitcoin Fortunes"
+    publishedOn: "2021-01-12"
+    tier: 2
+  - publisher: "Bloomberg"
+    title: "Coverage of Stefan Thomas and the IronKey case"
+    publishedOn: "2023"
+    tier: 2
+relatedIncidents: []
+---
+
+## What happened
+
+In 2011, Stefan Thomas — then a programmer, later the CTO of Ripple —
+made a short animated video called *What is Bitcoin?* It became, for a
+while, the canonical explainer. A grateful viewer paid him 7,002 BTC.
+
+He encrypted the wallet file holding those coins on an IronKey USB
+drive and wrote the password down on a piece of paper. The paper was
+lost. So, eventually, was the memory of the password.
+
+IronKey drives are designed to resist brute force in the most direct
+way available: after ten incorrect password attempts, the drive
+permanently and irreversibly encrypts its contents. By the time the
+NYT covered the story in January 2021, Thomas had used eight of his
+ten attempts. Two remained.
+
+At Bitcoin's peak in late 2021 the wallet was worth roughly $240
+million. As of public reporting, Thomas has not yet attempted the
+remaining tries — sensibly, given the asymmetric downside of a wrong
+guess — and has at various points discussed working with hardware
+security teams who claim to be able to extract the encrypted contents
+without triggering the wipe.
+
+## Why this is in the incidents corpus
+
+Stefan Thomas's case isn't a hack. Nobody stole from him. The category
+of loss is *self-inflicted* — the most common cause of permanent loss
+in self-custody, more common than any external attack, and the
+category about which the rest of this site has the most to say.
+
+His specific failure mode is *single-medium, single-location, no
+backup of the encryption key*. The IronKey was a fine choice for cold
+storage. The mistake was treating the IronKey password as if it were
+itself stored securely, when in fact it was stored on a piece of paper
+that could be lost — the same way a seed phrase can be lost — without
+any redundancy.
+
+## Why it matters here
+
+In 2011, the BIP-39 standard didn't exist yet. The whole ergonomic
+infrastructure for cold storage — twelve to twenty-four-word
+mnemonics, deterministic wallets, hardware signers with screens —
+was either not yet invented or not yet mainstream. Thomas's setup was
+a reasonable answer to the storage problem of *that* era.
+
+The shape of the loss, however, is identical to what still happens
+today. Replace "IronKey password" with "BIP-39 passphrase" or "wallet
+encryption password" and the failure mode is the same. The fix is the
+same too: the secret you actually need to remember must be backed up
+on the same level of medium as the seed itself — at least two
+locations, at least one of them not in your head.
+
+Human memory is the least reliable storage device ever invented.
+Anything that depends on a single human's recall is a single point of
+failure that *will* fail, given enough years.
