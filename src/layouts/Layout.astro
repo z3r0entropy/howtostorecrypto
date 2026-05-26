@@ -53,6 +53,8 @@ const canonicalUrl = canonical ?? `${siteUrl}${rawPath}`;
 const ogImageUrl = ogImage.startsWith("http") ? ogImage : `${siteUrl}${url(ogImage)}`;
 
 const nav = [
+  { label: "Concepts", href: "/concepts" },
+  { label: "Wallets", href: "/wallets" },
   { label: "Incidents", href: "/incidents" },
   { label: "Plan", href: "/app/setup" },
   { label: "Locations", href: "/app/locations" },
@@ -76,6 +78,7 @@ const orgJsonLd = {
   url: siteUrl,
   logo: `${siteUrl}${url("/og.svg")}`,
   description: "Patient, vendor-neutral guide to self-custody crypto storage.",
+  sameAs: ["https://x.com/how2storecrypto"],
 };
 
 const websiteJsonLd = {
@@ -132,6 +135,8 @@ const websiteJsonLd = {
 
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@how2storecrypto" />
+    <meta name="twitter:creator" content="@how2storecrypto" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
@@ -266,6 +271,18 @@ const websiteJsonLd = {
               <span>© 2026 How to Store Crypto</span>
               <span>Not financial advice. Not a custodian. Vendor-neutral.</span>
               <span>Built calmly. Updated regularly.</span>
+              <a
+                href="https://x.com/how2storecrypto"
+                rel="me noopener"
+                target="_blank"
+                aria-label="Follow @how2storecrypto on X"
+                class="inline-flex items-center gap-1.5 text-[var(--ink-2)] hover:text-[var(--ice-deep)]"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                  <path d="M18.244 2H21l-6.49 7.41L22 22h-6.59l-4.66-6.09L5.4 22H2.64l6.94-7.93L2 2h6.74l4.2 5.55L18.244 2Zm-1.15 18.4h1.82L7.02 3.5H5.05l12.044 16.9Z" />
+                </svg>
+                <span>@how2storecrypto</span>
+              </a>
             </div>
           </div>
         </footer>

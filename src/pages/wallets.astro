@@ -1,0 +1,250 @@
+---
+import { url } from "~/lib/url";
+import Layout from "~/layouts/Layout.astro";
+import { wallets, features, formMeta, type WalletForm } from "~/data/wallets";
+
+const forms: WalletForm[] = ["hardware", "software"];
+
+// For software wallets, hide the SE / attestation columns (n/a)
+const FORM_FEATURES: Record<WalletForm, string[]> = {
+  hardware: ["psbt", "multisig", "taproot", "airgap", "oss", "se", "passphrase", "shamir", "duress", "attestation"],
+  software: ["psbt", "multisig", "taproot", "passphrase", "shamir", "oss", "tor", "coinjoin"],
+  service:  ["psbt", "multisig", "taproot", "passphrase", "tor"],
+};
+
+const SUPPORT_GLYPH: Record<string, string> = {
+  "yes":         "✓",
+  "third-party": "◇",
+  "partial":     "◐",
+  "no":          "—",
+  "n/a":         " ",
+};
+
+const SUPPORT_LABEL: Record<string, string> = {
+  "yes":         "first-class",
+  "third-party": "via 3rd-party app",
+  "partial":     "partial · see notes",
+  "no":          "not supported",
+  "n/a":         "not applicable",
+};
+---
+
+<Layout
+  title="Wallets — which one supports what"
+  description="A vendor-neutral matrix of popular Bitcoin wallets and the security features each one supports. Filter by what matters to you."
+>
+  <main class="mx-auto max-w-6xl px-6 pt-32 pb-20 md:px-10">
+    <!-- Header -->
+    <header class="mb-16">
+      <div class="pill"><span class="pill-dot"></span> Wallets · last reviewed 23 May 2026</div>
+      <h1 class="display mt-6 text-[clamp(2.5rem,6vw,5.5rem)] leading-[0.95]">
+        Which wallet
+        <span class="stat-grad italic">supports what.</span>
+      </h1>
+      <p class="mt-6 max-w-2xl text-lg text-[var(--ink-2)]">
+        A factual matrix of popular Bitcoin wallets and the features that
+        actually matter for self-custody. <strong>Filter by what you need;</strong>
+        wallets that don't tick every box dim out. No rankings, no
+        affiliate links — verify against vendor docs before you buy.
+      </p>
+    </header>
+
+    <!-- Feature filter -->
+    <section class="mb-10">
+      <div class="mb-3 text-[11px] uppercase tracking-[0.2em] text-[var(--dim)]">Filter · require these features</div>
+      <div class="wallet-filter glass flex flex-wrap gap-2 rounded-2xl p-3" id="wallet-filter">
+        {
+          features.map((f) => (
+            <button
+              type="button"
+              class="wallet-filter__chip"
+              data-feature={f.id}
+              aria-pressed="false"
+              title={f.desc}
+            >
+              {f.short}
+            </button>
+          ))
+        }
+        <button type="button" class="wallet-filter__clear" id="wallet-filter-clear">clear</button>
+      </div>
+      <div class="wallet-filter__status mono-readout mt-3" id="wallet-filter-status" aria-live="polite">
+        {wallets.length} wallets · no filters applied
+      </div>
+    </section>
+
+    {
+      forms.map((form) => {
+        const formWallets = wallets.filter((w) => w.form === form);
+        if (formWallets.length === 0) return null;
+        const cols = FORM_FEATURES[form];
+        return (
+          <section class="mb-16" data-form={form}>
+            <header class="mb-6">
+              <div class="text-xs uppercase tracking-[0.2em] text-[var(--dim)]">{formMeta[form].label}</div>
+              <p class="mt-1 text-sm text-[var(--ink-2)]">{formMeta[form].sub}</p>
+            </header>
+
+            <div class="glass overflow-hidden rounded-2xl">
+              <div class="overflow-x-auto">
+                <table class="wallet-matrix">
+                  <thead>
+                    <tr>
+                      <th class="wallet-matrix__name-col">wallet</th>
+                      {cols.map((fid) => {
+                        const f = features.find((x) => x.id === fid)!;
+                        return (
+                          <th title={f.desc}>
+                            <span class="wallet-matrix__col-name">{f.short}</span>
+                          </th>
+                        );
+                      })}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {
+                      formWallets.map((w) => (
+                        <tr class="wallet-row" data-wallet={w.id} data-features={cols.filter((c) => w.features[c] === "yes" || w.features[c] === "third-party" || w.features[c] === "partial").join(" ")}>
+                          <td class="wallet-matrix__name">
+                            <div class="wallet-matrix__name-main">{w.name}</div>
+                            <div class="wallet-matrix__name-maker mono-readout">{w.maker}</div>
+                            {w.notes && (
+                              <div class="wallet-matrix__notes">{w.notes}</div>
+                            )}
+                          </td>
+                          {cols.map((fid) => {
+                            const s = w.features[fid] ?? "no";
+                            return (
+                              <td
+                                class={`wallet-cell wallet-cell--${s}`}
+                                title={SUPPORT_LABEL[s]}
+                                data-support={s}
+                                data-feature={fid}
+                              >
+                                <span class="wallet-cell__glyph">{SUPPORT_GLYPH[s]}</span>
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        );
+      })
+    }
+
+    <!-- Legend -->
+    <section class="mb-20">
+      <header class="mb-4">
+        <div class="text-xs uppercase tracking-[0.2em] text-[var(--dim)]">Legend</div>
+      </header>
+      <div class="glass rounded-2xl p-6">
+        <div class="grid grid-cols-1 gap-3 md:grid-cols-4">
+          <div class="legend-row"><span class="legend-row__glyph wallet-cell wallet-cell--yes">✓</span><span class="legend-row__lbl">first-class · in the official client</span></div>
+          <div class="legend-row"><span class="legend-row__glyph wallet-cell wallet-cell--third-party">◇</span><span class="legend-row__lbl">via 3rd-party companion app</span></div>
+          <div class="legend-row"><span class="legend-row__glyph wallet-cell wallet-cell--partial">◐</span><span class="legend-row__lbl">partial · caveats in notes</span></div>
+          <div class="legend-row"><span class="legend-row__glyph wallet-cell wallet-cell--no">—</span><span class="legend-row__lbl">not supported</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feature glossary -->
+    <section class="mb-12">
+      <header class="mb-6">
+        <div class="text-xs uppercase tracking-[0.2em] text-[var(--dim)]">Glossary</div>
+        <h2 class="display mt-2 text-3xl">What each feature means</h2>
+        <p class="mt-2 text-sm text-[var(--ink-2)]">
+          Each row links to a visualisation that demonstrates the feature.
+        </p>
+      </header>
+      <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+        {
+          features.map((f) => (
+            <div class="glass rounded-2xl p-5">
+              <div class="flex items-start justify-between gap-3">
+                <div class="display text-lg">{f.name}</div>
+                {f.vizAnchor && (
+                  <a
+                    href={`${url("/brand")}#${f.vizAnchor}`}
+                    class="pill text-[var(--ice-deep)]! hover:text-[var(--accent)]!"
+                  >
+                    show me →
+                  </a>
+                )}
+              </div>
+              <p class="mt-2 text-sm text-[var(--ink-2)] leading-relaxed">{f.desc}</p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- Footnote -->
+    <section class="mb-12">
+      <div class="glass rounded-2xl p-6">
+        <p class="text-sm text-[var(--ink-2)]">
+          <strong>Verify before you buy.</strong> Wallet features change
+          across firmware versions. The values in this matrix reflect the
+          current shipping versions as of the date in the header. For
+          anything load-bearing (e.g. duress PIN, air-gap, multisig
+          cross-vendor support), check the vendor's docs and recent
+          changelogs yourself.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // ============================================================
+    //  Wallet feature filter — chips AND-filter the rows
+    // ============================================================
+    {
+      const root = document.getElementById("wallet-filter");
+      const clearBtn = document.getElementById("wallet-filter-clear");
+      const status = document.getElementById("wallet-filter-status");
+      if (root && clearBtn && status) {
+        const chips = root.querySelectorAll<HTMLButtonElement>(".wallet-filter__chip");
+        const rows = document.querySelectorAll<HTMLElement>(".wallet-row");
+        const required = new Set<string>();
+        const apply = () => {
+          let shown = 0;
+          rows.forEach((r) => {
+            const have = new Set((r.dataset.features ?? "").split(/\s+/).filter(Boolean));
+            const ok = Array.from(required).every((req) => have.has(req));
+            r.classList.toggle("is-dim", !ok);
+            if (ok) shown++;
+          });
+          // Highlight cells matching active filters
+          document.querySelectorAll<HTMLElement>(".wallet-cell").forEach((c) => {
+            const f = c.dataset.feature ?? "";
+            c.classList.toggle("is-highlight", required.has(f));
+          });
+          const total = rows.length;
+          if (required.size === 0) {
+            status.textContent = `${total} wallets · no filters applied`;
+          } else {
+            const list = Array.from(required).join(" · ");
+            status.textContent = `${shown} of ${total} wallets match · ${list}`;
+          }
+        };
+        chips.forEach((c) => {
+          c.addEventListener("click", () => {
+            const id = c.dataset.feature ?? "";
+            if (required.has(id)) { required.delete(id); c.setAttribute("aria-pressed", "false"); }
+            else { required.add(id); c.setAttribute("aria-pressed", "true"); }
+            apply();
+          });
+        });
+        clearBtn.addEventListener("click", () => {
+          required.clear();
+          chips.forEach((c) => c.setAttribute("aria-pressed", "false"));
+          apply();
+        });
+      }
+    }
+  </script>
+</Layout>

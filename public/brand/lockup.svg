@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 80" width="520" height="80">
+  <g transform="translate(8 8) scale(2.67)" fill="none" stroke="#0c1a2e" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M12 2 L20 6.5 L20 16.5 L12 21 L4 16.5 L4 6.5 Z"/>
+    <path d="M12 7 L16 11.5 L12 16 L8 11.5 Z"/>
+  </g>
+  <text x="88" y="52" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="500" font-size="32" letter-spacing="-0.6" fill="#0c1a2e">How to Store Crypto</text>
+</svg>

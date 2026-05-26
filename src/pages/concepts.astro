@@ -1,0 +1,86 @@
+---
+import { url } from "~/lib/url";
+import Layout from "~/layouts/Layout.astro";
+import { topics } from "~/data/concepts";
+
+const tocItems = topics.map((t) => ({ id: t.id, title: t.title, count: t.concepts.length }));
+---
+
+<Layout
+  title="Concepts — the things that matter, visualised"
+  description="Every concept that matters in self-custody — foundations, threats, strategy, operations, hardware, resilience, privacy, protocol, trust — each with a working visualisation."
+>
+  <main class="mx-auto max-w-6xl px-6 pt-32 pb-20 md:px-10">
+    <!-- Header -->
+    <header class="mb-16">
+      <div class="pill"><span class="pill-dot"></span> Concepts · {topics.reduce((s, t) => s + t.concepts.length, 0)} entries</div>
+      <h1 class="display mt-6 text-[clamp(2.5rem,6vw,5.5rem)] leading-[0.95]">
+        Everything that
+        <span class="stat-grad italic">matters,</span>
+        <span class="text-[var(--dim)]">in one place.</span>
+      </h1>
+      <p class="mt-6 max-w-2xl text-lg text-[var(--ink-2)]">
+        Self-custody has a small finite vocabulary that compounds in
+        interesting ways. Each concept below has a working visualisation —
+        tap "show me" to see the idea move.
+      </p>
+    </header>
+
+    <!-- TOC -->
+    <nav class="glass mb-20 rounded-2xl p-2">
+      <ul class="flex flex-wrap gap-1 text-xs">
+        {
+          tocItems.map((t) => (
+            <li>
+              <a
+                href={`#${t.id}`}
+                class="rounded-full px-3 py-1.5 text-[var(--ink-2)] transition hover:bg-white/70"
+              >
+                {t.title} <span class="text-[var(--dim)]">·&nbsp;{t.count}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <!-- Topic sections -->
+    {
+      topics.map((t) => (
+        <section id={t.id} class="concept-topic">
+          <header class="concept-topic__header">
+            <div class="concept-topic__num">{t.num} · {t.title}</div>
+            <h2 class="display concept-topic__title">
+              {t.title}.
+            </h2>
+            <p class="concept-topic__sub">{t.sub}</p>
+          </header>
+
+          <div class="concept-grid">
+            {
+              t.concepts.map((c) => (
+                <a class="concept-card" href={`${url("/brand")}#${c.anchor}`}>
+                  <div class="concept-card__num">{c.num} · {t.title.toLowerCase()}</div>
+                  <div class="concept-card__title">{c.title}</div>
+                  <div class="concept-card__sub">{c.sub}</div>
+                  <div class="concept-card__cta">show me →</div>
+                </a>
+              ))
+            }
+          </div>
+        </section>
+      ))
+    }
+
+    <!-- Footnote -->
+    <section class="mb-12">
+      <div class="glass rounded-2xl p-8">
+        <p class="text-sm text-[var(--ink-2)]">
+          <strong>Looking for the wallet matrix?</strong> Which wallet
+          supports which of these features is over at{" "}
+          <a href={url("/wallets")} class="text-[var(--accent)] hover:text-[var(--accent-deep)]">/wallets</a>.
+        </p>
+      </div>
+    </section>
+  </main>
+</Layout>
